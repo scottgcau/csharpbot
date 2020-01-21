@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modelink threeWay="true" forceExeedL="true" forceExeedM="true" forceExeedR="true">
+  <model path="/scottgcau.sportstats.models/ui/sportstats.reactbotui" position="LEFT" />
+  <model path="/scottgcau.sportstats.models/entity/sportstats.csharpbotentity" position="MIDDLE" />
+  <model path="/scottgcau.sportstats.models/security/sportstats.commonsecurity" position="RIGHT" />
+</modelink>
