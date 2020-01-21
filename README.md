@@ -1,2 +1,0 @@
-# csharpbot
-codebot c#
