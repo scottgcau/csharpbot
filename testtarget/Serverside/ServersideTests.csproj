@@ -1,0 +1,80 @@
+<!--
+@bot-written
+
+WARNING AND NOTICE
+Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
+Full Software Licence as accepted by you before being granted access to this source code and other materials,
+the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
+licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
+including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
+access, download, storage, and/or use of this source code.
+
+BOT WARNING
+This file is bot-written.
+Any changes out side of "protected regions" will be lost next time the bot makes any changes.
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../../serverside/src/appsettings.xml" CopyToOutputDirectory="Always" />
+		<None Include="../../serverside/src/appsettings.Test.xml" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Audit.EntityFramework.Core" Version="14.7.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.0.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
+		<PackageReference Include="GraphQL" Version="2.4.0" />
+		<PackageReference Include="GraphQL.EntityFramework" Version="9.0.0" />
+		<PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
+		<PackageReference Include="GraphQL.Server.Transports.WebSockets" Version="3.4.0" />
+		<PackageReference Include="Moq" Version="4.13.1" />
+		<PackageReference Include="NCrontab" Version="3.3.1" />
+		<PackageReference Include="OpenIddict" Version="2.0.1" />
+		<PackageReference Include="OpenIddict.EntityFrameworkCore" Version="2.0.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
+		<PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.0.14" />
+
+		<PackageReference Include="AutoFixture.Xunit2" Version="4.11.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="3.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="3.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+		<PackageReference Include="NCrontab" Version="3.3.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+		<PackageReference Include="RestSharp" Version="106.6.10" />
+		<PackageReference Include="dotnet-test-xunit" Version="2.2.0-preview2-build1029" />
+		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit.runner.console" Version="2.4.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+		<PackageReference Include="XunitXml.TestLogger" Version="2.1.26" />
+		<!-- % protected region % [Add any further imports here] off begin -->
+		<!-- % protected region % [Add any further imports here] end -->
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="Sportstats">
+	    <HintPath>..\..\serverside\src\bin\$(Configuration)\netcoreapp3.0\Sportstats.dll</HintPath>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Reference>
+	</ItemGroup>
+</Project>

@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<reactbotUi:UserInterfaceModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reactbotUi="http://codebots.com/emf/reactbot/ui" TargetProject="sportstats" />
+<reactbotUi:UserInterfaceModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reactbotUi="http://codebots.com/emf/reactbot/ui" Uuid="40cbec04-3be5-11ea-c0e9-6d6f75736579" TargetProject="sportstats">
+  <Pages xsi:type="reactbotUi:Page" Uuid="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Name="Home" Title="Home" Description="Home" IsHomePage="true"/>
+  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="05467f2c-15c1-4dfc-e283-caf67fae6986" Name="Home Wrapping Tile" IsDefaultTile="true">
+    <ViewElements xsi:type="reactbotUi:View" Uuid="452b81a1-b17b-42a0-a4b1-728d6e02784d" Name="Home Wrapping View" DefaultView="true"/>
+  </Tiles>
+  <Tiles xsi:type="reactbotUi:TileCrud" Uuid="bdf1a1dc-3f56-4e5f-bbb1-96afd85cfe96" Name="Sport CRUD">
+    <Entity href="../entity/sportstats.csharpbotentity#d469786e-3d85-4cc1-ad6f-36f959703fd7"/>
+  </Tiles>
+  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="44cddf59-186a-477e-a458-475b2d6b7355" DisplayIndex="1" Source="452b81a1-b17b-42a0-a4b1-728d6e02784d" Target="bdf1a1dc-3f56-4e5f-bbb1-96afd85cfe96"/>
+  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="54153949-cd2d-4070-882b-7f44b2671742" Source="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Target="05467f2c-15c1-4dfc-e283-caf67fae6986"/>
+</reactbotUi:UserInterfaceModel>

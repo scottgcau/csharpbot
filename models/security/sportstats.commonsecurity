@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<commonSecurity:Security xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:commonSecurity="http://codebots.com/emf/security">
-  <Authentication/>
-  <Authorization/>
+<commonSecurity:Security xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commonSecurity="http://codebots.com/emf/security">
+  <Authentication>
+    <Authentication xsi:type="commonSecurity:LocalAuthentication" Uuid="40cc2a7a-3be5-11ea-88e8-6d6f75736579"/>
+  </Authentication>
+  <Authorization>
+    <Acl Uuid="d8a5c86d-372e-4992-bed6-e9fb1c09c92a" Group="1dae5499-9998-4270-98d1-5c81c3d43f46" SecurityScheme="39c6c63f-39de-4457-8b0a-4942e18acd21" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="070cddbf-d7c7-4f72-9ad6-278a1849839e" Group="1dae5499-9998-4270-98d1-5c81c3d43f46" SecurityScheme="d469786e-3d85-4cc1-ad6f-36f959703fd7" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="b6f9c16b-5428-4c12-adaf-8cf0132b5ba7" Group="1dae5499-9998-4270-98d1-5c81c3d43f46" SecurityScheme="f4f16bde-8891-4eaf-843a-6d04300329dd" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="8fb870e2-2311-40d6-8a33-b17ac4bedfad" Group="1dae5499-9998-4270-98d1-5c81c3d43f46" SecurityScheme="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Read="true"/>
+    <Acl Uuid="de8e956d-31b2-427f-9457-4b5d0448a447" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="39c6c63f-39de-4457-8b0a-4942e18acd21" Read="true"/>
+    <Acl Uuid="509931a9-e58b-4831-a836-9206216d1a1c" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="d469786e-3d85-4cc1-ad6f-36f959703fd7" Read="true"/>
+    <Acl Uuid="fa3ba577-36ba-4a11-885e-387a543b63be" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="f4f16bde-8891-4eaf-843a-6d04300329dd" Read="true"/>
+    <Acl Uuid="1068b09b-2980-458d-8f1d-417cc545335c" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Read="true"/>
+  </Authorization>
   <Auditing/>
-  <SecuritySchemes/>
+  <SecuritySchemes>
+    <SecuritySchemes Uuid="39c6c63f-39de-4457-8b0a-4942e18acd21" Name="User Entity">
+      <Object href="../entity/sportstats.csharpbotentity#39c6c63f-39de-4457-8b0a-4942e18acd21"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="d469786e-3d85-4cc1-ad6f-36f959703fd7" Name="Sport Entity">
+      <Object href="../entity/sportstats.csharpbotentity#d469786e-3d85-4cc1-ad6f-36f959703fd7"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="f4f16bde-8891-4eaf-843a-6d04300329dd" Name="League Entity">
+      <Object href="../entity/sportstats.csharpbotentity#f4f16bde-8891-4eaf-843a-6d04300329dd"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Name="Home">
+      <Object href="../ui/sportstats.reactbotui#4d754dc1-54d6-4c5a-b725-c19d55b435bd"/>
+    </SecuritySchemes>
+  </SecuritySchemes>
+  <TwoFactorAuthenticationProviders/>
   <Groups>
-    <Groups Name="Visitors"/>
+    <Groups Uuid="40cc6828-3be5-11ea-b18d-6d6f75736579" Name="Visitors" Description="Anonymous users who have not been authenticated" IsSpecialGroup="UNAUTHENTICATED"/>
+    <Groups Uuid="1dae5499-9998-4270-98d1-5c81c3d43f46" Name="User" Description="Users who have been created as an User entity">
+      <UserEntities href="../entity/sportstats.csharpbotentity#39c6c63f-39de-4457-8b0a-4942e18acd21"/>
+    </Groups>
   </Groups>
 </commonSecurity:Security>

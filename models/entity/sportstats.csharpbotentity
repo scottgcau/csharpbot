@@ -1,2 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<csharpbotEntity:EntityModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:csharpbotEntity="http://codebots.com/emf/csharpbot/entity" TargetProject="sportstats" />
+<csharpbotEntity:EntityModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:csharpbotEntity="http://codebots.com/emf/csharpbot/entity" Uuid="40cada9e-3be5-11ea-bb2c-6d6f75736579" TargetProject="sportstats">
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="d469786e-3d85-4cc1-ad6f-36f959703fd7" Name="Sport" DocoDescription="Sport" OrderBy="64d16324-4f01-4643-a429-36adec5e599f">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="6a81132f-a8c6-4fdd-9321-88f173d3d33f" Name="Id" DocoDescription="Id" Searchable="true" Unique="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="87a1fc5f-3887-469d-a39c-e4dfa2a1a35f"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="64d16324-4f01-4643-a429-36adec5e599f" Name="Name" DocoDescription="Name" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="168fd539-c51c-4ef2-b073-f0f286b31458"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="f4f16bde-8891-4eaf-843a-6d04300329dd" Name="League" DocoDescription="League" OrderBy="d7dda3e9-c7c2-4f1d-91ca-a58695bc845b">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="189d01df-7cc1-47ce-8fa8-0b5a5020c3fc" Name="Id" DocoDescription="Id" Searchable="true" Unique="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="3c7915ee-1f41-440e-8bef-e4b32d5ae5a9"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="d7dda3e9-c7c2-4f1d-91ca-a58695bc845b" Name="Name" DocoDescription="Name" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="998e1b58-1f65-4b75-a888-d29dfa172eb5"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="cfd68408-106c-44aa-a3ec-a52faa634cff" Name="SportId" DocoDescription="Sport Id" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="68339d2f-a677-448d-9d83-3071ca7abf5c"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="5cb1e3f3-599e-41f5-b336-93ce1ef4656f" Name="ShortName" DocoDescription="Short name" Searchable="true"/>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="39c6c63f-39de-4457-8b0a-4942e18acd21" Name="User" DocoDescription="User account" OrderBy="cbf1cf4c-7b4b-4d16-9eab-6813d625ad9b">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="052bf5e1-1ea9-4ff0-9b23-01dab19a27a5" Name="Id" DocoDescription="Id" Searchable="true" Unique="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="dc1c07d7-167c-4b53-ac0f-a6970aab79b4"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="cbf1cf4c-7b4b-4d16-9eab-6813d625ad9b" Name="Username" DocoDescription="Username" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="ffe01824-d6b6-44d2-a0f1-3d77553f400b"/>
+    </Attributes>
+    <Behaviours xsi:type="csharpbotEntity:BehaviourUser" Uuid="5bf59f04-c8dd-484c-99fa-0c9aeb761199"/>
+  </Entities>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="6d33aec8-c771-452e-a6d1-72ec8df5ace5" Name="Leagues" DocoDescription="Sport leagues" OppositeName="Sport" Source="d469786e-3d85-4cc1-ad6f-36f959703fd7" Target="f4f16bde-8891-4eaf-843a-6d04300329dd"/>
+</csharpbotEntity:EntityModel>
