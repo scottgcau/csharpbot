@@ -27,12 +27,12 @@ namespace SeleniumTests.Utils
 		{
 			switch (entityName)
 			{
-				case "Sport":
-					return new SportDetailSection(contextConfiguration);
-				case "League":
-					return new LeagueDetailSection(contextConfiguration);
-				case "User":
-					return new UserDetailSection(contextConfiguration);
+				case "Sportentity":
+					return new SportentityDetailSection(contextConfiguration);
+				case "SportentitySubmission":
+					return new SportentitySubmissionDetailSection(contextConfiguration);
+				case "SportentityFormTile":
+					return new SportentityFormTileDetailSection(contextConfiguration);
 				default:
 					throw new Exception($"Cannot find detail section for type {entityName}");
 			}

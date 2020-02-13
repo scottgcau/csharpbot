@@ -24,6 +24,7 @@ import PageLinks from './Pages/Admin/PageLinks';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
 import { SERVER_URL } from "../Constants";
 import { store } from "../Models/Store";
+import FormsPage from "./Pages/Admin/Forms/FormsPage";
 
 // This ts-ignore is needed since there is no types for graphiql
 // @ts-ignore
@@ -75,9 +76,10 @@ export default class Admin extends React.Component<RouteComponentProps> {
 
 						{/* Admin entity pages */}
 						<Route exact={true} path={`${path}`} component={AdminPage} />
-						<Route path={`${path}/Sport`} component={AdminPages.SportPage} />
-						<Route path={`${path}/League`} component={AdminPages.LeaguePage} />
-						<Route path={`${path}/User`} component={AdminPages.UserPage} />
+						<Route path={`${path}/forms`} component={FormsPage} />
+						<Route path={`${path}/Sportentity`} component={AdminPages.SportentityPage} />
+						<Route path={`${path}/SportentitySubmission`} component={AdminPages.SportentitySubmissionPage} />
+						<Route path={`${path}/SportentityFormTile`} component={AdminPages.SportentityFormTilePage} />
 
 						{
 						// % protected region % [Add any extra page routes here] off begin

@@ -95,8 +95,6 @@ namespace SeleniumTests.Steps.BotWritten.UserRegistration
 		{
 			switch (userType)
 			{
-				case "User":
-					return UserType.USER;
 				default:
 					throw new Exception($"{userType} enum is not handled");
 			}

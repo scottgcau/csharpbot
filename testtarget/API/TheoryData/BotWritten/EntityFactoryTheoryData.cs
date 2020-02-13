@@ -24,7 +24,6 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public UserEntityFactorySingleTheoryData()
 		{
-			Add(new UserEntityFactory("User"));
 		}
 	}
 
@@ -32,9 +31,8 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityFactorySingleTheoryData()
 		{
-			Add(new EntityFactory("Sport"), 1);
-			Add(new EntityFactory("League"), 1);
-			Add(new EntityFactory("User"), 1);
+			Add(new EntityFactory("Sportentity"), 1);
+			Add(new EntityFactory("SportentityFormTile"), 1);
 		}
 	}
 
@@ -42,9 +40,8 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public NonUserEntityFactorySingleTheoryData()
 		{
-			Add(new EntityFactory("Sport"), 1);
-			Add(new EntityFactory("League"), 1);
-			Add(new EntityFactory("User"), 1);
+			Add(new EntityFactory("Sportentity"), 1);
+			Add(new EntityFactory("SportentityFormTile"), 1);
 		}
 	}
 
@@ -52,9 +49,8 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityFactoryTheoryData()
 		{
-			Add(new EntityFactory("Sport"));
-			Add(new EntityFactory("League"));
-			Add(new EntityFactory("User"));
+			Add(new EntityFactory("Sportentity"));
+			Add(new EntityFactory("SportentityFormTile"));
 		}
 	}
 
@@ -63,9 +59,8 @@ namespace APITests.TheoryData.BotWritten
 		public EntityFactoryMultipleTheoryData()
 		{
 			var numEntities = 3;
-			Add(new EntityFactory("Sport"), numEntities);
-			Add(new EntityFactory("League"), numEntities);
-			Add(new EntityFactory("User"), numEntities);
+			Add(new EntityFactory("Sportentity"), numEntities);
+			Add(new EntityFactory("SportentityFormTile"), numEntities);
 		}
 	}
 }

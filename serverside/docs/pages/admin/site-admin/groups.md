@@ -33,7 +33,6 @@ Please see the entity documentation for details regarding access.
 | Name | Description | Default |
 |:---: | :----: | :----: |
 | Visitors | Anonymous users who have not been authenticated | false |
-| User | Users who have been created as an User entity | false |
 
 ---
 
@@ -43,15 +42,6 @@ Please see the entity documentation for details regarding access.
 
 ### Visitors Group 
 Anonymous users who have not been authenticated
-
-
-<!-- % protected region % [Customise details about the group here.] off begin -->
-<!-- % protected region % [Customise details about the group here.] end -->
-
----
-
-### User Group 
-Users who have been created as an User entity
 
 
 <!-- % protected region % [Customise details about the group here.] off begin -->

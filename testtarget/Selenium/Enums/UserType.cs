@@ -19,6 +19,5 @@ namespace SeleniumTests.Enums
 {
 	public enum UserType
 	{
-		USER,
 	}
 }

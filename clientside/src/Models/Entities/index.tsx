@@ -15,16 +15,18 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 
-import { ISportAttributes as ISportAttributesImport } from './Sport';
-import { ILeagueAttributes as ILeagueAttributesImport } from './League';
-import { IUserAttributes as IUserAttributesImport } from './User';
+import { ISportentityAttributes as ISportentityAttributesImport } from './Sportentity';
+import { ISportentitySubmissionAttributes as ISportentitySubmissionAttributesImport } from './SportentitySubmission';
+import { ISportentityFormTileAttributes as ISportentityFormTileAttributesImport } from './SportentityFormTile';
 
 export { default as User } from './User';
 
-export { default as Sport } from './Sport';
-export type ISportAttributes = ISportAttributesImport;
+export { default as Sportentity } from './Sportentity';
+export type ISportentityAttributes = ISportentityAttributesImport;
 
-export { default as League } from './League';
-export type ILeagueAttributes = ILeagueAttributesImport;
+export { default as SportentitySubmission } from './SportentitySubmission';
+export type ISportentitySubmissionAttributes = ISportentitySubmissionAttributesImport;
 
+export { default as SportentityFormTile } from './SportentityFormTile';
+export type ISportentityFormTileAttributes = ISportentityFormTileAttributesImport;
 

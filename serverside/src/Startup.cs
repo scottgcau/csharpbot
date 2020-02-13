@@ -260,19 +260,21 @@ namespace Sportstats
 
 			// GraphQL types must be registered as singleton services. This is since building the underlying graph is
 			// expensive and should only be done once.
-			services.AddSingleton<SportType>();
-			services.AddSingleton<SportInputType>();
-			services.AddSingleton<LeagueType>();
-			services.AddSingleton<LeagueInputType>();
-			services.AddSingleton<UserType>();
-			services.AddSingleton<UserInputType>();
-			services.AddSingleton<UserCreateInputType>();
+			services.AddSingleton<SportentityType>();
+			services.AddSingleton<SportentityInputType>();
+			services.AddSingleton<SportentityFormVersionType>();
+			services.AddSingleton<SportentityFormVersionInputType>();
+			services.AddSingleton<SportentitySubmissionType>();
+			services.AddSingleton<SportentitySubmissionInputType>();
+			services.AddSingleton<SportentityFormTileType>();
+			services.AddSingleton<SportentityFormTileInputType>();
 
 
 			// Connect the database type to the GraphQL type
-			GraphTypeTypeRegistry.Register<Sport, SportType>();
-			GraphTypeTypeRegistry.Register<League, LeagueType>();
-			GraphTypeTypeRegistry.Register<User, UserType>();
+			GraphTypeTypeRegistry.Register<Sportentity, SportentityType>();
+			GraphTypeTypeRegistry.Register<SportentityFormVersion, SportentityFormVersionType>();
+			GraphTypeTypeRegistry.Register<SportentitySubmission, SportentitySubmissionType>();
+			GraphTypeTypeRegistry.Register<SportentityFormTile, SportentityFormTileType>();
 
 			// Add GraphQL core services and executors
 			services.AddGraphQL();

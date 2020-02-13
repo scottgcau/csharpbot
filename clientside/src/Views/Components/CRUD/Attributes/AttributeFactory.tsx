@@ -29,6 +29,8 @@ import AttributeReferenceMultiCombobox from './AttributeReferenceMultiCombobox';
 import { EntityFormMode } from '../EntityAttributeList';
 import AttributeDateTimePicker from './AttributeDateTimePicker';
 import AttributeEnumCombobox from './AttributeEnumCombobox';
+import AttributeFormData from "./AttributeFormData";
+import AttributeFormTile from 'Views/Components/CRUD/Attributes/AttributeFormTile';
 
 
 export function getAttributeComponent (
@@ -257,6 +259,47 @@ export function getAttributeComponent (
 					}
 				}}
 				/>;
+		case 'form-data':
+			return <AttributeFormData
+				key={attributeOptions.attributeName}
+				model={model}
+				options={attributeOptions}
+				errors={errors}
+				className={attributeOptions.attributeName}
+				isReadonly={isReadonly}
+				isRequired={isRequired}
+				onAfterChange={() => { 
+					if (!!onAfterChange) {
+						onAfterChange(attributeOptions.attributeName);
+					}
+					if (attributeOptions.onAfterChange) {
+						attributeOptions.onAfterChange(model);
+					}
+				}}
+				onChangeAndBlur={() => { 
+					if (!!onChangeAndBlur) {
+						onChangeAndBlur(attributeOptions.attributeName);
+					}
+				}}
+				{...attributeOptions.inputProps}
+				/>;
+		case 'form-tile':
+			return <AttributeFormTile 
+				model={model} 
+				options={attributeOptions}
+				errors={errors}
+				className={attributeOptions.attributeName}
+				isReadonly={isReadonly}
+				isRequired={isRequired}
+				key={attributeOptions.attributeName}
+				onAfterChange={() => {
+					if (!!onChangeAndBlur) {
+						onChangeAndBlur(attributeOptions.attributeName);
+					}
+					if (attributeOptions.onAfterChange) {
+						attributeOptions.onAfterChange(model);
+					}
+				}}/>;
 		case 'hidden':
 			return null;
 		default:

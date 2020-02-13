@@ -52,9 +52,10 @@ namespace Sportstats.Models {
 		public string SessionUser { get; }
 		public string SessionId { get; }
 
-		public DbSet<Sport> Sport { get; set; }
-		public DbSet<League> League { get; set; }
-		public DbSet<User> User { get; set; }
+		public DbSet<Sportentity> Sportentity { get; set; }
+		public DbSet<SportentityFormVersion> SportentityFormVersion { get; set; }
+		public DbSet<SportentitySubmission> SportentitySubmission { get; set; }
+		public DbSet<SportentityFormTile> SportentityFormTile { get; set; }
 
 		static SportstatsDBContext()
 		{
@@ -84,9 +85,9 @@ namespace Sportstats.Models {
 
 			// Configure models from the entity diagram
 			modelBuilder.HasPostgresExtension("uuid-ossp");
-			modelBuilder.ApplyConfiguration(new SportConfiguration());
-			modelBuilder.ApplyConfiguration(new LeagueConfiguration());
-			modelBuilder.ApplyConfiguration(new UserConfiguration());
+			modelBuilder.ApplyConfiguration(new SportentityConfiguration());
+			modelBuilder.ApplyConfiguration(new SportentitySubmissionConfiguration());
+			modelBuilder.ApplyConfiguration(new SportentityFormTileConfiguration());
 
 			// Configure the user and group models
 			modelBuilder.ApplyConfiguration(new UserConfiguration());

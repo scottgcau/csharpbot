@@ -21,7 +21,7 @@ import { Model } from '../Models/Model';
  * Tests cases for validating the source optional = false property of a reference 
  */
 test.each([
-	['leagues', 'sport', 'League', 'Sport', new Models.League(), 'oneToMany'],
+	['formPage', 'form', 'SportentityFormTile', 'Sportentity', new Models.SportentityFormTile(), 'oneToMany'],
 ])(
 	'Source Optional for the %s %s relation between %s and %s',
 	(...args: Array<string | Model>) => {

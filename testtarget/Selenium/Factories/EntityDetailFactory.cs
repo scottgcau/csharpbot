@@ -45,9 +45,9 @@ namespace SeleniumTests.Factories
 		{
 			return entityName switch
 			{
-				"Sport" => new SportDetailSection(_contextConfiguration, (Sport) entity),
-				"League" => new LeagueDetailSection(_contextConfiguration, (League) entity),
-				"User" => new UserDetailSection(_contextConfiguration, (User) entity),
+				"Sportentity" => new SportentityDetailSection(_contextConfiguration, (Sportentity) entity),
+				"SportentitySubmission" => new SportentitySubmissionDetailSection(_contextConfiguration, (SportentitySubmission) entity),
+				"SportentityFormTile" => new SportentityFormTileDetailSection(_contextConfiguration, (SportentityFormTile) entity),
 				_ => throw new Exception($"Cannot find entity type {entityName}"),
 			};
 		}

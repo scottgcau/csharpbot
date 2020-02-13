@@ -49,20 +49,6 @@ namespace Sportstats.Controllers
 			_logger = logger;
 		}
 
-		/// <summary>
-		/// Registers a new User user
-		/// </summary>
-		/// <param name="registrationModel">The fields to set on the user</param>
-		/// <returns>A user result on success or a list of errors on failure</returns>
-		[HttpPost]
-		[Route("user")]
-		[Authorize(Roles = "User,Visitors")]
-		public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationModel registrationModel)
-		{
-			var model = registrationModel.ToModel();
-			return await Register(model, registrationModel.Password, registrationModel.Groups);
-		}
-
 		[HttpPost]
 		[Route("confirm-email")]
 		[AllowAnonymous]

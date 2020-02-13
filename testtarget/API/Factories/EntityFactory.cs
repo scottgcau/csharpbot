@@ -41,9 +41,9 @@ namespace APITests.Factories
 		{
 			return _type switch
 			{
-				"Sport" => Sport.GetEntity(isValid, _fixedStrValues),
-				"League" => League.GetEntity(isValid, _fixedStrValues),
-				"User" => User.GetEntity(isValid, _fixedStrValues),
+				"Sportentity" => Sportentity.GetEntity(isValid, _fixedStrValues),
+				"SportentitySubmission" => SportentitySubmission.GetEntity(isValid, _fixedStrValues),
+				"SportentityFormTile" => SportentityFormTile.GetEntity(isValid, _fixedStrValues),
 				_ => throw new Exception($"Cannot find entity type {_type}"),
 			};
 		}

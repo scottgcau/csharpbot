@@ -59,9 +59,10 @@ namespace Sportstats.Graphql
 		public SportstatsQuery(IEfGraphQLService<SportstatsDBContext> efGraphQlService) : base(efGraphQlService)
 		{
 			// Add query types for each entity
-			AddModelQueryField<SportType, Sport>("Sport");
-			AddModelQueryField<LeagueType, League>("League");
-			AddModelQueryField<UserType, User>("User");
+			AddModelQueryField<SportentityType, Sportentity>("Sportentity");
+			AddModelQueryField<SportentityFormVersionType, SportentityFormVersion>("SportentityFormVersion");
+			AddModelQueryField<SportentitySubmissionType, SportentitySubmission>("SportentitySubmission");
+			AddModelQueryField<SportentityFormTileType, SportentityFormTile>("SportentityFormTile");
 
 			// Add query types for each many to many reference
 
@@ -160,11 +161,12 @@ namespace Sportstats.Graphql
 			Name = "Mutation";
 
 			// Add input types for each entity
-			AddMutationField<SportInputType, SportInputType, SportType, Sport>("Sport");
-			AddMutationField<LeagueInputType, LeagueInputType, LeagueType, League>("League");
-			AddMutationField<UserCreateInputType, UserInputType, UserType, User>(
-				"User",
-				CreateMutation.CreateUserCreateMutation<User, UserRegistrationModel, UserGraphQlRegistrationModel>("User"));
+			AddMutationField<SportentityInputType, SportentityInputType, SportentityType, Sportentity>("Sportentity");
+			AddMutationField<SportentityFormVersionInputType, SportentityFormVersionInputType, SportentityFormVersionType, SportentityFormVersion>(
+				"SportentityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<SportentitySubmissionInputType, SportentitySubmissionInputType, SportentitySubmissionType, SportentitySubmission>("SportentitySubmission");
+			AddMutationField<SportentityFormTileInputType, SportentityFormTileInputType, SportentityFormTileType, SportentityFormTile>("SportentityFormTile");
 
 			// Add input types for each many to many reference
 

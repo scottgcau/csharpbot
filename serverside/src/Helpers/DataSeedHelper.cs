@@ -70,7 +70,6 @@ namespace Sportstats.Helpers
 			// pages without there being a modelled admin group.
 			new SeedGroup {Name = "Super Administrators", HasBackendAccess = true},
 			new SeedGroup {Name = "Visitors", HasBackendAccess = false},
-			new SeedGroup {Name = "User", HasBackendAccess = false},
 			// % protected region % [Configure the modelled groups here] end
 
 			// % protected region % [Add any extra seeded groups here] off begin
@@ -114,11 +113,7 @@ namespace Sportstats.Helpers
 				await CreateUser(
 					new User {Email = "super@example.com"},
 					"password",
-					new [] {"Visitors", "User", "Super Administrators"});
-				await CreateUser(
-					new User {Email = "user@example.com"},
-					"password",
-					new [] {"User"});
+					new [] {"Visitors", "Super Administrators"});
 				// % protected region % [Add any extra development seeding here] off begin
 				// % protected region % [Add any extra development seeding here] end
 			}

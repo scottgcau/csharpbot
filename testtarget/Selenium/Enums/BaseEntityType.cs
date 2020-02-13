@@ -27,7 +27,8 @@ namespace SeleniumTests.Enums
 
 	public enum EntityType
 	{
-		SPORT,
-		LEAGUE,
+		SPORTENTITY,
+		SPORTENTITY_SUBMISSION,
+		SPORTENTITY_FORM_TILE,
 	}
 }

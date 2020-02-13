@@ -23,9 +23,9 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityNamePluralizedTheoryData()
 		{
-			Add("sports");
-			Add("leagues");
-			Add("users");
+			Add("sportentitys");
+			Add("sportentitySubmissions");
+			Add("sportentityFormTiles");
 		}
 
 	}
@@ -34,9 +34,9 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityNameTheoryData()
 		{
-			Add("sport");
-			Add("league");
-			Add("user");
+			Add("sportentity");
+			Add("sportentitySubmission");
+			Add("sportentityFormTile");
 		}
 
 	}

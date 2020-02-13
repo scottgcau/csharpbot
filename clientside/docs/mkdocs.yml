@@ -22,15 +22,15 @@ docs_dir: pages
 nav:
 
 # % protected region % [Customise your documentation nav as you see fit here] off begin
-
   - index.md
   - Site-Admin:
     - Users: 'admin/site-admin/users.md'
     - Groups: 'admin/site-admin/groups.md'
     - Emails: 'admin/site-admin/emails.md'
   - Entities:
-    - Sport Entity: 'admin/entities/sport.md'
-    - League Entity: 'admin/entities/league.md'
+    - SportEntity Entity: 'admin/entities/sportentity.md'
+    - SportEntity Submission Entity: 'admin/entities/sportentitySubmission.md'
+    - SportEntity Form Tile Entity: 'admin/entities/sportentityFormTile.md'
   
 
 # % protected region % [Customise your documentation nav as you see fit here] end

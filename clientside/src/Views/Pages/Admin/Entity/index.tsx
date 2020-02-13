@@ -14,8 +14,8 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-export { default as SportPage } from './SportPage';
-export { default as LeaguePage } from './LeaguePage';
-export { default as UserPage } from './UserPage';
+export { default as SportentityPage } from './SportentityPage';
+export { default as SportentitySubmissionPage } from './SportentitySubmissionPage';
+export { default as SportentityFormTilePage } from './SportentityFormTilePage';
 // % protected region % [Add any further admin page exports here] off begin
 // % protected region % [Add any further admin page exports here] end

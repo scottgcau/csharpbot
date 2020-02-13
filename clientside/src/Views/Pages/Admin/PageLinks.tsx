@@ -32,22 +32,22 @@ interface AdminLink extends IIconProps {
 
 const LINKS : AdminLink[] = [
 	{
-		path: '/admin/sport',
-		label: 'Sport',
-		entity: Models.Sport,
+		path: '/admin/sportentity',
+		label: 'SportEntity',
+		entity: Models.Sportentity,
 		isMember: false
 	},
 	{
-		path: '/admin/league',
-		label: 'League',
-		entity: Models.League,
+		path: '/admin/sportentitysubmission',
+		label: 'SportEntity Submission',
+		entity: Models.SportentitySubmission,
 		isMember: false
 	},
 	{
-		path: '/admin/user',
-		label: 'User',
-		entity: Models.User,
-		isMember: true
+		path: '/admin/sportentityformtile',
+		label: 'SportEntity Form Tile',
+		entity: Models.SportentityFormTile,
+		isMember: false
 	},
 	// % protected region % [Add any extra page links here] off begin
 	// % protected region % [Add any extra page links here] end
@@ -117,6 +117,10 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 		const otherlinkGroup: ILink[] = [];
 		//otherlinkGroup.push({ path: '/admin/dashboards', label: 'Dashboards', icon: 'dashboard', iconPos: 'icon-left', isDisabled: true });
 		//otherlinkGroup.push({ path: '/admin/timelines', label: 'Timelines', icon: 'timeline', iconPos: 'icon-left', isDisabled: true });
+		const formsGroups: string[] = ['Visitors'];
+		if (store.userGroups.some(ug => formsGroups.some(fg => fg == ug.name))){
+			otherlinkGroup.push({ path: '/admin/forms', label: 'Forms', icon: 'forms', iconPos: 'icon-left', isDisabled: false });
+		}
 		if (otherlinkGroup.length > 0) {
 			linkGroups.push(otherlinkGroup);
 		}

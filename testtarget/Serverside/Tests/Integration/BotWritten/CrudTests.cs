@@ -30,14 +30,14 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		[Fact]
 		[Trait("Category", "BotWritten")]
 		[Trait("Category", "Unit")]
-		public async void SportControllerGetTest()
+		public async void SportentityControllerGetTest()
 		{
 			using var host = ServerBuilder.CreateServer();
 
 			var database = host.Services.GetRequiredService<SportstatsDBContext>();
-			var controller = host.Services.GetRequiredService<SportController>();
+			var controller = host.Services.GetRequiredService<SportentityController>();
 
-			var entities = new EntityFactory<Sport>(10)
+			var entities = new EntityFactory<Sportentity>(10)
 				.UseAttributes()
 				.UseReferences()
 				.UseOwner(Guid.NewGuid())
@@ -54,14 +54,14 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		[Fact]
 		[Trait("Category", "BotWritten")]
 		[Trait("Category", "Unit")]
-		public async void LeagueControllerGetTest()
+		public async void SportentitySubmissionControllerGetTest()
 		{
 			using var host = ServerBuilder.CreateServer();
 
 			var database = host.Services.GetRequiredService<SportstatsDBContext>();
-			var controller = host.Services.GetRequiredService<LeagueController>();
+			var controller = host.Services.GetRequiredService<SportentitySubmissionController>();
 
-			var entities = new EntityFactory<League>(10)
+			var entities = new EntityFactory<SportentitySubmission>(10)
 				.UseAttributes()
 				.UseReferences()
 				.UseOwner(Guid.NewGuid())
@@ -78,14 +78,14 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		[Fact]
 		[Trait("Category", "BotWritten")]
 		[Trait("Category", "Unit")]
-		public async void UserControllerGetTest()
+		public async void SportentityFormTileControllerGetTest()
 		{
 			using var host = ServerBuilder.CreateServer();
 
 			var database = host.Services.GetRequiredService<SportstatsDBContext>();
-			var controller = host.Services.GetRequiredService<UserController>();
+			var controller = host.Services.GetRequiredService<SportentityFormTileController>();
 
-			var entities = new EntityFactory<User>(10)
+			var entities = new EntityFactory<SportentityFormTile>(10)
 				.UseAttributes()
 				.UseReferences()
 				.UseOwner(Guid.NewGuid())

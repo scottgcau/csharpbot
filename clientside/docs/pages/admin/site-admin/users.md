@@ -26,36 +26,10 @@ Users of the system and the details related to them.
 
 | Name | Description |
 | ---- | ----
-| User | User account |
-
----
-
-
-## User Details
-
-User account
-
-### Special Attributes
-
-### Attributes
-| Name | Type | Example | Required | Rules | Description |
-| ---- | :----: | :--------: | :-----: | ----- | ----- |
-| Id | NUMBER | 42 | True | Attribute must be entered. | Id | 
-| Username | STRING | example value | True | Attribute must be entered. | Username | 
-
-
-### Security
-| Group  | Create | Read | Update | Delete |
-| ---- | :----: | :----:  | :----:  | :----:  |
-| User | True | True | True | True |
-| Visitors | False | True | False | False |
 
 
 ---
 
-<!-- % protected region % [More detailed docs here for User] off begin -->
-<!-- % protected region % [More detailed docs here for User] end -->
 
----
 
 

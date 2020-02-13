@@ -30,7 +30,7 @@ export default class HomeWrappingTileTile extends React.Component<RouteComponent
 	public render() {
 		let contents = (
 			<>
-				<EntityCRUD {...this.props} modelType={Models.Sport} />
+				<EntityCRUD {...this.props} modelType={Models.Sportentity} />
 			</>
 		);
 

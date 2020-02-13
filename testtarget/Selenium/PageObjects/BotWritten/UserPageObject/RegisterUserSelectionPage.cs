@@ -24,6 +24,9 @@ namespace SeleniumTests.PageObjects.BotWritten.UserPageObjects
 {
 	public class RegisterUserSelectionPage : BasePage
 	{
+		public IWebElement SportentityDropdownOption => FindElementExt("SportentityDropdownOption");
+		public IWebElement SportentitySubmissionDropdownOption => FindElementExt("SportentitySubmissionDropdownOption");
+		public IWebElement SportentityFormTileDropdownOption => FindElementExt("SportentityFormTileDropdownOption");
 		public IWebElement UserTypeDropdown => FindElementExt("UserTypeDropdown");
 		public IWebElement ConfirmButton => FindElementExt("ConfirmButton");
 		public IWebElement CancelButton => FindElementExt("CancelButton");
@@ -35,6 +38,9 @@ namespace SeleniumTests.PageObjects.BotWritten.UserPageObjects
 
 		private void InitializeSelectors()
 		{
+			selectorDict.Add("SportentityDropdownOption", (selector: "//div[contains(@class, 'dropdown__option')][contains(text(),'Sportentity')]", type: SelectorType.XPath));
+			selectorDict.Add("SportentitySubmissionDropdownOption", (selector: "//div[contains(@class, 'dropdown__option')][contains(text(),'SportentitySubmission')]", type: SelectorType.XPath));
+			selectorDict.Add("SportentityFormTileDropdownOption", (selector: "//div[contains(@class, 'dropdown__option')][contains(text(),'SportentityFormTile')]", type: SelectorType.XPath));
 			selectorDict.Add("UserTypeDropdown", (selector: "//div[contains(@class, 'input-group__dropdown')]//input", type: SelectorType.XPath));
 			selectorDict.Add("ConfirmButton", (selector: "confirm_type", type: SelectorType.ID));
 			selectorDict.Add("CancelButton", (selector: "cancel_register", type: SelectorType.ID));

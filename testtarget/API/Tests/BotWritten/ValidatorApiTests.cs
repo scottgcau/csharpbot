@@ -45,9 +45,8 @@ namespace APITests.Tests.BotWritten
 		{
 			return new TheoryData<EntityFactory>
 			{
-				{ new EntityFactory("Sport")},
-				{ new EntityFactory("League")},
-				{ new EntityFactory("User")},
+				{ new EntityFactory("Sportentity")},
+				{ new EntityFactory("SportentityFormTile")},
 			};
 		}
 
