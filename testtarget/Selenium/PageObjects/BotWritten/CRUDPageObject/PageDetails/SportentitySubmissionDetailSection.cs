@@ -63,7 +63,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			_contextConfiguration = contextConfiguration;
 			_sportentitySubmission = SportentitySubmission;
 			// % protected region % [Add any extra construction requires] off begin
-
 			// % protected region % [Add any extra construction requires] end
 		}
 
@@ -139,7 +138,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			};
 
 			// % protected region % [Add any extra steps to extract an entity] off begin
-
 			// % protected region % [Add any extra steps to extract an entity] end
 
 			return SportentitySubmission;
