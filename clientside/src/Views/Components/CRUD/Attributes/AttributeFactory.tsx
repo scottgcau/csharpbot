@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -19,6 +19,7 @@ import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 import { Model } from 'Models/Model';
 import { Symbols } from '../../../../Symbols';
 import AttributeTextField from './AttributeTextField';
+import AttributeTextArea from './AttributeTextArea';
 import AttributeReferenceCombobox from './AttributeReferenceCombobox';
 import AttributeDatePicker from './AttributeDatePicker';
 import AttributeTimePicker from './AttributeTimePicker';
@@ -26,9 +27,9 @@ import AttributeCheckbox from './AttributeCheckbox';
 import AttributePassword from './AttributePassword';
 import AttributeDisplayField from './AttributeDisplayField';
 import AttributeReferenceMultiCombobox from './AttributeReferenceMultiCombobox';
-import { EntityFormMode } from '../EntityAttributeList';
 import AttributeDateTimePicker from './AttributeDateTimePicker';
 import AttributeEnumCombobox from './AttributeEnumCombobox';
+import { EntityFormMode } from 'Views/Components/Helpers/Common';
 import AttributeFormData from "./AttributeFormData";
 import AttributeFormTile from 'Views/Components/CRUD/Attributes/AttributeFormTile';
 
@@ -40,7 +41,7 @@ export function getAttributeComponent (
 	formMode: EntityFormMode = EntityFormMode.VIEW,
 	isRequired: boolean = false,
 	onAfterChange?: (attributeName: string) => void,
-	onChangeAndBlur?: (attributeName: string) => void) 
+	onChangeAndBlur?: (attributeName: string) => void)
 {
 	const isReadonly = formMode === EntityFormMode.VIEW || attributeOptions.isReadonly;
 
@@ -60,7 +61,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onAfterChange) {
 						onAfterChange(attributeOptions.attributeName);
 					}
@@ -68,12 +69,22 @@ export function getAttributeComponent (
 						attributeOptions.onAfterChange(model);
 					}
 				}}
-				onChangeAndBlur={() => { 
+				onChangeAndBlur={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
 				}}
 				{...attributeOptions.inputProps}
+				/>;
+		case 'textarea':
+			return <AttributeTextArea
+				key={attributeOptions.attributeName}
+				model={model}
+				options={attributeOptions}
+				errors={errors}
+				className={attributeOptions.attributeName}
+				isReadonly={isReadonly}
+				isRequired={isRequired}
 				/>;
 		case 'password':
 			return <AttributePassword
@@ -84,7 +95,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -102,7 +113,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -120,7 +131,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -138,7 +149,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -156,7 +167,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -173,7 +184,7 @@ export function getAttributeComponent (
 				options={attributeOptions}
 				errors={errors}
 				className={attributeOptions.attributeName}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -198,7 +209,7 @@ export function getAttributeComponent (
 				isReadonly={isReadonly}
 				isRequired={isRequired}
 				fetchReferenceEntity={attributeOptions.isJoinEntity}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -213,12 +224,6 @@ export function getAttributeComponent (
 				throw new Error('Must have a defined referenceType for display type' + attributeOptions.displayType);
 			}
 
-			let required = false;
-			if (model[Symbols.validatorMap]) {
-				const maybeValidator = model[Symbols.validatorMap][attributeOptions.attributeName];
-				required = maybeValidator ? maybeValidator.indexOf('Required') > -1 : false;
-			}
-
 			return <AttributeReferenceMultiCombobox
 				key={attributeOptions.attributeName}
 				model={model}
@@ -228,8 +233,7 @@ export function getAttributeComponent (
 				optionEqualFunc={attributeOptions.optionEqualFunc}
 				errors={errors}
 				isJoinEntity={attributeOptions.isJoinEntity}
-				synchronousLoad={false}
-				disableDefaultOptionRemoval={required}
+				disableDefaultOptionRemoval={attributeOptions.disableDefaultOptionRemoval}
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
@@ -250,7 +254,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -268,7 +272,7 @@ export function getAttributeComponent (
 				className={attributeOptions.attributeName}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
-				onAfterChange={() => { 
+				onAfterChange={() => {
 					if (!!onAfterChange) {
 						onAfterChange(attributeOptions.attributeName);
 					}
@@ -276,7 +280,7 @@ export function getAttributeComponent (
 						attributeOptions.onAfterChange(model);
 					}
 				}}
-				onChangeAndBlur={() => { 
+				onChangeAndBlur={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
 					}
@@ -284,8 +288,11 @@ export function getAttributeComponent (
 				{...attributeOptions.inputProps}
 				/>;
 		case 'form-tile':
-			return <AttributeFormTile 
-				model={model} 
+			if (attributeOptions.formTileFilterFn === undefined) {
+				throw new Error('Must have a defined formTileFilterFn for display type' + attributeOptions.displayType);
+			}
+			return <AttributeFormTile
+				model={model}
 				options={attributeOptions}
 				errors={errors}
 				className={attributeOptions.attributeName}
@@ -302,6 +309,8 @@ export function getAttributeComponent (
 				}}/>;
 		case 'hidden':
 			return null;
+		// % protected region % [Add more customized cases here] off begin
+		// % protected region % [Add more customized cases here] end
 		default:
 			throw new Error(`No attribute component is defined to handle ${attributeOptions.displayType}`);
 	}

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -260,21 +260,21 @@ namespace Sportstats
 
 			// GraphQL types must be registered as singleton services. This is since building the underlying graph is
 			// expensive and should only be done once.
-			services.AddSingleton<SportentityType>();
-			services.AddSingleton<SportentityInputType>();
-			services.AddSingleton<SportentityFormVersionType>();
-			services.AddSingleton<SportentityFormVersionInputType>();
-			services.AddSingleton<SportentitySubmissionType>();
-			services.AddSingleton<SportentitySubmissionInputType>();
-			services.AddSingleton<SportentityFormTileType>();
-			services.AddSingleton<SportentityFormTileInputType>();
+			services.AddSingleton<SportentityEntityType>();
+			services.AddSingleton<SportentityEntityInputType>();
+			services.AddSingleton<SportentityEntityFormVersionType>();
+			services.AddSingleton<SportentityEntityFormVersionInputType>();
+			services.AddSingleton<SportentitySubmissionEntityType>();
+			services.AddSingleton<SportentitySubmissionEntityInputType>();
+			services.AddSingleton<SportentityEntityFormTileEntityType>();
+			services.AddSingleton<SportentityEntityFormTileEntityInputType>();
 
 
 			// Connect the database type to the GraphQL type
-			GraphTypeTypeRegistry.Register<Sportentity, SportentityType>();
-			GraphTypeTypeRegistry.Register<SportentityFormVersion, SportentityFormVersionType>();
-			GraphTypeTypeRegistry.Register<SportentitySubmission, SportentitySubmissionType>();
-			GraphTypeTypeRegistry.Register<SportentityFormTile, SportentityFormTileType>();
+			GraphTypeTypeRegistry.Register<SportentityEntity, SportentityEntityType>();
+			GraphTypeTypeRegistry.Register<SportentityEntityFormVersion, SportentityEntityFormVersionType>();
+			GraphTypeTypeRegistry.Register<SportentitySubmissionEntity, SportentitySubmissionEntityType>();
+			GraphTypeTypeRegistry.Register<SportentityEntityFormTileEntity, SportentityEntityFormTileEntityType>();
 
 			// Add GraphQL core services and executors
 			services.AddGraphQL();

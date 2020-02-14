@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -20,7 +20,7 @@ import { Button, Display } from '../Button/Button';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 import { Model, IModelType } from 'Models/Model';
-import { getModelName, getAttributeCRUDOptions, exportAll } from 'Util/EntityUtils';
+import { getModelName, getModelDisplayName, getAttributeCRUDOptions, exportAll } from 'Util/EntityUtils';
 import {observable, action, runInAction, computed} from 'mobx';
 import Spinner from '../Spinner/Spinner';
 import { ICollectionHeaderProps } from '../Collection/CollectionHeaders';
@@ -227,7 +227,7 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 									<p className="user-error">These records could not be deleted because of an association</p>
 									<p className="internal-error-title">Message:</p>
 									<p className="internal-error">{errorMessage}</p>
-								</div>, 
+								</div>,
 								'error'
 							);
 						});
@@ -342,14 +342,14 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 
 	protected renderCreateButton(): React.ReactNode {
 		const { modelType } = this.props;
-		const modelName = getModelName(modelType);
+		const modelDisplayName = getModelDisplayName(modelType);
 		return (
 			<Button
 				key="create"
 				className={classNames(Display.Solid)}
 				icon={{icon: 'create', iconPos: 'icon-right'}}
 				buttonProps={{ onClick: () => { this.props.history.push(`${this.props.match.url}/create`); } }}>
-				Create {modelName}
+				Create {modelDisplayName}
 			</Button>
 		);
 	}

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -20,6 +20,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Sportstats.Models;
+using Sportstats.Helpers;
 using Sportstats.Security;
 using Sportstats.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -201,6 +202,15 @@ namespace Sportstats.Services
 					var entityName = grouping.First().Entity.GetType().Name;
 					var modelErrors = new List<string>();
 
+					// If there is no mutating actions then continue
+					var actions = grouping.Select(e => e.State).ToList();
+					if (!(actions.Contains(EntityState.Added) ||
+						actions.Contains(EntityState.Deleted) ||
+						actions.Contains(EntityState.Modified)))
+					{
+						return modelErrors;
+					}
+
 					// Even though we have filtered this before we need this check for the compiler
 					if (!(grouping.FirstOrDefault()?.Entity is IOwnerAbstractModel model))
 					{
@@ -304,23 +314,55 @@ namespace Sportstats.Services
 					{
 						funcs.Add(acl.GetCreate);
 					}
-
 					break;
 				case EntityState.Modified:
 					foreach (var acl in acls)
 					{
 						funcs.Add(acl.GetUpdate);
 					}
-
 					break;
 				case EntityState.Deleted:
 					foreach (var acl in acls)
 					{
 						funcs.Add(acl.GetDelete);
 					}
-
+					break;
+				default:
+					// Unchanged or untracked need no security checks
+					funcs.Add((a,b,c) => true);
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Gets an aggregated version of the update acls for an entity
+		/// </summary>
+		/// <param name="user">The user trying to access the entity</param>
+		/// <param name="groups">The groups that the user belongs to</param>
+		/// <param name="operation"> The database operation the user is trying to perform  </param>
+		/// <typeparam name="TModel">The entity model the user wishes to read</typeparam>
+		/// <returns>An expression that can be used for the where condition of a linq query</returns>
+		public static Expression<Func<User, bool>> GetAggregatedUserModelAcls<TModel>(User user, IList<string> groups, DATABASE_OPERATION operation)
+			where TModel : IOwnerAbstractModel, new()
+		{
+			var groupAcls = new TModel().Acls.Where(a => groups.Contains(a.Group));
+			
+			IEnumerable<Expression<Func<User, bool>>> operationAcls = null;
+			switch (operation)
+			{
+				case DATABASE_OPERATION.READ:
+					operationAcls = groupAcls.Select(acl => acl.GetReadConditions<User>(user, new SecurityContext()));
+					break;
+				case DATABASE_OPERATION.UPDATE:
+					operationAcls = groupAcls.Select(acl => acl.GetUpdateConditions<User>(user, new SecurityContext()));
+					break;
+				case DATABASE_OPERATION.DELETE:
+					operationAcls = groupAcls.Select(acl => acl.GetUpdateConditions<User>(user, new SecurityContext()));
+					break;
+				default:
+					break;
+			}
+			return ExpressionHelper.OrExpressions(operationAcls);
 		}
 	}
 }

@@ -4,7 +4,7 @@
 # WARNING AND NOTICE
 # Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
 # Full Software Licence as accepted by you before being granted access to this source code and other materials,
-# the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+# the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
 # commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
 # licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
 # including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -15,34 +15,36 @@
 # Any changes out side of "protected regions" will be lost next time the bot makes any changes.
 ###
 
-site_name: SPORTSTATS - SPORTSTATS User Docs
+site_name: sportstats - sportstats User Docs
 site_url: https://sportstats/docs
 use_directory_urls: false
 docs_dir: pages
-nav:
+pages:
 
 # % protected region % [Customise your documentation nav as you see fit here] off begin
   - index.md
   - Site-Admin:
     - Users: 'admin/site-admin/users.md'
     - Groups: 'admin/site-admin/groups.md'
+    - Site Settings: 'admin/site-admin/site-settings.md'
     - Emails: 'admin/site-admin/emails.md'
   - Entities:
-    - SportEntity Entity: 'admin/entities/sportentity.md'
-    - SportEntity Submission Entity: 'admin/entities/sportentitySubmission.md'
-    - SportEntity Form Tile Entity: 'admin/entities/sportentityFormTile.md'
-  
+    - SportEntity Entity Entity: 'admin/entities/sportentityEntity.md'
+    - SportEntity Submission Entity Entity: 'admin/entities/sportentitySubmissionEntity.md'
+    - SportEntity Entity Form Tile Entity Entity: 'admin/entities/sportentityEntityFormTileEntity.md'
+  - Behaviours:
+    
 
-# % protected region % [Customise your documentation nav as you see fit here] end
+    # % protected region % [Customise your documentation nav as you see fit here] end
 
     # % protected region % [Extend your nav with custom pages here] off begin
     # % protected region % [Extend your nav with custom pages here] end
 
-theme: readthedocs
+theme:
+    name: readthedocs
+    custom_dir: 'harmony_theme/'
 extra_css:
     - css/harmony_extra.css
-extra_javascript:
-    - js/script.js
 markdown_extensions:
     - smarty
     - toc:
@@ -51,6 +53,7 @@ markdown_extensions:
     - meta
     - tables
     - fenced_code
+    - fontawesome_markdown
     - codehilite
 extra:
     version: 0.0.0

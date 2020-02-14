@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -57,14 +57,14 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 			Assert.Contains(formEntityName, accordionHeaders);
 		}
 
-		[StepDefinition(@"I expect to be able to create and save a new (.*) form")]
-		public void IExpectToBeAbleToCreateAndSaveANewForm(string formEntityName)
+		[StepDefinition(@"I expect to be able to create and save a new (.*) called (.*) form")]
+		public void IExpectToBeAbleToCreateAndSaveANewForm(string formEntityName, string formDisplayName)
 		{
 			// Create a new instance of the form entity
-			_formsLandingPage.ToggleAccordionWithWait(formEntityName);
-			_formsLandingPage.ClickNewFormItemWithWait(formEntityName);
-			var createFormEntityPage = new GenericEntityEditPage(formEntityName.RemoveWordsSpacing(), _contextConfiguration);
-			var formEntity = _entityDetailFactory.ApplyDetails(formEntityName.RemoveWordsSpacing(), true);
+			_formsLandingPage.ToggleAccordionWithWait(formDisplayName);
+			_formsLandingPage.ClickNewFormItemWithWait(formDisplayName);
+			var createFormEntityPage = new GenericEntityEditPage(formEntityName, _contextConfiguration);
+			var formEntity = _entityDetailFactory.ApplyDetails(formEntityName, true);
 			createFormEntityPage.SubmitButton.Click();
 
 			// Create and save a new slide and question
@@ -75,7 +75,7 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 			_formsBuildPage.SaveAndPublishButton.Click();
 
 			// Assert that the slide and question have been saved
-			_formsLandingPage.ToggleAccordionWithWait(formEntityName);
+			_formsLandingPage.ToggleAccordionWithWait(formDisplayName);
 			_formsLandingPage.ClickFormItemWithWait(formEntity.toDictionary()["name"]);
 			var slideNames = _formsBuildPage.GetSlideNamesWithWait();
 			var questionNames = _formsBuildPage.GetQuestionNamesWithWait();

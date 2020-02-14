@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -41,6 +41,7 @@ interface ITextAreaProps<T> {
 	textAreaProps?: React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>;
 	placeholder?: string;
 	errors?: string | string[];
+	onAfterChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 @observer
@@ -60,7 +61,7 @@ export class TextArea<T> extends React.Component<ITextAreaProps<T>, any> {
 				<textarea
 					name={name}
 					id={fieldId}
-					value={this.props.model[this.props.modelProperty] || ''} 
+					value={this.props.model[this.props.modelProperty] || ''}
 					onChange={this.onChange}
 					placeholder={this.props.placeholder}
 					disabled={isDisabled}
@@ -79,5 +80,12 @@ export class TextArea<T> extends React.Component<ITextAreaProps<T>, any> {
 			return this.props.textAreaProps.onChange(event);
 		}
 		this.props.model[this.props.modelProperty] = event.target.value;
+
+		// % protected region % [Add any additional onChange actions here] off begin
+		// % protected region % [Add any additional onChange actions here] end
+
+		if (this.props.onAfterChange) {
+			this.props.onAfterChange(event);
+		}
 	}
 }

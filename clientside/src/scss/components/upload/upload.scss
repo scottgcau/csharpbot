@@ -1,0 +1,132 @@
+/*
+ * @bot-written
+ * 
+ * WARNING AND NOTICE
+ * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
+ * Full Software Licence as accepted by you before being granted access to this source code and other materials,
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
+ * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
+ * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
+ * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
+ * access, download, storage, and/or use of this source code.
+ * 
+ * BOT WARNING
+ * This file is bot-written.
+ * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
+ */
+/* --------------------------------
+Upload
+-------------------------------- */
+/*
+Upload component allows image upload or file upload.
+*/
+
+// % protected region % [Change upload styles here] off begin
+.upload {
+	width: 100%;
+	margin: $space-sm;
+
+	.input-group {
+		margin: 0;
+
+		input {
+			visibility: hidden;
+			padding: $space-lg 0rem;
+			@include lightning-icon(after, upload);
+			position: relative;
+			cursor: pointer;
+
+			@-moz-document url-prefix() {
+				visibility: visible;
+			}
+
+			&:before {
+				visibility: visible;
+				position: absolute;
+				content: 'Select Files';
+				@extend .btn;
+				background-color: transparent;
+				@include inner-box-shadow(convert-rem(0px), convert-rem(0px), convert-rem(0px), convert-rem(3px), $color-primary);
+				padding: $space-sm $space-sm $space-sm $space-xl;
+			}
+
+			&:after {
+				position: absolute;
+				color: $color-primary;
+				visibility: visible;
+				left: $space-xs;
+				margin-top: $space-sm;
+			}
+
+			&:hover {
+				@include transform-timing($animation-time);
+
+				&:before {
+					background-color: $color-primary;
+					color: $white;
+				}
+
+				&:after {
+					color: $white;
+				}
+			}
+		}
+
+		&.input-group--empty {
+			label {
+				&:after {
+					content: '- No Attachments -';
+				}
+			}
+		}
+	}
+
+	.preview {
+
+		.file {
+			@include lightning-icon(before, file);
+			@include fadeIn($animation-time);
+			display: flex;
+			align-items: center;
+			position: relative;
+			padding: $space-xs;
+			margin: $space-xs;
+
+			&:before {
+				margin-right: 0;
+				background-color: $grey-1;
+				padding: $space-xs;
+			}
+
+			p {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				text-decoration: none;
+				overflow: hidden;
+				min-width: 10rem;
+				max-width: 10rem;
+				margin-right: 0 $space-xs;
+			}
+
+			a {
+				&:before {
+					margin-right: $space-xs;
+				}
+			}
+
+			.btn {
+				padding: 0;
+				margin-left: $space-sm;
+				&:hover,
+				&:active {
+					text-decoration: none;
+					border-bottom: none;
+				}
+			}
+		}
+	}
+}
+// % protected region % [Change upload styles here] end
+
+// % protected region % [Add additional upload styles here] off begin
+// % protected region % [Add additional upload styles here] end

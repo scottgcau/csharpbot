@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -32,21 +32,15 @@ interface AdminLink extends IIconProps {
 
 const LINKS : AdminLink[] = [
 	{
-		path: '/admin/sportentity',
+		path: '/admin/sportentityentity',
 		label: 'SportEntity',
-		entity: Models.Sportentity,
+		entity: Models.SportentityEntity,
 		isMember: false
 	},
 	{
-		path: '/admin/sportentitysubmission',
+		path: '/admin/sportentitysubmissionentity',
 		label: 'SportEntity Submission',
-		entity: Models.SportentitySubmission,
-		isMember: false
-	},
-	{
-		path: '/admin/sportentityformtile',
-		label: 'SportEntity Form Tile',
-		entity: Models.SportentityFormTile,
+		entity: Models.SportentitySubmissionEntity,
 		isMember: false
 	},
 	// % protected region % [Add any extra page links here] off begin
@@ -67,14 +61,23 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 	}
 
 	private getAdminNavLinks = () : ILink[][] => {
-		const userLinks = LINKS.filter(link => link.isMember).filter(this.filter);
-		const entityLinks = LINKS.filter(link => ! link.isMember).filter(this.filter);
+		// % protected region % [Add custom logic before all here] off begin
+		// % protected region % [Add custom logic before all here] end
+
+		let userLinks = LINKS.filter(link => link.isMember).filter(this.filter);
+		let entityLinks = LINKS.filter(link => ! link.isMember).filter(this.filter);
 
 		let linkGroups: ILink[][] = [];
 
+		// % protected region % [Add any custom logic here before groups are made] off begin
+		// % protected region % [Add any custom logic here before groups are made] end
+
 		const homeLinkGroup: ILink[] = [
-			{ path: '/', label: 'Home', icon: 'home', iconPos: 'icon-left' },
+			{ path: '/admin', label: 'Home', icon: 'home', iconPos: 'icon-left' },
 			// { path: '/admin/settings', label: 'Settings', icon: 'settings', iconPos: 'icon-left', isDisabled: true }
+
+			// % protected region % [Updated your home link group here] off begin
+			// % protected region % [Updated your home link group here] end
 		];
 		linkGroups.push(homeLinkGroup);
 
@@ -86,12 +89,10 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 					label: 'Users',
 					icon: 'person-group',
 					iconPos: 'icon-left',
-					subLinks: userLinks.map(link => {
-						return {
-							path: link.path,
-							label: link.label,
-						}
-					})
+					subLinks: [
+						{path: "/admin/user", label: "All Users"},
+						...userLinks.map(link => ({path: link.path, label: link.label}))
+					]
 				}
 			);
 		}
@@ -113,6 +114,9 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 		}
 		linkGroups.push(entityLinkGroup);
 
+		// % protected region % [Add any new link groups here before other and bottom] off begin
+		// % protected region % [Add any new link groups here before other and bottom] end
+
 		// Removed these links until these behaviours are activated in the future
 		const otherlinkGroup: ILink[] = [];
 		//otherlinkGroup.push({ path: '/admin/dashboards', label: 'Dashboards', icon: 'dashboard', iconPos: 'icon-left', isDisabled: true });
@@ -130,6 +134,12 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 		bottomlinkGroup.push({ path: '/logout', label: 'Logout', icon: 'logout', iconPos: 'icon-left' });
 		linkGroups.push(bottomlinkGroup);
 
+		// % protected region % [Modify your link groups here before returning] off begin
+		// % protected region % [Modify your link groups here before returning] end
+
 		return linkGroups;
 	}
+
+	// % protected region % [Add custom methods here] off begin
+	// % protected region % [Add custom methods here] end
 }

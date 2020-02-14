@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -18,11 +18,13 @@
 using System;
 using System.Linq;
 using System.Net;
+using Sportstats.Controllers;
+using APITests.EntityObjects.Models;
+using APITests.Factories;
 using APITests.Setup;
 using APITests.TheoryData.BotWritten;
 using APITests.Utils;
-using APITests.EntityObjects.Models;
-using APITests.Factories;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using Xunit;
@@ -52,21 +54,6 @@ namespace APITests.Tests.BotWritten
 			userEntity.CreateUser(true);
 			var loginResponse = AttemptLogin(userEntity.EmailAddress, userEntity.Password);
 			Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
-		}
-
-		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
-		[ClassData(typeof(UserEntityFactorySingleTheoryData))]
-		public void CreateValidUnregisteredUserTests(UserEntityFactory entityFactory)
-		{
-			var userEntity = entityFactory.Construct();
-			userEntity.Configure(BaseEntity.ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES);
-			userEntity.CreateUser(false);
-			var loginResponse = AttemptLogin(userEntity.EmailAddress, userEntity.Password);
-			var errorMessage = JObject.Parse(loginResponse.Content)["errors"].Select(x => x["message"].ToString()).FirstOrDefault();
-			Assert.Equal(HttpStatusCode.Unauthorized, loginResponse.StatusCode);
-			Assert.Equal(UnregisteredAccountError, errorMessage);
 		}
 
 		private IRestResponse AttemptLogin(string username, string password)
@@ -177,6 +164,77 @@ namespace APITests.Tests.BotWritten
 		{
 			var exception = Assert.Throws<Exception>(() => new LoginToken(_configure.BaseUrl, username, password));
 			Assert.Equal(expectedResponse, exception.Message);
+		}
+
+		[Theory]
+		[Trait("Category", "BotWritten")]
+		[Trait("Category", "Integration")]
+		[ClassData(typeof(UserEntityFactorySingleTheoryData))]
+		public void GetAllUsersEndpointTests(UserEntityFactory entityFactory)
+		{
+			// Arrange
+			var userEntity = entityFactory.Construct();
+			userEntity.Configure(BaseEntity.ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES);
+			userEntity.CreateUser(true);
+
+			// Endpoint requires sorting and pagination options to be supplied.
+			var sortOptions = new[] {new {Path = "id", Descending = false}};
+			var paginationOptions = new {PageNo = 1, PageSize = 10};
+
+			// Search query for the user entity that we have created.
+			var searchConditions = new[] { new[] { new {comparison = "Like", path = "Email", value = new string[] {$"%{userEntity.EmailAddress}%"}}}};
+
+			// Add required sorting and pagination options, and the search for our created entity to the body of the query.
+			var query = JsonConvert.SerializeObject(new {PaginationOptions = paginationOptions, SearchConditions = searchConditions, SortConditions = sortOptions });
+
+			var clientxsrf = ClientXSRF.GetValidClientAndxsrfTokenPair(_configure);
+			var client = clientxsrf.client;
+			client.BaseUrl = new Uri(_configure.BaseUrl + $"/api/account/users");
+
+			var request = new RestRequest { Method = Method.POST, RequestFormat = DataFormat.Json };
+			request.AddHeader("X-XSRF-TOKEN", clientxsrf.xsrfToken);
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("query", query, ParameterType.RequestBody);
+
+			// Act
+			var response = client.Execute(request);
+			var returnedObject = JsonConvert.DeserializeObject<AccountController.UserListModel>(response.Content);
+
+			// Assert
+			Assert.Equal(userEntity.Id, returnedObject.Users.First().Id);
+
+		}
+
+		[Theory]
+		[Trait("Category", "BotWritten")]
+		[Trait("Category", "Integration")]
+		[ClassData(typeof(UserEntityFactorySingleTheoryData))]
+		public void DeactivateUserEndpointTests(UserEntityFactory entityFactory)
+		{
+			// Arrange
+			var userEntity = entityFactory.Construct();
+			userEntity.Configure(BaseEntity.ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES);
+			userEntity.CreateUser(true);
+			var deactivateQuery = JsonConvert.SerializeObject(new
+			{
+				Username = userEntity.EmailAddress
+			});
+
+			var clientxsrf = ClientXSRF.GetValidClientAndxsrfTokenPair(_configure);
+			var client = clientxsrf.client;
+			client.BaseUrl = new Uri(_configure.BaseUrl + $"/api/account/deactivate");
+			var request = new RestRequest { Method = Method.POST, RequestFormat = DataFormat.Json };
+			request.AddHeader("X-XSRF-TOKEN", clientxsrf.xsrfToken);
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("query", deactivateQuery, ParameterType.RequestBody);
+
+			// Act
+			var response = client.Execute(request);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+			var activatedInDatabase = UserHelper.GetUserFromDB(userEntity.Id).EmailConfirmed;
+			Assert.False(activatedInDatabase);
 		}
 	}
 }

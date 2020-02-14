@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -22,6 +22,7 @@ using SeleniumTests.Setup;
 using SeleniumTests.Utils;
 using SeleniumTests.Enums;
 using TechTalk.SpecFlow;
+using TestDataLib;
 
 namespace SeleniumTests.Steps.BotWritten.Basechoice
 {
@@ -45,10 +46,10 @@ namespace SeleniumTests.Steps.BotWritten.Basechoice
 			switch (baseChoiceType)
 			{
 				case "wordystring":
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, BaseChoice.GetValidWordyString(min, max));
+					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandString(min, max));
 					break;
 				case "string":
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, BaseChoice.GetValidString(min, max));
+					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandString(min, max));
 					break;
 			}
 		}
@@ -63,16 +64,16 @@ namespace SeleniumTests.Steps.BotWritten.Basechoice
 			switch (baseChoiceType)
 			{
 				case BaseChoiceType.INT:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, BaseChoice.GetValidint().ToString());
+					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandInt().ToString());
 					break;
 				case BaseChoiceType.DOUBLE:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, BaseChoice.GetValiddouble().ToString());
+					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandDouble().ToString());
 					break;
 				case BaseChoiceType.BOOL:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, BaseChoice.GetValidbool().ToString());
+					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandBool().ToString());
 					break;
 				case BaseChoiceType.EMAIL:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, BaseChoice.ValidEmail);
+					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandEmail());
 					break;
 			}
 		}

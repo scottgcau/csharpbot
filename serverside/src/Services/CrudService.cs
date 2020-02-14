@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -92,6 +92,16 @@ namespace Sportstats.Services
 		}
 
 		/// <inheritdoc />
+		public async Task<T> Create<T>(
+			T model,
+			UpdateOptions options = null)
+			where T : class, IOwnerAbstractModel, new()
+		{
+			var result = await Create(new List<T> {model}, options);
+			return result.First();
+		}
+
+		/// <inheritdoc />
 		public async Task<ICollection<T>> Create<T>(
 			ICollection<T> models,
 			UpdateOptions options = null)
@@ -109,8 +119,6 @@ namespace Sportstats.Services
 
 					foreach (var model in models)
 					{
-						model.BeforeSave(DatabaseSaveOperation.Create, _dbContext, _serviceProvider);
-
 						// Update is used here so references are properly handled
 						dbSet.Update(model);
 					}
@@ -138,11 +146,16 @@ namespace Sportstats.Services
 							errors.Select(error => new InvalidOperationException(error)));
 					}
 
+					foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
+					{
+						entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+					}
+
 					await _dbContext.SaveChangesAsync();
 
 					foreach (var model in models)
 					{
-						model.AfterSave(DatabaseSaveOperation.Create, _dbContext, _serviceProvider);
+						model.AfterSave(EntityState.Added, _dbContext, _serviceProvider);
 					}
 
 					transaction.Commit();
@@ -155,6 +168,16 @@ namespace Sportstats.Services
 					throw;
 				}
 			}
+		}
+
+		/// <inheritdoc />
+		public async Task<T> Update<T>(
+			T model,
+			UpdateOptions options = null)
+			where T : class, IOwnerAbstractModel, new()
+		{
+			var result = await Update(new List<T> {model}, options);
+			return result.First();
 		}
 
 		/// <inheritdoc />
@@ -174,7 +197,6 @@ namespace Sportstats.Services
 
 					foreach (var model in models)
 					{
-						model.BeforeSave(DatabaseSaveOperation.Update, _dbContext, _serviceProvider);
 						dbSet.Update(model);
 					}
 
@@ -191,11 +213,16 @@ namespace Sportstats.Services
 							errors.Select(error => new InvalidOperationException(error)));
 					}
 
+					foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
+					{
+						entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+					}
+
 					await _dbContext.SaveChangesAsync();
 
 					foreach (var model in models)
 					{
-						model.AfterSave(DatabaseSaveOperation.Update, _dbContext, _serviceProvider);
+						model.AfterSave(EntityState.Modified, _dbContext, _serviceProvider);
 					}
 
 					transaction.Commit();
@@ -234,6 +261,13 @@ namespace Sportstats.Services
 		}
 
 		/// <inheritdoc />
+		public async Task<Guid> Delete<T>(Guid id) where T : class, IAbstractModel
+		{
+			var result = await Delete<T>(new List<Guid> {id});
+			return result.First();
+		}
+
+		/// <inheritdoc />
 		public async Task<ICollection<Guid>> Delete<T>(List<Guid> ids)
 			where T : class, IAbstractModel
 		{
@@ -242,11 +276,6 @@ namespace Sportstats.Services
 
 			await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 			var models = await dbSet.Where(o => ids.Contains(o.Id)).ToListAsync();
-
-			foreach (var model in models)
-			{
-				model.BeforeSave(DatabaseSaveOperation.Delete, _dbContext, _serviceProvider);
-			}
 
 			dbSet.RemoveRange(models);
 
@@ -257,6 +286,11 @@ namespace Sportstats.Services
 			if (errors.Any())
 			{
 				throw new AggregateException(errors.Select(error => new InvalidOperationException(error)));
+			}
+
+			foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
+			{
+				entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
 			}
 
 			try {
@@ -275,7 +309,7 @@ namespace Sportstats.Services
 
 			foreach (var model in models)
 			{
-				model.AfterSave(DatabaseSaveOperation.Delete, _dbContext, _serviceProvider);
+				model.AfterSave(EntityState.Deleted, _dbContext, _serviceProvider);
 			}
 
 			transaction.Commit();
@@ -373,8 +407,6 @@ namespace Sportstats.Services
 						model.SecurityStamp = Guid.NewGuid().ToString();
 						dbSet.Update(model);
 
-						model.BeforeSave(DatabaseSaveOperation.Create, _dbContext, _serviceProvider);
-
 						createdUsers.Add(model);
 					}
 
@@ -401,11 +433,16 @@ namespace Sportstats.Services
 							errors.Select(error => new InvalidOperationException(error)));
 					}
 
+					foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
+					{
+						entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+					}
+
 					await _dbContext.SaveChangesAsync();
 
 					foreach (var (_, model) in modelPairs)
 					{
-						model.AfterSave(DatabaseSaveOperation.Create, _dbContext, _serviceProvider);
+						model.AfterSave(EntityState.Added, _dbContext, _serviceProvider);
 					}
 
 					transaction.Commit();
@@ -465,13 +502,15 @@ namespace Sportstats.Services
 		{
 			foreach (var entry in _dbContext.ChangeTracker.Entries<IOwnerAbstractModel>())
 			{
-				entry.Entity.Modified = DateTime.Now;
-
 				switch (entry.State)
 				{
 					case EntityState.Added:
 						entry.Entity.Created = DateTime.Now;
-						entry.Entity.Owner = user?.Id ?? Guid.Empty;
+						entry.Entity.Modified = DateTime.Now;
+						if (entry.Entity.Owner == Guid.Empty)
+						{
+							entry.Entity.Owner = user?.Id ?? Guid.Empty;
+						}
 
 						// If we haven't been given an id to create against then we need to make a new one
 						if (entry.Entity.Id == Guid.Empty)
@@ -484,6 +523,7 @@ namespace Sportstats.Services
 						// Unset fields we don't want to be changed on update
 						entry.Property("Owner").IsModified = false;
 						entry.Property("Created").IsModified = false;
+						entry.Entity.Modified = DateTime.Now;
 						break;
 				}
 			}
@@ -491,6 +531,7 @@ namespace Sportstats.Services
 			var userProperties = typeof(User)
 				.GetProperties()
 				.Select(p => p.Name)
+				.Where(n => n != "Acls")
 				.ToList();
 
 			// Users have a concurrency stamp so they need to be pulled from the db and have

@@ -4,23 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
- * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
- * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
- * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
- * access, download, storage, and/or use of this source code.
- * 
- * BOT WARNING
- * This file is bot-written.
- * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
- */
-/*
- * @bot-written
- * 
- * WARNING AND NOTICE
- * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
- * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -62,6 +46,8 @@ namespace Sportstats.Helpers
 		private readonly IUserService _userService;
 		private readonly ILogger<DataSeedHelper> _logger;
 		private readonly IWebHostEnvironment _environment;
+		// % protected region % [Add any extra properties here] off begin
+		// % protected region % [Add any extra properties here] end
 
 		private static readonly List<SeedGroup> Roles = new List<SeedGroup>
 		{
@@ -80,12 +66,17 @@ namespace Sportstats.Helpers
 			RoleManager<Group> roleManager,
 			IUserService userService,
 			ILogger<DataSeedHelper> logger,
-			IWebHostEnvironment environment)
+			IWebHostEnvironment environment
+			// % protected region % [Add any extra dependencies here] off begin
+			// % protected region % [Add any extra dependencies here] end
+			)
 		{
 			_roleManager = roleManager;
 			_userService = userService;
 			_logger = logger;
 			_environment = environment;
+			// % protected region % [Add any extra dependency assignments here] off begin
+			// % protected region % [Add any extra dependency assignments here] end
 		}
 
 		public void Initialize()
@@ -111,7 +102,7 @@ namespace Sportstats.Helpers
 			if (_environment.IsDevelopment())
 			{
 				await CreateUser(
-					new User {Email = "super@example.com"},
+					new User {Email = "super@example.com", Discriminator = "User"},
 					"password",
 					new [] {"Visitors", "Super Administrators"});
 				// % protected region % [Add any extra development seeding here] off begin
@@ -174,6 +165,10 @@ namespace Sportstats.Helpers
 			catch (DbUpdateException e)
 			{
 				_logger.LogError(e, $"Not creating user {user.Email} because of a database error");
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Unable to create {user.Email} because of an unhandled error");
 			}
 		}
 

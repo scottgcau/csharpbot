@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -15,18 +15,16 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
-import { Model } from 'Models/Model';
-import { AttributeCRUDOptions } from 'Models/CRUDOptions';
-import { Combobox } from '../../Combobox/Combobox';
-import { getFetchAllConditional, getModelName, isRequired } from 'Util/EntityUtils';
-import { lowerCaseFirst } from 'Util/StringUtils';
-import { Symbols } from 'Symbols';
-import { store } from '../../../../Models/Store';
-import { action, computed, observable } from 'mobx';
 import _ from 'lodash';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
-import { ActionMeta, ValueType } from 'react-select/lib/types';
+import { store } from 'Models/Store';
+import { IModelAttributes, Model } from 'Models/Model';
+import { Combobox } from 'Views/Components/Combobox/Combobox';
+import { getFetchAllConditional, getModelName, isRequired } from 'Util/EntityUtils';
+import { lowerCaseFirst } from 'Util/StringUtils';
+import { action, computed, observable } from 'mobx';
 import { IAttributeProps } from './IAttributeProps';
+import { DropdownProps } from 'semantic-ui-react';
 
 interface IAttributeReferenceComboboxProps<T extends Model> extends IAttributeProps<T> {
 	/** A function that returns an object that can construct a model */
@@ -56,17 +54,18 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 	}
 	
 	@action
-	private onChange = (value: ValueType<{display: string, value: string}>, action: ActionMeta) => {
+	private onChange = (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+		const { value } = data;
 		if (value !== undefined && value !== null) {
 			if (this.props.fetchReferenceEntity) {
-				this.props.model[this.props.options.attributeName] = _.find(this.internalOptions, x => x.id === value['value']);
+				this.props.model[this.props.options.attributeName] = _.find(this.internalOptions, x => x.id === value);
 			} else {
-				this.props.model[this.props.options.attributeName] = value['value'];
+				this.props.model[this.props.options.attributeName] = value;
 			}
 		}
 	}
 
-	private fetchOptions = async (query: string | string[]) => {
+	private fetchOptions = async (query?: string | string[]) => {
 		const { referenceType } = this.props;
 		
 		if (Array.isArray(query)) {
@@ -76,7 +75,7 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 		const modelName = getModelName(referenceType);
 		const dataReturnName = lowerCaseFirst(modelName) + "s";
 
-		const { data } = await store.apolloClient
+		return store.apolloClient
 			.query({
 				query: getFetchAllConditional(this.props.referenceType),
 				variables: {
@@ -85,21 +84,31 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 				},
 				fetchPolicy: 'network-only',
 			})
-			.catch(e => {
-				console.error("Unexpected error fetching from reference combobox", e);
-				return e;
+			.then(({ data }) => {
+				let associatedObjects: any[] = data[dataReturnName];
+				if (this.props.model.id !== null && this.props.model.id !== undefined) {
+					associatedObjects = associatedObjects.filter((d: IModelAttributes) => d.id !== this.props.model.id);
+				}
+				let existingValue = undefined;
+				if (this.props.fetchReferenceEntity) {
+					existingValue = this.props.model[this.props.options.attributeName];
+				} else {
+					existingValue = this.props.model[this.props.options.attributeName.slice(0, -2)];
+				}
+					
+				if (existingValue) {
+					associatedObjects = _.unionBy(associatedObjects, [existingValue], x => x.id);
+				}
+				let comboOptions: Array<{ display: string, value: string }> = [];
+				if (associatedObjects) {
+					const optionObjects = associatedObjects.map(obj => new referenceType(obj));
+					this.setInternalOptions(optionObjects);
+					comboOptions = optionObjects
+						.map(obj => ({ display: obj.getDisplayName(), value: obj.id }));
+				}
+				
+				return comboOptions;
 			});
-		
-		const associatedObjects: any[] = data[dataReturnName];
-		let comboOptions: Array<{ display: string, value: string }> = [];
-		if (associatedObjects) {
-			const optionObjects = associatedObjects.map(obj => new referenceType(obj));
-			this.setInternalOptions(optionObjects);
-			comboOptions = optionObjects
-				.map(obj => ({ display: obj.getDisplayName(), value: obj.id }));
-		}
-		
-		return comboOptions;
 	}
 
 	private getOptions = () => {
@@ -116,16 +125,18 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 			className={this.props.className}
 			placeholder={this.isRequired ? undefined : '-'}
 			onChange={this.onChange}
-			optionEqualFunc={this.props.optionEqualFunc}
 			isDisabled={this.props.isReadonly}
 			isRequired={this.props.isRequired}
 			onAfterChange={this.props.onAfterChange}
-			inputProps={{
-				noOptionsMessage: input => input.inputValue.length
-					? 'No options found'
-					: 'Start typing to search for entities',
-				formatOptionLabel: option => <span data-id={option.value}>{option.display}</span>,
-			}} />;
+			initialOptions={this.fetchOptions}
+			isClearable={!this.props.isRequired}
+			optionEqualFunc={(modelProperty, option) => {
+				if (this.props.fetchReferenceEntity && modelProperty) {
+					return modelProperty['id'] === option
+				}
+				return modelProperty === option;
+			}}
+		/>;
 	}
 }
 

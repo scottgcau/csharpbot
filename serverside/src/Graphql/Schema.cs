@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -59,10 +59,10 @@ namespace Sportstats.Graphql
 		public SportstatsQuery(IEfGraphQLService<SportstatsDBContext> efGraphQlService) : base(efGraphQlService)
 		{
 			// Add query types for each entity
-			AddModelQueryField<SportentityType, Sportentity>("Sportentity");
-			AddModelQueryField<SportentityFormVersionType, SportentityFormVersion>("SportentityFormVersion");
-			AddModelQueryField<SportentitySubmissionType, SportentitySubmission>("SportentitySubmission");
-			AddModelQueryField<SportentityFormTileType, SportentityFormTile>("SportentityFormTile");
+			AddModelQueryField<SportentityEntityType, SportentityEntity>("SportentityEntity");
+			AddModelQueryField<SportentityEntityFormVersionType, SportentityEntityFormVersion>("SportentityEntityFormVersion");
+			AddModelQueryField<SportentitySubmissionEntityType, SportentitySubmissionEntity>("SportentitySubmissionEntity");
+			AddModelQueryField<SportentityEntityFormTileEntityType, SportentityEntityFormTileEntity>("SportentityEntityFormTileEntity");
 
 			// Add query types for each many to many reference
 
@@ -161,12 +161,12 @@ namespace Sportstats.Graphql
 			Name = "Mutation";
 
 			// Add input types for each entity
-			AddMutationField<SportentityInputType, SportentityInputType, SportentityType, Sportentity>("Sportentity");
-			AddMutationField<SportentityFormVersionInputType, SportentityFormVersionInputType, SportentityFormVersionType, SportentityFormVersion>(
-				"SportentityFormVersion",
+			AddMutationField<SportentityEntityInputType, SportentityEntityInputType, SportentityEntityType, SportentityEntity>("SportentityEntity");
+			AddMutationField<SportentityEntityFormVersionInputType, SportentityEntityFormVersionInputType, SportentityEntityFormVersionType, SportentityEntityFormVersion>(
+				"SportentityEntityFormVersion",
 				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
-			AddMutationField<SportentitySubmissionInputType, SportentitySubmissionInputType, SportentitySubmissionType, SportentitySubmission>("SportentitySubmission");
-			AddMutationField<SportentityFormTileInputType, SportentityFormTileInputType, SportentityFormTileType, SportentityFormTile>("SportentityFormTile");
+			AddMutationField<SportentitySubmissionEntityInputType, SportentitySubmissionEntityInputType, SportentitySubmissionEntityType, SportentitySubmissionEntity>("SportentitySubmissionEntity");
+			AddMutationField<SportentityEntityFormTileEntityInputType, SportentityEntityFormTileEntityInputType, SportentityEntityFormTileEntityType, SportentityEntityFormTileEntity>("SportentityEntityFormTileEntity");
 
 			// Add input types for each many to many reference
 

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -29,14 +29,14 @@ import { Combobox } from 'Views/Components/Combobox/Combobox';
 import * as Models from '../../Models/Entities';
 import _ from 'lodash';
 import { Model } from 'Models/Model';
-import { EntityFormMode } from 'Views/Components/CRUD/EntityAttributeList';
 import { isRequired } from 'Util/EntityUtils';
 import { getAttributeComponent } from 'Views/Components/CRUD/Attributes/AttributeFactory';
 import alert from '../../Util/ToastifyUtils';
 import { SERVER_URL } from 'Constants';
 import { getErrorMessages } from 'Util/GraphQLUtils';
 import Spinner from 'Views/Components/Spinner/Spinner';
-import { IUserEntity, UserFields } from '../../Models/UserEntity';
+import { EntityFormMode } from 'Views/Components/Helpers/Common';
+import { IUserEntity, UserFields } from 'Models/UserEntity';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -166,6 +166,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 	}
 
 	private getRegisterEntityAttributes = () => {
+		// % protected region % [Override getRegisterEntityAttributes here] off begin
 		if (!this.registrationState.modelToRegister) {
 			return null;
 		} else {
@@ -187,7 +188,8 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 						model ? model.validate.bind(model) : undefined
 					));
 		}
-	}
+		// % protected region % [Override getRegisterEntityAttributes here] end
+	};
 
 	@action
 	private onSubmitRegisterClicked = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -203,7 +205,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 			this.submitRegister();
 		}
 		// % protected region % [Override onSubmitRegisterClicked here] end
-	}
+	};
 
 	@action
 	private submitRegister = () => {
@@ -234,7 +236,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 				});
 		}
 		// % protected region % [Override submitRegister here] end
-	}
+	};
 
 	@action
 	private onCancelRegisterClicked = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -244,7 +246,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 		const { redirect } = queryString.parse(this.props.location.search.substring(1));
 		store.routerHistory.push(`/login?${!!redirect ? `redirect=${redirect}` : ''}`);
 		// % protected region % [Override onCancelRegisterClicked here] end
-	}
+	};
 
 	@action
 	private onTypeConfirmed = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -268,25 +270,31 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 			this.registrationState.modelToRegister = this.userEntityFactory(entityToRegister);
 		}
 		// % protected region % [Override onTypeConfirmed here] end
-	}
+	};
 
 	private userEntityFactory = (entityToRegister: string | null): Model & IUserEntity | null => {
+		// % protected region % [Override userEntityFactory here] off begin
 		switch(entityToRegister){
 			default:
 				return null;
 		}
-	}
+		// % protected region % [Override userEntityFactory here] end
+	};
 
 	@action
 	private onChangeUserType = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+		// % protected region % [Override onChangeUserType here] off begin
 		e.preventDefault();
 		this.resetRegistration();
 		this.displayMode = 'select-type';
-	}
+		// % protected region % [Override onChangeUserType here] end
+	};
 
 	private resetRegistration = () => {
+		// % protected region % [Override resetRegistration here] off begin
 		this.registrationState = defaultRegistrationState;
-	}
+		// % protected region % [Override resetRegistration here] end
+	};
 
 	@action
 	private onRegistrationEmailSentSuccess = () => {
@@ -294,10 +302,15 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 		this.registrationState.emailSending = false;
 		this.registrationState.emailSent = true;
 		// % protected region % [Override onRegistrationEmailSentSuccess here] end
-	}
+	};
 
 	private onLoginClick = () => {
+		// % protected region % [Override onLoginClick here] off begin
 		const { redirect } = queryString.parse(this.props.location.search.substring(1));
 		store.routerHistory.push(`/login?redirect=${redirect}`);
-	}
+		// % protected region % [Override onLoginClick here] end
+	};
+
+	// % protected region % [Add class methods here] off begin
+	// % protected region % [Add class methods here] end
 }

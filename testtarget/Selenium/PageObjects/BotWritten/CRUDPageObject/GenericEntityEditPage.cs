@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -44,8 +44,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject
 			factory.ApplyDetails(_entityName, true);
 		}
 
-		public void Cancel() => CancelButton.Click();
-		public void Submit() => SubmitButton.Click();
+		public void Cancel() => CancelButton.ClickWithWait(driverWait);
+		public void Submit() => SubmitButton.ClickWithWait(driverWait);
 
 		// Created/Modified Datepickers
 		public IWebElement CreateAtDatepickerField => driver.FindElementExt(By.XPath("//label[text()='Created']/following-sibling::input[@class='flatpickr-input']"));

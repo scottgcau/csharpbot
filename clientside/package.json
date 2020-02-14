@@ -1,5 +1,5 @@
 {
-  "@bot-written": "@bot-written  WARNING AND NOTICE Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the Full Software Licence as accepted by you before being granted access to this source code and other materials, the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through licence termination and further legal action, and be required to indemnify Codebots for any loss or damage, including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any access, download, storage, and/or use of this source code.  BOT WARNING This file is bot-written. Any changes out side of \"protected regions\" will be lost next time the bot makes any changes.",
+  "@bot-written": "@bot-written  WARNING AND NOTICE Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the Full Software Licence as accepted by you before being granted access to this source code and other materials, the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through licence termination and further legal action, and be required to indemnify Codebots for any loss or damage, including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any access, download, storage, and/or use of this source code.  BOT WARNING This file is bot-written. Any changes out side of \"protected regions\" will be lost next time the bot makes any changes.",
   "name": "app",
   "version": "0.4.0",
   "private": true,
@@ -16,7 +16,7 @@
     "graphiql": "^0.13.2",
     "graphql": "^14.4.2",
     "graphql-language-service-parser": "1.3.0",
-    "harmony": "https://codebots-cdn.s3.amazonaws.com/harmony/harmony-0.8.0.tar.gz",
+    "harmony": "https://codebots-cdn.s3.amazonaws.com/harmony/harmony-1.0.0.tar.gz",
     "js-cookie": "^2.2.1",
     "mobx": "^5.13.0",
     "mobx-react": "^6.1.3",
@@ -33,6 +33,8 @@
     "react-select": "^2.4.3",
     "react-toastify": "^5.3.2",
     "reflect-metadata": "^0.1.13",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.2",
     "typescript": "3.5.3",
     "uuid": "^3.3.2",
     "//": [
@@ -69,7 +71,13 @@
     ]
   },
   "devDependencies": {
+    "//": [
+    	" protected region % [Configure the dev package versions here] off begin "
+    ],
+    "@testing-library/react": "^9.3.0",
     "@types/classnames": "^2.2.9",
+    "@types/enzyme": "^3.10.3",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/file-saver": "^2.0.1",
     "@types/graphql": "^14.2.3",
     "@types/jest": "^24.0.18",
@@ -83,9 +91,21 @@
     "@types/react-router": "^5.0.3",
     "@types/react-router-dom": "^4.3.4",
     "@types/react-select": "^2.0.18",
+    "@types/testing-library__react": "^9.1.2",
     "@types/uuid": "^3.4.5",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "react-docgen-typescript": "^1.12.5",
     "react-styleguidist": "^9.1.14",
-    "ts-jest": "^24.0.2"
+    "ts-jest": "^24.0.2",
+    "//": [
+    	" protected region % [Configure the dev package versions here] end "
+    ],
+    "//": [
+    	" protected region % [Add any custom dev libraries here] off begin "
+    ],
+    "//": [
+    	" protected region % [Add any custom dev libraries here] end "
+    ]
   }
 }

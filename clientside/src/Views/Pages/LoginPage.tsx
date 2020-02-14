@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -34,7 +34,7 @@ import { getErrorMessages } from 'Util/GraphQLUtils';
 // % protected region % [Add any extra imports here] end
 
 interface ILoginState {
-	username: string; 
+	username: string;
 	password: string;
 	errors: { [attr: string]: string };
 	// % protected region % [Add extra login state properties here] off begin
@@ -68,13 +68,13 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 			<div className="body-content">
 				<form className="login" onSubmit={this.onLoginClicked}>
 					<h2>Login</h2>
-					<TextField 
+					<TextField
 						id="login_username"
 						className="login-username"
 						model={this.loginState}
 						modelProperty="username"
 						label="Email Address"
-						inputProps={{ autoComplete: 'username' }}
+						inputProps={{ autoComplete: 'username', type: "email" }}
 						isRequired={true}
 						errors={this.loginState.errors['username']} />
 					<Password
@@ -141,7 +141,7 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 				});
 		}
 		// % protected region % [Override onLoginClicked here] end
-	}
+	};
 
 	@action
 	private onStartRegisterClicked = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -149,7 +149,7 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 		const { redirect } = queryString.parse(this.props.location.search.substring(1));
 		store.routerHistory.push(`/register?${!!redirect ? `redirect=${redirect}` : ''}`);
 		// % protected region % [Override onStartRegisterClicked here] end
-	}
+	};
 
 	@action
 	private onLoginSuccess = (userResult: IUserResult) => {
@@ -164,12 +164,15 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 			store.routerHistory.push('/');
 		}
 		// % protected region % [Override login success logic here] end
-	}
+	};
 
 	@action
 	private onForgottenPasswordClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
 		// % protected region % [Override onForgottenPasswordClick here] off begin
 		store.routerHistory.push(`/reset-password-request`);
 		// % protected region % [Override onForgottenPasswordClick here] end
-	}
+	};
+
+	// % protected region % [Add class methods here] off begin
+	// % protected region % [Add class methods here] end
 }

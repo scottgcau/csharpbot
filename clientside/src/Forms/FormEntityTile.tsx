@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -20,20 +20,20 @@ import { observer } from 'mobx-react';
 import { action, computed, observable } from 'mobx';
 import { jsonReplacerFn, Model } from 'Models/Model';
 import { FormTile, IFormProps } from './FormTile';
-import { FormEntity, SubmissionEntity } from './FormEntity';
+import { FormEntityData, SubmissionEntityData } from 'Forms/FormEntityData';
 
-export interface IFormEntityTileProps<T extends FormEntity> extends IFormProps<T> {
+export interface IFormEntityTileProps<T extends FormEntityData> extends IFormProps<T> {
 	model: T;
-	onAfterSubmit?: (entity: Model & SubmissionEntity) => void;
+	onAfterSubmit?: (entity: Model & SubmissionEntityData) => void;
 }
 
 /**
  * Managed form that handles submit getting published forms and submit logic automatically
  */
 @observer
-export class FormEntityTile<T extends FormEntity> extends React.Component<IFormEntityTileProps<T>> {
+export class FormEntityTile<T extends FormEntityData> extends React.Component<IFormEntityTileProps<T>> {
 	@observable
-	private submissionEntity: Model & SubmissionEntity = new (this.props.model.getSubmissionEntity())();
+	private submissionEntity: Model & SubmissionEntityData = new (this.props.model.getSubmissionEntity())();
 
 	private submissionTransform: jsonReplacerFn = (input) => {
 		const submissionData = input['submissionData'];

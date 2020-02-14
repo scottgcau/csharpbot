@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -16,7 +16,10 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using APITests.Setup;
+using EntityObject.Enums;
+using Microsoft.EntityFrameworkCore;
 using SportstatsDBContext = Sportstats.Models.SportstatsDBContext;
 using RestSharp;
 
@@ -28,8 +31,8 @@ namespace APITests.EntityObjects.Models
 		public string OppositeName { get; set; }
 		public string EntityName { get; set; }
 		public bool Optional { get; set; }
-		public string Type { get; set; }
-		public string OppositeType { get; set; }
+		public ReferenceType Type { get; set; }
+		public ReferenceType OppositeType { get; set; }
 	}
 	public class Attribute
 	{
@@ -47,7 +50,6 @@ namespace APITests.EntityObjects.Models
 		public abstract JsonObject toJson();
 		public abstract (int min, int max) GetLengthValidatorMinMax(string attribute);
 		public abstract ICollection<(List<string> expectedErrors, JsonObject jsonObject)> GetInvalidMutatedJsons();
-		public abstract ICollection<(List<string> expectedErrors, JsonObject jsonObject)> GetInvalidMutatedJsonsForEnums();
 		public ICollection<Reference> References = new List<Reference>();
 		public ICollection<Attribute> Attributes = new List<Attribute>();
 		public ICollection<BaseEntity> ParentEntities = new List<BaseEntity>();
@@ -63,7 +65,13 @@ namespace APITests.EntityObjects.Models
 			var context = new SportstatsDBContext(configure.DbContextOptions, null, null);
 			model.Owner = configure.SuperOwnerId;
 			var dbSet = context.GetDbSet<T>(typeof(T).Name);
-			dbSet.Add(model);
+			dbSet.Update(model);
+			var addedEntry = context
+				.ChangeTracker
+				.Entries()
+				.First(entry => model.Equals(entry.Entity));
+
+			addedEntry.State = EntityState.Added;
 			context.SaveChanges();
 			context.Dispose();
 			return model.Id;

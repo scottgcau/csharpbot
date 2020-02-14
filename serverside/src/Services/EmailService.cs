@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -54,6 +54,10 @@ namespace Sportstats.Services
 		/// The from address attached to the email
 		/// </summary>
 		public string FromAddress { get; set; }
+		/// <summary>
+		/// The from address display name of the from address
+		/// </summary>
+		public string FromAddressDisplayName { get; set; }
 		/// <summary>
 		/// The port used for SMTP transactions
 		/// </summary>
@@ -167,7 +171,7 @@ namespace Sportstats.Services
 			{
 				Body = body,
 				IsBodyHtml = true,
-				From = new MailAddress(EmailAccount.FromAddress, EmailAccount.FromAddress, Encoding.UTF8),
+				From = new MailAddress(EmailAccount.FromAddress, EmailAccount.FromAddressDisplayName, Encoding.UTF8),
 				Subject = emailToSend.Subject,
 				SubjectEncoding = Encoding.UTF8,
 				Priority = MailPriority.Normal
@@ -190,12 +194,12 @@ namespace Sportstats.Services
 
 			//send email
 			ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallBack;
-			var smtp = new SmtpClient
-			{
-				Credentials = new NetworkCredential(EmailAccount.Username, EmailAccount.Password),
-				Host = EmailAccount.Host,
-				EnableSsl = EmailAccount.EnableSsl
-			};
+			var smtp = new SmtpClient();
+			smtp.UseDefaultCredentials = false;
+			smtp.Credentials = new NetworkCredential(EmailAccount.Username, EmailAccount.Password);
+			smtp.Host = EmailAccount.Host;
+			smtp.EnableSsl = EmailAccount.EnableSsl;
+			
 			if (EmailAccount.Port > 0) smtp.Port = EmailAccount.Port;
 
 			if (EmailAccount.SaveToLocalFile)

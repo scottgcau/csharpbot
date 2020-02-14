@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -21,9 +21,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sportstats.Exceptions;
 using Sportstats.Models;
+using Sportstats.Helpers;
 using Sportstats.Services;
 using Sportstats.Services.Interfaces;
 using Sportstats.Utility;
+using Sportstats.Graphql.Types;
+using GraphQL.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -46,9 +49,10 @@ namespace Sportstats.Controllers
 		private readonly UserManager<User> _userManager;
 		private readonly IUserService _userService;
 		private readonly RoleManager<Group> _roleManager;
+		private readonly IIdentityService _identityService;
 		private readonly ILogger<AccountController> _logger;
 
-		public class ForgotPasswordModel
+		public class UsernameModel
 		{
 			/// <summary>
 			/// The username to reset the password of
@@ -78,15 +82,47 @@ namespace Sportstats.Controllers
 			public string Token { get; set; }
 		}
 
+		public class AllUserRequestModel
+		{
+			/// <summary>
+			/// The conditions for sorting user entities
+			/// </summary>
+			public List<OrderBy> SortConditions { get; set; }
+			/// <summary>
+			/// The pagination options
+			/// </summary>
+			public PaginationOptions PaginationOptions { get; set; }
+			/// <summary>
+			/// The search conditions
+			/// </summary>
+			public IEnumerable<IEnumerable<WhereExpression>> SearchConditions { get; set; }
+		}
+
+		public class UserListModel
+		{
+			/// <summary>
+			/// The total number of users
+			/// </summary>
+			[Required]
+			public int countUsers { get; set; }
+			/// <summary>
+			/// A paginated list of users
+			/// </summary>
+			[Required]
+			public IEnumerable<UserDto> Users { get; set; }
+		}
+
 		public AccountController(
 			UserManager<User> userManager,
 			IUserService userService,
 			RoleManager<Group> roleManager,
+			IIdentityService identityService,
 			ILogger<AccountController> logger)
 		{
 			_userManager = userManager;
 			_userService = userService;
 			_roleManager = roleManager;
+			_identityService = identityService;
 			_logger = logger;
 		}
 
@@ -163,6 +199,95 @@ namespace Sportstats.Controllers
 		}
 
 		/// <summary>
+		/// Get a paginated list of all the users in the system
+		/// </summary>
+		/// <returns> A list of user list model </returns>
+		/// <response code="200"> On a successful response </response>
+		/// <response code="401"> On failing to authenticate </response>
+		[HttpPost]
+		[Authorize]
+		[Route("users")]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(401)]
+		public async Task<UserListModel> GetUsers([FromBody] AllUserRequestModel options)
+		{
+			_identityService.RetrieveUserAsync().Wait();
+
+			var userQuery = _userManager.Users
+				.Where(UsersFilter.AllUsersFilter(_identityService.User, _identityService.Groups, DATABASE_OPERATION.READ))
+				.AddConditionalWhereFilter(options.SearchConditions)
+				.AddOrderBys(options.SortConditions);
+			
+			return new UserListModel
+			{
+				countUsers = await userQuery.CountAsync(),
+				Users = userQuery
+					.AddPagination(new Pagination(options.PaginationOptions))
+					.ToList()
+					.Select(u => new UserDto(u))
+			};
+		}
+
+		/// <summary>
+		/// Deactivates a user
+		/// </summary>
+		/// <returns> 200OK on success </returns>
+		/// <response code="200"> On a successful response </response>
+		/// <response code="401"> On failing to authenticate </response>
+		[HttpPost]
+		[Authorize]
+		[Route("deactivate")]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(401)]
+		public async Task<IActionResult> DeactivateUser([FromBody] UsernameModel deactivateUser)
+		{
+			_identityService.RetrieveUserAsync().Wait();
+			
+			var user = _userManager.Users
+				.Where(UsersFilter.AllUsersFilter(_identityService.User, _identityService.Groups, DATABASE_OPERATION.UPDATE))
+				.FirstOrDefault(u => u.UserName == deactivateUser.Username);
+			
+			if (user == null)
+			{
+				return BadRequest("The user does not exist or you do not have permission to deactivate the user");
+			}
+
+			user.EmailConfirmed = false;
+			await _userManager.UpdateAsync(user);
+			return Ok();
+		}
+
+		/// <summary>
+		/// Activates a user
+		/// </summary>
+		/// <returns> 200OK on success </returns>
+		/// <response code="200"> On a successful response </response>
+		/// <response code="401"> On failing to authenticate </response>
+		[HttpPost]
+		[Authorize]
+		[Route("activate")]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(401)]
+		public async Task<IActionResult> ActivateUser([FromBody] UsernameModel userModel)
+		{
+			_identityService.RetrieveUserAsync().Wait();
+			
+			var user = _userManager
+				.Users
+				.Where(UsersFilter.AllUsersFilter(_identityService.User, _identityService.Groups, DATABASE_OPERATION.UPDATE))
+				.FirstOrDefault(u => u.UserName == userModel.Username);
+			
+			if (user == null)
+			{
+				return BadRequest("The user does not exist or you do not have permission to activate the user");
+			}
+
+			user.EmailConfirmed = true;
+			await _userManager.UpdateAsync(user);
+			return Ok();
+		}
+
+		/// <summary>
 		/// Sends a reset password email to a specified user
 		/// </summary>
 		/// <param name="userModel">The user details</param>
@@ -170,7 +295,7 @@ namespace Sportstats.Controllers
 		[HttpPost("reset-password-request")]
 		[AllowAnonymous]
 		[ProducesResponseType(200)]
-		public async Task<IActionResult> ResetPasswordRequest([FromBody]ForgotPasswordModel userModel)
+		public async Task<IActionResult> ResetPasswordRequest([FromBody]UsernameModel userModel)
 		{
 			try
 			{

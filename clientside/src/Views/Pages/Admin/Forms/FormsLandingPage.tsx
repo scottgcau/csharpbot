@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -26,16 +26,17 @@ import { SecurityService } from "Services/SecurityService";
 export default class FormsLandingPage extends React.Component<RouteComponentProps>{
 	private getAccordionProps = () => {
 		const forms = [
-			{name: 'SportEntity', model: Models.Sportentity},
+			{displayName: 'SportEntity', name: 'SportentityEntity', model: Models.SportentityEntity},
 		];
 
 		return forms
 			.filter(f => SecurityService.canRead(f.model))
 			.map(f => ({
-				name: f.name,
+				name: f.displayName,
 				key: f.name,
 				component: <FormVersionCollection
 					formName={f.name}
+					formDisplayName={f.displayName}
 					showCreateTile={SecurityService.canCreate(f.model)}/>
 			}));
 	};

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -48,10 +48,10 @@ namespace SeleniumTests.Steps.BotWritten.Filter
 		private readonly IWebDriver _driver;
 		private readonly IWait<IWebDriver> _driverWait;
 		private readonly bool _isFastText;
-		private readonly EntityFactory _entityFactory = null;
+		private EntityFactory _entityFactory;
 		private FilterDateRange createdDateRange = null;
 		private FilterDateRange modifiedDateRange = null;
-		private readonly BaseEntity _createdEntityForTestFiltering = null;
+		private BaseEntity _createdEntityForTestFiltering;
 		//private string _entityName;
 
 		public FilterSteps(ContextConfiguration contextConfiguration)
@@ -166,7 +166,7 @@ namespace SeleniumTests.Steps.BotWritten.Filter
 			TypingUtils.InputEntityAttributeByClass(_driver, $"filter-{enumColumnName}", enumValue, _isFastText);
 
 			var builder = new Actions(_contextConfiguration.WebDriver);
-			builder.SendKeys(Keys.Enter).Perform();
+			builder.SendKeys(Keys.Enter).SendKeys(Keys.Escape).Perform();
 			_genericEntityPage.ApplyFilterButton.Click();
 		}
 
@@ -178,11 +178,11 @@ namespace SeleniumTests.Steps.BotWritten.Filter
 			Assert.True(isInEachRow);
 		}
 
-		[Given("I have (.*) valid (.*) entities with fixed string values (.*)")]
-		public void IHaveValidEntitiesWithFixedStrValues(int numEntities, string entityName, string fixedValues)
+		[Given("I have 1 valid (.*) entities with fixed string values (.*)")]
+		public void IHaveValidEntitiesWithFixedStrValues(string entityName, string fixedValues)
 		{
-			var _entityFactory = new EntityFactory(entityName, fixedValues);
-			_entityFactory.ConstructAndSave(_contextConfiguration.TestOutputHelper, numEntities);
+			_entityFactory = new EntityFactory(entityName, fixedValues);
+			_createdEntityForTestFiltering = _entityFactory.ConstructAndSave(_contextConfiguration.TestOutputHelper, 1)[0];
 		}
 	}
 }

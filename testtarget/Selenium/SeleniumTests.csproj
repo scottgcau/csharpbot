@@ -4,7 +4,7 @@
 WARNING AND NOTICE
 Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
 Full Software Licence as accepted by you before being granted access to this source code and other materials,
-the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
 commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
 licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
 including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -44,13 +44,15 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
 		<PackageReference Include="RestSharp" Version="106.6.10" />
 		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
-		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="77.0.3865.4000" />
+		<!-- % protected region % [The default web driver versions, change to suit needs] off begin -->
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="79.0.3945.3600" />
 		<PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.26.0" />
+		<!-- % protected region % [The default web driver versions, change to suit needs] end -->
 		<PackageReference Include="Selenium.Support" Version="3.141.0" />
 		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-		<PackageReference Include="SpecFlow" Version="3.1.62" />
-		<PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.62" />
-		<PackageReference Include="SpecFlow.xUnit" Version="3.1.62" />
+		<PackageReference Include="SpecFlow" Version="3.1.78" />
+		<PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.78" />
+		<PackageReference Include="SpecFlow.xUnit" Version="3.1.78" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.console" Version="2.4.1">
 			<PrivateAssets>all</PrivateAssets>

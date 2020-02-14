@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -15,6 +15,7 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -35,11 +36,11 @@ namespace ServersideTests.Helpers.EntityFactory
 	/// </summary>
 	public static class EntityFactoryReflectionCache
 	{
-		private static Dictionary<Type, List<TypeInfo>> ReferenceCache { get; } = new Dictionary<Type, List<TypeInfo>>();
+		private static ConcurrentDictionary<Type, List<TypeInfo>> ReferenceCache { get; } = new ConcurrentDictionary<Type, List<TypeInfo>>();
 
-		private static Dictionary<Type, List<PropertyInfo>> AttributeCache { get; } = new Dictionary<Type, List<PropertyInfo>>();
+		private static ConcurrentDictionary<Type, List<PropertyInfo>> AttributeCache { get; } = new ConcurrentDictionary<Type, List<PropertyInfo>>();
 
-		private static Dictionary<Type, List<PropertyInfo>> AllAttributeCache { get; } = new Dictionary<Type, List<PropertyInfo>>();
+		private static ConcurrentDictionary<Type, List<PropertyInfo>> AllAttributeCache { get; } = new ConcurrentDictionary<Type, List<PropertyInfo>>();
 
 		/// <summary>
 		/// Gets the required non collection references for a type.
@@ -59,7 +60,7 @@ namespace ServersideTests.Helpers.EntityFactory
 				.Select(p => new TypeInfo {Name = p.Name, Type = p.PropertyType})
 				.ToList();
 
-			ReferenceCache.Add(entityType, referenceTypes);
+			ReferenceCache.TryAdd(entityType, referenceTypes);
 
 			return referenceTypes;
 		}
@@ -78,7 +79,7 @@ namespace ServersideTests.Helpers.EntityFactory
 			}
 
 			var propertyInfos = entityType.GetProperties();
-			AttributeCache.Add(entityType, propertyInfos.ToList());
+			AttributeCache.TryAdd(entityType, propertyInfos.ToList());
 
 			return propertyInfos.First(p => p.Name == property);
 		}
@@ -98,7 +99,7 @@ namespace ServersideTests.Helpers.EntityFactory
 			var attributeInfos = entityType.GetProperties()
 				.Where(p => p.GetCustomAttributes<EntityAttribute>().Any())
 				.ToList();
-			AllAttributeCache.Add(entityType, attributeInfos);
+			AllAttributeCache.TryAdd(entityType, attributeInfos);
 			
 			return attributeInfos;
 		}

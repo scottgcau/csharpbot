@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -24,6 +24,7 @@ using APITests.Factories;
 using APITests.Setup;
 using APITests.Utils;
 using APITests.TheoryData.BotWritten;
+using EntityObject.Enums;
 using RestSharp;
 using Xunit;
 using Xunit.Abstractions;
@@ -123,7 +124,7 @@ namespace APITests.Tests.BotWritten
 								}
 							};
 							//add the created entity to our dictionary for the child entity for all entities in the list
-							if (reference.Type == "One" && reference.OppositeType == "One")
+							if (reference.Type == ReferenceType.ONE && reference.OppositeType == ReferenceType.ONE)
 							{
 								// if one-to-one each reference must be unique
 								entityList.FirstOrDefault(x => x == entity).SetReferences(referenceDictionary);

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -16,7 +16,7 @@
  */
 import { observer } from "mobx-react";
 import * as React from 'react';
-import { ICollectionItemActionProps, expandFn } from './Collection';
+import { ICollectionItemActionProps, expandFn, actionFilterFn } from './Collection';
 import { observable, computed, runInAction } from 'mobx';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Button } from '../Button/Button';
@@ -30,7 +30,7 @@ import { EntityContextMenu, IEntityContextMenuActions } from '../EntityContextMe
 export interface ICollectionRowProps<T> {
 	item: T;
 	headers: Array<ICollectionHeaderPropsPrivate<T>>;
-	actions: Array<ICollectionItemActionProps<T>>;
+	actions?: Array<ICollectionItemActionProps<T>> | actionFilterFn<T>;
 	actionsMore?: IEntityContextMenuActions<T>;
 	selectableItems?: boolean;
 	expandAction?: expandFn<T>;
@@ -134,20 +134,41 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 		}));
 
 		// The action buttons
-		const actionButtons = this.props.actions.map((action, actIdx) => {
-			if (!action.customButton) {
-				const icon = action.showIcon && action.icon && action.iconPos ? {icon: action.icon, iconPos: action.iconPos} : undefined;
-				return <Button
-					key={actIdx}
-					className={action.buttonClass}
-					icon={icon}
-					buttonProps={ {onClick: event => {action.action(this.props.item, event);}} } >
-					{action.label}
-				</Button>;
-			}
-			
-			return <React.Fragment key={actIdx}>{action.customButton}</React.Fragment>
-		});
+		let actionButtons: JSX.Element[] = [];
+
+		if (typeof(this.props.actions) === 'function') {
+			actionButtons = this.props.actions(this.props.item)
+				.map((action, actIdx) => {
+					if (!action.customButton) {
+						const icon = action.showIcon && action.icon && action.iconPos ? {icon: action.icon, iconPos: action.iconPos} : undefined;
+						return <Button
+							key={actIdx}
+							className={action.buttonClass}
+							icon={icon}
+							buttonProps={ {onClick: event => {action.action(this.props.item, event);}} } >
+							{action.label}
+						</Button>;
+					}
+					
+					return <React.Fragment key={actIdx}>{action.customButton}</React.Fragment>
+				});
+		} else if (Array.isArray(this.props.actions)) {
+			actionButtons = this.props.actions
+				.map((action, actIdx) => {
+					if (!action.customButton) {
+						const icon = action.showIcon && action.icon && action.iconPos ? {icon: action.icon, iconPos: action.iconPos} : undefined;
+						return <Button
+							key={actIdx}
+							className={action.buttonClass}
+							icon={icon}
+							buttonProps={ {onClick: event => {action.action(this.props.item, event);}} } >
+							{action.label}
+						</Button>;
+					}
+					
+					return <React.Fragment key={actIdx}>{action.customButton}</React.Fragment>
+				});
+		}
 
 		// The expand button if needed
 		let expandButton = null;
@@ -164,7 +185,7 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 			);
 		}
 
-		if (expandButton || actionButtons.length > 0 || (this.props.actionsMore && this.props.actionsMore.length > 0)) {
+		if (expandButton || this.props.actions || (this.props.actionsMore && this.props.actionsMore.length > 0)) {
 			columns.push(
 				<td className="list__items--actions" key={this.props.headers.length + 1}>
 					<ButtonGroup alignment={Alignment.HORIZONTAL}>
@@ -183,7 +204,7 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 										this.moreMenuRef.handleContextMenu(event);
 									}
 								}}
-								icon={{ icon: "more-horizontal", iconPos: 'icon-left' }} />
+								icon={{ icon: "more-horizontal", iconPos: 'icon-top' }}>More</Button>
 						</If>
 					</ButtonGroup>
 				</td>,

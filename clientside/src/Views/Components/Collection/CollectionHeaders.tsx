@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -18,7 +18,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Checkbox } from '../Checkbox/Checkbox';
 import If from '../If/If';
-import { ICollectionItemActionProps } from './Collection';
+import { ICollectionItemActionProps, actionFilterFn } from './Collection';
 import { observable, runInAction } from 'mobx';
 import { IOrderByCondition } from '../ModelCollection/ModelQuery';
 import { DisplayType } from '../Models/Enums';
@@ -32,7 +32,7 @@ export interface ICollectionHeaderProps<T> {
 	sortable?: boolean;
 	transformItem?: transformFn<T>;
 	nullValue?: string;
-	sortClicked?: (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>) => IOrderByCondition<T> | undefined;
+	sortClicked?: (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>) => IOrderByCondition<T> | undefined | void;
 }
 
 export interface ICollectionHeaderPropsPrivate<T> extends ICollectionHeaderProps<T> {
@@ -41,7 +41,7 @@ export interface ICollectionHeaderPropsPrivate<T> extends ICollectionHeaderProps
 
 export interface ICollectionHeadersProps<T> {
 	headers: Array<ICollectionHeaderPropsPrivate<T>>;
-	actions?: Array<ICollectionItemActionProps<T>>;
+	actions?: Array<ICollectionItemActionProps<T>> | actionFilterFn<T>;
 	selectableItems?: boolean;
 	allChecked: boolean;
 	onCheckedAll?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void
@@ -52,7 +52,7 @@ export interface ICollectionHeadersProps<T> {
 @observer
 export default class CollectionHeaders<T> extends React.Component<ICollectionHeadersProps<T>> {
 	@observable
-	private orderBy: IOrderByCondition<T> | undefined;
+	private orderBy: IOrderByCondition<T> | undefined | void;
 
 	constructor(props: ICollectionHeadersProps<T>, context: any){
 		super(props, context);

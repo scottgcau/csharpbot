@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -46,18 +46,17 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 			_entityDetailFactory =  new EntityDetailFactory(contextConfiguration);
 		}
 
-
-		[StepDefinition(@"I create a (.*) associated with the (.*) tile")]
-		public void ICreateAFormAssociatedWithTheFormPage(string formEntityName, string tileName)
+		[StepDefinition(@"I create a (.*) called (.*) associated with the (.*) tile")]
+		public void ICreateAFormAssociatedWithTheFormPage(string formEntityName, string formDisplayName, string tileName)
 		{
 			//Navigate to the forms landing page
 			_formsLandingPage.Navigate();
 
 			// Create a new instance of the form entity
-			_formsLandingPage.ToggleAccordionWithWait(formEntityName);
-			_formsLandingPage.ClickNewFormItemWithWait(formEntityName);
-			var createFormEntityPage = new GenericEntityEditPage(formEntityName.RemoveWordsSpacing(), _contextConfiguration);
-			var formEntity = _entityDetailFactory.ApplyDetails(formEntityName.RemoveWordsSpacing(), true);
+			_formsLandingPage.ToggleAccordionWithWait(formDisplayName);
+			_formsLandingPage.ClickNewFormItemWithWait(formDisplayName);
+			var createFormEntityPage = new GenericEntityEditPage(formEntityName, _contextConfiguration);
+			var formEntity = _entityDetailFactory.ApplyDetails(formEntityName, true);
 			createFormEntityPage.SubmitButton.Click();
 
 			// Create and save a new slide and question
@@ -68,17 +67,17 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 			_formsBuildPage.SaveAndPublishButton.Click();
 			
 			// Link to submission tile
-			var formTileUrl = $"{_contextConfiguration.BaseUrl}/admin/{formEntityName}formtile/create";
+			var formTileUrl = $"{_contextConfiguration.BaseUrl}/admin/{formEntityName}formtileentity/create";
 			_contextConfiguration.WebDriver.Navigate().GoToUrl(formTileUrl);
 			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait, formTileUrl);
 			var createFormTile = new GenericEntityEditPage(formEntityName.RemoveWordsSpacing(), _contextConfiguration);
-			var createFormTilePage = _entityDetailFactory.CreateDetailSection($"{formEntityName.RemoveWordsSpacing()}FormTile");
+			var createFormTilePage = _entityDetailFactory.CreateDetailSection($"{formEntityName.RemoveWordsSpacing()}FormTileEntity");
 			createFormTilePage.SetInputElement("Tile", tileName);
-			createFormTilePage.GetInputElement("FormId").SendKeys(formEntity.toDictionary()["name"]);
-			var xpath = $"//div[contains(@class, 'dropdown__menu-list')]/div[contains(@class, 'dropdown__option')]";
-			var elementBy = WebElementUtils.GetElementAsBy(SelectorPathType.XPATH, xpath);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy,ElementState.EXISTS);
-			createFormTilePage.GetInputElement("FormId").SendKeys(Keys.Enter);
+
+			var formIdInput = createFormTilePage.GetInputElement("FormId").FindElement(By.TagName("input"));
+			formIdInput.SendKeys(formEntity.toDictionary()["name"]);
+			formIdInput.SendKeys(Keys.Return);
+
 			createFormTile.SubmitButton.Click();
 			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait, $"{_contextConfiguration.BaseUrl}/admin/forms");
 		}

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -48,12 +48,19 @@ namespace SeleniumTests.Steps.BotWritten.ViewReadonly
 		[Then(@"I assert that the entity input fields  are readonly on the (.*) page")]
 		public void ThenIAssertThatTheEntityInputFieldsAreReadonlyOnThePage(string entityName)
 		{
+			_contextConfiguration.WebDriverWait.Until(d =>
+				d.Url.ToLower().StartsWith(_contextConfiguration.BaseUrl + $"/admin/{entityName.ToLower()}/view/"));
 			var entityFactory = new EntityDetailFactory(_contextConfiguration);
 			// Get a detail section Object
 			var detailSection = entityFactory.CreateDetailSection(entityName);
 			var readonlyInputFields = detailSection.GetReadonlyInputFieldAttributes();
-			var isReadonlyField = !readonlyInputFields.Any(x =>string.IsNullOrEmpty(x.GetAttribute("readonly")) && string.IsNullOrEmpty(x.GetAttribute("disabled")));
-			Assert.True(isReadonlyField);
+			foreach (var readonlyInputField in readonlyInputFields)
+			{
+				var isReadOnly = string.IsNullOrEmpty(readonlyInputField.GetAttribute("readonly")) 
+						|| string.IsNullOrEmpty(readonlyInputField.GetAttribute("aria-disabled"));
+				
+				Assert.True(isReadOnly);
+			}
 		}
 	}
 }

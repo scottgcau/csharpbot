@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -33,15 +33,12 @@ import { SecurityService } from 'Services/SecurityService';
 import { IAcl } from 'Models/Security/IAcl';
 import * as AttrUtils from 'Util/AttributeUtils';
 import { isRequired } from 'Util/EntityUtils';
+import { Form } from '../Form/Form';
+import { EntityFormMode } from '../Helpers/Common';
+import { EntityFormLayout } from '../EntityFormLayout/EntityFormLayout';
 import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 
 const VALIDATION_ERROR = "Some of the fields are missing or invalid, please check your form.";
-
-export enum EntityFormMode {
-	VIEW = 'view',
-	CREATE = 'create',
-	EDIT = 'edit'
-}
 
 interface IEntityCreateProps<T extends Model> extends RouteComponentProps {
 	model: T;
@@ -92,19 +89,22 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 								</div>
 							)
 						: <h2>{title}</h2>}
-					<form onSubmit={this.onSubmit}>
-						<div className="crud__form-container">
-							{this.constructAttributeCreateHtml()}
-							{this.props.customFields}
-						</div>
-
-						<ButtonGroup>
-							<Button display={Display.Outline} onClick={this.onCancel}>Cancel</Button>
-							<If condition={SecurityService.canUpdate(this.props.modelType) && this.props.formMode !== EntityFormMode.VIEW}>
-								<Button type='submit' display={Display.Outline}>Submit</Button>
-							</If>
-						</ButtonGroup>
-					</form>
+					<Form
+						submitButton={SecurityService.canUpdate(this.props.modelType) && this.props.formMode !== EntityFormMode.VIEW}
+						cancelButton={true}
+						onSubmit={this.onSubmit}
+						onCancel={this.onCancel}
+					>
+						<EntityFormLayout
+							model={this.props.model}
+							displayCreatedModifed={true}
+							getErrorsForAttribute={this.props.model.getErrorsForAttribute}
+							formMode={this.props.formMode}
+							onAttributeAfterChange={this.onAttributeAfterChange}
+							onAttributeChangeAndBlur={this.onAttributeChangeAndBlur}
+						/>
+						{this.props.customFields}
+					</Form>
 				</section>
 			</div>
 		);
@@ -114,69 +114,71 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 		event.preventDefault();
 
 		const { model } = this.props;
-		const modelName = model.getModelName();
+		const modelName = model.getModelDisplayName();
 		model.clearErrors();
 
 		model.validate(this.props.customRelationPath).then(() => {
-		if (model.hasValidationError) {
-			this.hasSubmittedOnce = true;
-			return;
-		}
+			if (model.hasValidationError) {
+				this.hasSubmittedOnce = true;
+				return;
+			}
+		
+			return model.saveFromCrud(this.props.formMode)
+				.then((result) => {
+					const actionDone = this.props.formMode === 'create' 
+						? 'added'
+						: (this.props.formMode === 'edit' ? 'edited' : '');
 
-		return model.saveFromCrud(this.props.formMode)
-			.then((result) => {
-				const actionDone = this.props.formMode === EntityFormMode.CREATE? 'added'
-					: (this.props.formMode === EntityFormMode.EDIT? 'edited': '');
+					console.log(`Successfully ${actionDone} ${modelName}`, result);
+					alert(`Successfully ${actionDone} ${modelName}`, 'success');
 
-				console.log(`Successfully ${actionDone} ${modelName}`, result);
-				alert(`Successfully ${actionDone} ${modelName}`, 'success');
+					const { redirect } = queryString.parse(this.props.location.search.substring(1));
 
-				const { redirect } = queryString.parse(this.props.location.search.substring(1));
-
-				if (redirect && !Array.isArray(redirect)) {
-					store.routerHistory.push(redirect.replace('{id}', model.id));
-				} else {
-					store.routerHistory.goBack();
-				}
-			})
-			.catch((error) => {
-				console.error(`Failed adding ${modelName}`, error);
-
-				if (typeof error == 'string') {
-					alert(error, 'error');
-				}
-
-				const errors: Array<{code: string, message: string}> | undefined = safeLookup(
-					error,
-					'networkError',
-					'result',
-					'errors',
-					{map: (x: any) => {
-						return {
-							code: safeLookup(x, 'extensions', 'data', 'Code'),
-							message: safeLookup(x, 'extensions', 'data', 'Detail'),
-						};
-					}}
-				);
-
-				if (errors && errors.length) {
-					const errorCodes = errors.map(x => x.code);
-					let detailedError = 'Could not save entity.';
-
-					if (errorCodes.indexOf("23505") >= 0) {
-						detailedError += ' A duplicate reference was found.';
+					if (redirect && !Array.isArray(redirect)) {
+						store.routerHistory.push(redirect.replace('{id}', model.id));
+					} else {
+						store.routerHistory.goBack();
 					}
-
-					this.setErrors(
-						detailedError,
-						{},
-						errors.map(x => x.message).join(' '));
-					return;
-				}
-
-				this.setErrors(error.message, {});
-			});
-		});
+				})
+				.catch((error) => {
+					console.error(`Failed adding ${modelName}`, error);
+				
+					if (typeof error == 'string') {
+						alert(error, 'error');
+					}
+				
+					const errors: Array<{code: string, message: string}> | undefined = safeLookup(
+						error,
+						'networkError',
+						'result',
+						'errors',
+						{map: (x: any) => {
+							return {
+								code: safeLookup(x, 'extensions', 'data', 'Code'),
+								message: safeLookup(x, 'extensions', 'data', 'Detail'),
+							};
+						}}
+					);
+					
+					if (errors && errors.length) {
+						const errorCodes = errors.map(x => x.code);
+						let detailedError = 'Could not save entity.';
+					
+						if (errorCodes.indexOf("23505") >= 0) {
+							detailedError += ' A duplicate reference was found.';
+						}
+					
+						this.setErrors(
+							detailedError,
+							{},
+							errors.map(x => x.message).join(' '));
+						return;
+					}
+				
+					this.setErrors(error.message, {});
+				});
+			}
+		);
 	}
 
 	@action
@@ -198,30 +200,6 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 
 	private onEdit = (event: React.MouseEvent<Element, MouseEvent>) => {
 		this.props.history.push(`../Edit/${this.props.model.id}`);
-	}
-
-	private constructAttributeCreateHtml = () => {
-		let attributeOptions = this.props.model.getAttributeCRUDOptions();
-		if(this.props.formMode !== 'create'){
-			let createDateAttr = new AttributeCRUDOptions('created', {name:'Created', displayType: 'datepicker', headerColumn: false, searchable: true, searchFunction: 'equal', searchTransform: AttrUtils.standardiseDate});
-			createDateAttr.isReadonly = true;
-			let modifiedDateAttr = new AttributeCRUDOptions('modified', {name:'Modified', displayType: 'datepicker', headerColumn: false, searchable: true, searchFunction: 'equal', searchTransform: AttrUtils.standardiseDate});
-			modifiedDateAttr.isReadonly = true;
-			const defualtDateAttrs: AttributeCRUDOptions[] = [createDateAttr, modifiedDateAttr];
-			attributeOptions = [...attributeOptions, ...defualtDateAttrs];
-		}
-		const model = this.props.model;
-
-		return attributeOptions.map(attributeOption =>
-			getAttributeComponent(
-				attributeOption,
-				model,
-				this.props.model.getErrorsForAttribute(attributeOption.attributeName),
-				this.props.formMode,
-				isRequired(model, attributeOption.attributeName),
-				this.onAttributeAfterChange,
-				this.onAttributeChangeAndBlur
-			));
 	}
 
 	private onAttributeAfterChange = (attributeName: string) => {

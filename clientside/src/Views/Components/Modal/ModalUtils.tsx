@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -17,6 +17,9 @@
 import * as React from 'react';
 import { store } from '../../../Models/Store';
 import { Button, Display } from '../Button/Button';
+
+// % protected region % [Add any additional includes] off begin
+// % protected region % [Add any additional includes] end
 
 export interface IConfirmModalOptions {
 	/** The text to be placed in the confirm button */
@@ -47,6 +50,7 @@ export function confirmModal(title: string, message: React.ReactNode, options: I
 		const confirmText = options.confirmText || 'Confirm';
 		const cancelText = options.cancelText || 'Cancel';
 
+		// % protected region % [update confirm modal if required] off begin
 		const confirmDom = (
 			<>
 				<div key="header" className="modal__header">
@@ -69,6 +73,7 @@ export function confirmModal(title: string, message: React.ReactNode, options: I
 				</div>
 			</>
 		);
+		// % protected region % [update confirm modal if required] end
 
 		store.modal.show(title, confirmDom, {
 			className: 'confirm-modal',
@@ -76,6 +81,8 @@ export function confirmModal(title: string, message: React.ReactNode, options: I
 				store.modal.hide();
 				reject();
 			},
+			// % protected region % [Add additional options to the confirm modal] off begin
+			// % protected region % [Add additional options to the confirm modal] end
 		});
 	});
 }
@@ -101,6 +108,7 @@ export function alertModal(title: string, message: React.ReactNode, options: IAl
 
 		const cancelText = options.cancelText || 'Cancel';
 
+		// % protected region % [update alert modal if required] off begin
 		const alertDom = (
 			<>
 				<div key="header" className="modal__header">
@@ -119,6 +127,7 @@ export function alertModal(title: string, message: React.ReactNode, options: IAl
 				</div>
 			</>
 		);
+		// % protected region % [update alert modal if required] end
 
 		store.modal.show(title, alertDom, {
 			className: 'alert-modal',
@@ -126,6 +135,8 @@ export function alertModal(title: string, message: React.ReactNode, options: IAl
 				store.modal.hide();
 				resolve();
 			},
+			// % protected region % [Add additional options to the alert modal] off begin
+			// % protected region % [Add additional options to the alert modal] end
 		});
 	});
 }

@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -32,9 +32,10 @@ import { IEntityContextMenuActions } from '../EntityContextMenu/EntityContextMen
 import { ICollectionFilterPanelProps } from './CollectionFilterPanel';
 import { IOrderByCondition } from '../ModelCollection/ModelQuery';
 
-type actionFn<T> = (model: T, event: React.MouseEvent<Element, MouseEvent>) => void;
-type bulkActionFn<T> = (event: React.MouseEvent<Element, MouseEvent>) => void;
+export type actionFn<T> = (model: T, event: React.MouseEvent<Element, MouseEvent>) => void;
+export type bulkActionFn<T> = (event: React.MouseEvent<Element, MouseEvent>) => void;
 export type expandFn<T> = (model: T) => React.ReactNode | string;
+export type actionFilterFn<T> = (item: T) => Array<ICollectionItemActionProps<T>>;
 
 export interface ICollectionActionProps<T> {
 	/** A label for the action button */
@@ -72,7 +73,7 @@ export interface ICollectionListProps<T> {
 	/** The headers to provide to the collection, this defines the columns that are displayed */
 	headers: Array<ICollectionHeaderProps<T>>;
 	/** The actions that are displayed for each item on the collection */
-	actions?: Array<ICollectionItemActionProps<T>>;
+	actions?: Array<ICollectionItemActionProps<T>> | actionFilterFn<T>;
 	/** More actions that will be put into a context menu with will be triggered by clicking a button on the each row */
 	actionsMore?: IEntityContextMenuActions<T>;
 	/** The actions that are defined  */
@@ -126,6 +127,8 @@ export interface ICollectionProps<T> extends ICollectionListProps<T> {
 	hidePagination?: boolean;
 	/** The pagination data for the collection */
 	pagination?: IPaginationData;
+	/** Function to call on page change */
+	onPageChange?: () => void;
 }
 
 /**
@@ -238,7 +241,7 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 
 		return (
 			<section className="collection__load">
-				<Pagination pagination={pagination} />
+				<Pagination pagination={pagination} onPageChange={this.props.onPageChange}/>
 			</section>
 		);
 	}
@@ -275,7 +278,7 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 							selectableItems={this.props.selectableItems}
 							item={item}
 							headers={this.headers}
-							actions={this.props.actions || []}
+							actions={this.props.actions}
 							actionsMore={this.props.actionsMore}
 							checked={this.selectedItems.some(i => isEqual(i, item))}
 							onChecked={this.onRowChecked}

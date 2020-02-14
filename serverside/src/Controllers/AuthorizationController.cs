@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -26,6 +26,7 @@ using OpenIddict.Mvc.Internal;
 using Sportstats.Utility;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -40,11 +41,25 @@ namespace Sportstats.Controllers
 	{
 		private readonly IUserService _userService;
 		private readonly IXsrfService _xsrfService;
+		private readonly ILogger<AuthorizationController> _logger;
 
-		public AuthorizationController(IUserService userService, IXsrfService xsrfService)
+		// % protected region % [Add any additional fields here] off begin
+		// % protected region % [Add any additional fields here] end
+
+		public AuthorizationController(
+			// % protected region % [Add any constructor arguments here] off begin
+			// % protected region % [Add any constructor arguments here] end
+			IUserService userService, 
+			IXsrfService xsrfService,
+			ILogger<AuthorizationController> logger)
 		{
+			// % protected region % [Add any constructor initial logic here] off begin
+			// % protected region % [Add any constructor initial logic here] end
 			_userService = userService;
 			_xsrfService = xsrfService;
+			_logger = logger;
+			// % protected region % [Add any constructor end logic here] off begin
+			// % protected region % [Add any constructor end logic here] end
 		}
 
 		/// <summary>
@@ -98,6 +113,8 @@ namespace Sportstats.Controllers
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody]LoginDetails details)
 		{
+
+			// % protected region % [Configure authorization login logic here] off begin
 			try
 			{
 				var user = await _userService.CheckCredentials(details.Username, details.Password);
@@ -126,6 +143,7 @@ namespace Sportstats.Controllers
 			{
 				return Unauthorized();
 			}
+			// % protected region % [Configure authorization login logic here] end
 		}
 
 		/// <summary>
@@ -174,6 +192,7 @@ namespace Sportstats.Controllers
 	/// </summary>
 	public class LoginDetails
 	{
+		// % protected region % [Customise login details] off begin
 		/// <summary>
 		/// The username of the user that is logging in
 		/// </summary>
@@ -188,5 +207,8 @@ namespace Sportstats.Controllers
 		/// Should the user be sent a persistent token instead of a session token
 		/// </summary>
 		public bool RememberMe { get; set; }
+		// % protected region % [Customise login details] end
 	}
+	// % protected region % [Add any additional methods here] off begin
+	// % protected region % [Add any additional methods here] end
 }

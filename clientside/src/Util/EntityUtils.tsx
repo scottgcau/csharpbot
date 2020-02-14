@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -16,7 +16,7 @@
  */
 import { IConditionalFetchArgs, Model } from 'Models/Model';
 import { AttributeCRUDOptions, ICRUDOptions } from 'Models/CRUDOptions';
-import { crudOptions, attributes, modelName as modelNameSymbol } from 'Symbols';
+import { crudOptions, attributes, modelName as modelNameSymbol, displayName as displayNameSymbol, crudId } from 'Symbols';
 import gql from 'graphql-tag';
 import { lowerCaseFirst } from './StringUtils';
 import axios from 'axios';
@@ -26,6 +26,7 @@ import { store } from '../Models/Store';
 import _ from 'lodash';
 import { Symbols } from 'Symbols';
 import { IWhereConditionApi } from '../Views/Components/ModelCollection/ModelQuery';
+import uuid from 'uuid';
 
 /**
  * Helper method to get model name based on the modelType - must be a Model or subclass
@@ -33,6 +34,14 @@ import { IWhereConditionApi } from '../Views/Components/ModelCollection/ModelQue
  */
 export function getModelName(modelType: { new(): Model }) {
 	return modelType[modelNameSymbol];
+}
+
+/**
+ * Helper method to get model display name based on the modelType - must be a Model or subclass
+ * @param modelType The type of model
+ */
+export function getModelDisplayName(modelType: { new(): Model }) {
+	return modelType[displayNameSymbol];
 }
 
 /**
@@ -56,7 +65,7 @@ export function getAttributes(modelType: { new(): Model }) {
 
 export async function exportAll(modelType: { new(): Model }, conditions: IWhereConditionApi<{}>[][] = []): Promise<void> {
 	const result = await axios.post(
-		`${SERVER_URL}/api/${getModelName(modelType)}/export`,
+		`${SERVER_URL}/api/entity/${getModelName(modelType)}/export`,
 		conditions,
 		{
 			headers: {
@@ -98,7 +107,7 @@ export function getFetchSingleQuery(modelType: { new(): Model }) {
 export function getFetchAllConditional(modelType: {new() : Model}, expandString?: string) {
 	const modelName: string = modelType[modelNameSymbol];
 	const lowerModelName = lowerCaseFirst(modelName);
-	
+
 	return gql`
 		query ${lowerModelName}($args: [[WhereExpressionGraph]], $skip:Int, $take:Int, $orderBy: [OrderByGraph], $ids: [ID] ) {
 			${lowerModelName}s : ${lowerModelName}sConditional(conditions: $args, skip:$skip, take:$take, orderBy: $orderBy, ids: $ids) {
@@ -165,16 +174,19 @@ export function makeFetchManyToManyFunc(options: manyToManyOptions) {
 			.then(result => {
 				const data = result.data[`${options.oppositeEntityName}s`];
 				const serverData = _.flatMap(data, i => {
+					const join = new joinEntity({
+						[`${options.relationOppositeName}Id`]: i.id,
+						[`${options.relationOppositeName}`]: i,
+					});
+					join[crudId] = uuid.v4();
 					return {
 						display: new oppositeEntity(i).getDisplayName(),
-						value: new joinEntity({
-							[`${options.relationOppositeName}Id`]: i.id,
-							[`${options.relationOppositeName}`]: i,
-						}),
+						value: join,
 					}
 				});
 				const existingRelations = queryOptions.model[`${options.relationOppositeName}s`];
 				for (const existingEntity of existingRelations) {
+					existingEntity[crudId] = existingEntity.id;
 					if (!_.find(serverData, o => makeJoinEqualsFunc(`${options.relationOppositeName}Id`)(existingEntity, o.value[`${options.relationOppositeName}Id`]))) {
 						serverData.push({
 							display: new oppositeEntity(existingEntity[options.relationOppositeName]).getDisplayName(),
@@ -200,9 +212,9 @@ export function makeFetchOneToManyFunc<T extends Model>(options: oneToManyOption
 			args: typeof query === 'string' ? new oppositeEntity().getSearchConditions(query) : undefined,
 			take: 10,
 		});
-		
+
 		const existingData: T[] = queryOptions.model[options.relationName];
-		
+
 		return _
 			.unionBy(existingData, serverData, 'id')
 			.map(r => ({
@@ -212,13 +224,8 @@ export function makeFetchOneToManyFunc<T extends Model>(options: oneToManyOption
 	}
 }
 
-export function makeEnumFetchFunction<T extends string>(enumOptions: { [key in T]: string })
-	: () => Promise<{display: string, value: string}[]> {
-	return () => {
-		return new Promise(resolve => {
-			return resolve(_.map(enumOptions, (display, value) => ({display, value})));
-		})
-	}
+export function makeEnumFetchFunction<T extends string>(enumOptions: { [key in T]: string }) : {display: string, value: string}[] {
+	return _.map(enumOptions, (display, value) => ({display, value}));
 }
 
 export function isRequired(model: Model, attributeName: string) {

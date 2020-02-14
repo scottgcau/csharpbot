@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -22,6 +22,7 @@ using APITests.EntityObjects.Models;
 using Sportstats.Helpers;
 using Sportstats.Utility;
 using APITests.Factories;
+using EntityObject.Enums;
 using RestSharp;
 
 namespace APITests.Utils
@@ -30,9 +31,10 @@ namespace APITests.Utils
 	{
 		private static string ConstructFieldQueryPart(BaseEntity baseEntity)
 		{
-			var properties = ObjectHelper.GetNonReferenceProperties(baseEntity.GetType()).ToArray();
-			var propertyNames = properties.Select(p => char.ToLowerInvariant(p.Name[0]) + p.Name.Substring(1)).ToList();
-			var manyReferences = baseEntity.References.Where(x => x.Type == "Many");
+			var attributes = baseEntity.Attributes.Select(x => x.Name.LowerCaseFirst()).ToList();
+			var references = baseEntity.References.Select(x => x.OppositeName.LowerCaseFirst()+ "Id").ToList();
+			var propertyNames = attributes.Concat(references).ToList();
+			var manyReferences = baseEntity.References.Where(x => x.Type == ReferenceType.MANY);
 
 			if (propertyNames.Contains("entityName"))
 			{
@@ -94,7 +96,7 @@ namespace APITests.Utils
 				//this will update all of our foreign reference ids for our parent objects
 				foreach (var reference in entity.ReferenceIdDictionary)
 				{
-					if (entity.References.First(x => x.OppositeName + "Id" == reference.Key).Type == "Many")
+					if (entity.References.First(x => x.OppositeName + "Id" == reference.Key).Type == ReferenceType.MANY)
 					{
 						var referenceEntity = entity.References
 							.First(x => x.OppositeName + "Id" == reference.Key)
@@ -118,10 +120,9 @@ namespace APITests.Utils
 		}
 
 		/// <summary>
-		/// Query Builder for Invalid Entities
+		/// Builds a graphql query to create invalid entities
 		/// </summary>
-		/// <param name="entity"></param>
-		/// <param name="invalidEntityJsons"></param>
+		/// <param name="baseEntities"></param>
 		/// <returns>The graphql query as a json object</returns>
 		public static JsonObject InvalidEntityQueryBuilder(BaseEntity entity, List<JsonObject> invalidEntityJsons)
 		{
@@ -132,11 +133,29 @@ namespace APITests.Utils
 				//this will update all of our foreign reference ids for our parent objects
 				foreach (var reference in entity.ReferenceIdDictionary)
 				{
+					
 					// Set foreign-key for non null keys
-					// TODO: SORT THIS PART OUT. THERE WAS NOT NULL KEYS HERE BEFORE SO WHY IS THERE NOW?
-					if (invalidEntityJson[reference.Key.LowerCaseFirst()] != null)
+					if (invalidEntityJson.Keys.Contains(reference.Key.LowerCaseFirst()))
 					{
-						invalidEntityJson[reference.Key.LowerCaseFirst()] = reference.Value;
+						// Handle many -> many relations
+						var manyReference = entity.References
+							.FirstOrDefault(r => r.OppositeName + 's' == reference.Key);
+						
+						if (manyReference != null)
+						{
+							invalidEntityJson[reference.Key.LowerCaseFirst()] = new List<JsonObject>
+							{
+								new JsonObject
+								{
+									[manyReference.OppositeName.LowerCaseFirst() + "Id"] = reference.Value
+								}
+							};
+						}
+						// Handle one -> many and one -> one
+						else
+						{
+							invalidEntityJson[reference.Key.LowerCaseFirst()] = reference.Value;
+						}
 					}
 				}
 				myAL.Add(invalidEntityJson);

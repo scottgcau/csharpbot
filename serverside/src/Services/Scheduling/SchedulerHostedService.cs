@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Services.Scheduling
 {
@@ -29,16 +31,23 @@ namespace Sportstats.Services.Scheduling
 		public event EventHandler<UnobservedTaskExceptionEventArgs> UnobservedTaskException;
 
 		private readonly List<SchedulerTaskWrapper> _scheduledTasks = new List<SchedulerTaskWrapper>();
+		// % protected region % [Add any extra dependencies here] off begin
+		// % protected region % [Add any extra dependencies here] end
 
-		public SchedulerHostedService(IEnumerable<IScheduledTask> scheduledTasks)
+		public SchedulerHostedService(IEnumerable<IScheduledTask> scheduledTasks, IServiceProvider serviceProvider)
 		{
+			// % protected region % [Add any extra dependency assignments here] off begin
+			// % protected region % [Add any extra dependency assignments here] end
+
 			var referenceTime = DateTime.UtcNow;
 
 			foreach (var scheduledTask in scheduledTasks)
 			{
 				_scheduledTasks.Add(new SchedulerTaskWrapper
 				{
+					// % protected region % [Configure the parser of the schedule string to support down to 1 minute or 1 second] off begin
 					Schedule = CrontabSchedule.Parse(scheduledTask.Schedule),
+					// % protected region % [Configure the parser of the schedule string to support down to 1 minute or 1 second] end
 					Task = scheduledTask,
 					NextRunTime = referenceTime
 				});
@@ -47,16 +56,24 @@ namespace Sportstats.Services.Scheduling
 
 		protected override async Task ExecuteAsync(CancellationToken cancellationToken)
 		{
+			// % protected region % [Add any extra processes before the scheduled tasks running here] off begin
+			// % protected region % [Add any extra processes before the scheduled tasks running here] end
+			
 			while (!cancellationToken.IsCancellationRequested)
 			{
 				await ExecuteOnceAsync(cancellationToken);
 
-				await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+				// % protected region % [Configure the interval of the loop to ckeck the timer] off begin
+				var timeSpan = TimeSpan.FromMinutes(1);
+				// % protected region % [Configure the interval of the loop to ckeck the timer] end
+
+				await Task.Delay(timeSpan, cancellationToken);
 			}
 		}
 
 		private async Task ExecuteOnceAsync(CancellationToken cancellationToken)
 		{
+
 			var taskFactory = new TaskFactory(TaskScheduler.Current);
 			var referenceTime = DateTime.UtcNow;
 

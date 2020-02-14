@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -15,7 +15,7 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import { observable, runInAction, computed } from 'mobx';
-import { validator as validatorSymbol, attributes as attributesSymbol, crudOptions, references as referencesSymbol, modelName as modelNameSymbol } from 'Symbols';
+import { validator as validatorSymbol, attributes as attributesSymbol, crudOptions, references as referencesSymbol, modelName as modelNameSymbol, displayName as displayNameSymbol } from 'Symbols';
 import { store } from './Store';
 import gql from 'graphql-tag';
 import { lowerCaseFirst } from 'Util/StringUtils';
@@ -30,7 +30,7 @@ import { getTheNetworkError } from 'Util/GraphQLUtils';
 import { ICollectionFilterPanelProps } from 'Views/Components/Collection/CollectionFilterPanel';
 import _ from 'lodash';
 import co from "co";
-import { EntityFormMode } from '../Views/Components/CRUD/EntityAttributeList';
+import { EntityFormMode } from 'Views/Components/Helpers/Common';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
@@ -119,10 +119,23 @@ export function attribute(options?: IAttributeOptions) {
 	};
 }
 
-export function entity(modelName: string) {
+/**
+ * @param modelName The name of the model
+ * @param displayName The display name of the model for presentation purposes, defaults to the modelName
+ */
+export function entity(modelName: string, displayName?: string) {
 	return (target: object) => {
 		target[modelNameSymbol] = modelName;
+		target[displayNameSymbol] = displayName === undefined
+			? modelName
+			: displayName
 	}
+}
+
+export interface IAttributeGroup {
+	id: number;
+	name: string;
+	order: number;
 }
 
 export class Model implements IModelAttributes {
@@ -133,7 +146,7 @@ export class Model implements IModelAttributes {
 
 	public static excludeFromCreate: string[] = [];
 	public static excludeFromUpdate: string[] = [];
-	
+
 	/* The default order by field when the collection is loaded */
 	public get orderByField(): IOrderByCondition<Model> | undefined {
 		return undefined;
@@ -183,6 +196,8 @@ export class Model implements IModelAttributes {
 	}
 
 	public defaultExpands = '';
+
+	public attributeGroups?: IAttributeGroup[];
 
 	@observable
 	public id: string;
@@ -370,7 +385,7 @@ export class Model implements IModelAttributes {
 	public toJSON(path: {} = {}, excludeCrudFields = false, replacer: jsonReplacerFn | undefined = undefined) {
 		const json = {};
 		const pathKeys = Object.keys(path);
-		
+
 		let allKeys = _.uniq(this.attributes.concat(this.references).concat(pathKeys));
 		if (excludeCrudFields) {
 			const excludeList = this.id
@@ -378,7 +393,7 @@ export class Model implements IModelAttributes {
 				: this.constructor['excludeFromCreate'];
 			allKeys = allKeys.filter((k: string) => excludeList.indexOf(k) === -1);
 		}
-		
+
 		for (const key of allKeys) {
 			switch (typeof (this[key])) {
 				case 'function':
@@ -455,9 +470,9 @@ export class Model implements IModelAttributes {
 		return this.prototype[referencesSymbol];
 	}
 
-	public static async fetch<T>(variables?: IConditionalFetchArgs<T>): Promise<T[]> {
+	public static async fetch<T>(variables?: IConditionalFetchArgs<T>, expendString?: string): Promise<T[]> {
 		const { data } = await store.apolloClient.query({
-			query: getFetchAllConditional(this),
+			query: getFetchAllConditional(this, expendString),
 			variables: variables,
 			fetchPolicy: 'network-only',
 		});
@@ -529,6 +544,11 @@ export class Model implements IModelAttributes {
 		return this.__proto__.constructor[modelNameSymbol];
 	}
 
+	public getModelDisplayName() {
+		// @ts-ignore
+		return this.__proto__.constructor[displayNameSymbol];
+	}
+
 	/**
 	 * Deletes the model from the server
 	 */
@@ -577,13 +597,13 @@ export class Model implements IModelAttributes {
 							${functionName}(conditions: $args, ids: $ids){
 								value
 							}
-						}`, 
+						}`,
 					variables: {
 						"args": conditions,
 						"ids": ids || null
 					},
 					update: (cache, results) => {
-						
+
 					},
 				})
 				.then((response) => {
@@ -611,14 +631,14 @@ export class Model implements IModelAttributes {
 							${functionName}(conditions: $args, ids: $ids, filedsToUpdate: $modelValuesToUpdate){
 								valule
 							}
-						}`, 
+						}`,
 					variables: {
 						"where": conditions,
 						"modelValuesToUpdate": modelValuesToUpdate,
 						"ids": ids || null
 					},
 					update: (cache, results) => {
-						
+
 					},
 				})
 				.then((response) => {
@@ -637,7 +657,7 @@ export class Model implements IModelAttributes {
 		const variables = options.options ? options.options : [];
 		const createOptions = options.createOptions ? options.createOptions : [];
 		const updateOptions = options.updateOptions ? options.updateOptions : [];
-		
+
 		// Before we save, we run this overwriteable method.
 		this.beforeSave();
 
@@ -680,7 +700,7 @@ export class Model implements IModelAttributes {
 				});
 			});
 	}
-	
+
 	public beforeSave() {
 		// Do nothing. This function is here to be overridden
 	}

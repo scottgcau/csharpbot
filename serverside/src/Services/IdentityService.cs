@@ -4,7 +4,7 @@
  * WARNING AND NOTICE
  * Any access, download, storage, and/or use of this source code is subject to the terms and conditions of the
  * Full Software Licence as accepted by you before being granted access to this source code and other materials,
- * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-license. Any
+ * the terms of which can be accessed on the Codebots website at https://codebots.com/full-software-licence. Any
  * commercial use in contravention of the terms of the Full Software Licence may be pursued by Codebots through
  * licence termination and further legal action, and be required to indemnify Codebots for any loss or damage,
  * including interest and costs. You are deemed to have accepted the terms of the Full Software Licence on any
@@ -25,17 +25,17 @@ namespace Sportstats.Services
 {
 	public class IdentityService : IIdentityService
 	{
-		private bool _fetched = false;
+		public bool Fetched { get; set; } = false;
 
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IUserService _userService;
 		private readonly UserManager<User> _userManager;
 
 		/// <inheritdoc />
-		public User User { get; private set; }
+		public User User { get; set; }
 
 		/// <inheritdoc />
-		public IList<string> Groups { get; private set; }
+		public IList<string> Groups { get; set; }
 
 		public IdentityService(
 			IHttpContextAccessor httpContextAccessor,
@@ -50,11 +50,11 @@ namespace Sportstats.Services
 		/// <inheritdoc />
 		public async Task RetrieveUserAsync()
 		{
-			if (_fetched != true)
+			if (Fetched != true)
 			{
 				User = await _userService.GetUserFromClaim(_httpContextAccessor.HttpContext.User);
 				Groups = User == null? new List<string>() : await _userManager.GetRolesAsync(User);
-				_fetched = true;
+				Fetched = true;
 			}
 		}
 	}
