@@ -61,7 +61,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 			InitializeSelectors();
 			// % protected region % [Add any extra construction requires] off begin
-
 			// % protected region % [Add any extra construction requires] end
 		}
 
@@ -131,7 +130,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-
 			// % protected region % [Configure entity application here] end
 		}
 

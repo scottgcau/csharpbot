@@ -96,7 +96,6 @@ export default class GraphViewSidebar extends React.Component<ITimelineGraphView
 	
 	public render() {
 		// % protected region % [Override render here] off begin
-
 		if (this.loadingState == 'Error'){
 			return 'Error';
 		}

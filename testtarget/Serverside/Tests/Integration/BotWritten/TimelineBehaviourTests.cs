@@ -66,7 +66,6 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		public async void RosterEntityControllerEventLogTest()
 		{
 			// % protected region % [Configure controller EventLog test for Roster here] off begin
-
 			// Arrange
 			using var entityController = _serviceProvider.GetRequiredService<RosterEntityController>();
 			using var eventController = _serviceProvider.GetRequiredService<RosterTimelineEventsEntityController>();

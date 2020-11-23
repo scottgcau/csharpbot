@@ -397,7 +397,6 @@ export default class ListViewList extends React.Component<IListViewListProps> {
 
 	public render() {
 		// % protected region % [Override render here] off begin
-		
 		if (this.loadingState == 'Error'){
 			return 'Error';
 		}

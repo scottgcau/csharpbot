@@ -103,7 +103,6 @@ export default class GraphViewItem extends React.Component<IGraphViewEntryProps>
 		// % protected region % [Override render item here] end
 
 		// % protected region % [Override render date here] off begin
-		
 		const dateComponent = this.props.showDate 
 			? startDate.minutes(0).seconds(0).format(this.props.dateFormatString)
 			: null;

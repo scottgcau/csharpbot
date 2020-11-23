@@ -111,7 +111,6 @@ export default class ListViewQuickJumpSidebar extends React.Component<IListViewQ
 	
 	public render() {
 		// % protected region % [Override render here] off begin
-		
 		if (this.loadingState == 'Error'){
 			return 'Error';
 		}

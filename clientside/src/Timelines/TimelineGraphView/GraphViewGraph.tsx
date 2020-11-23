@@ -206,7 +206,6 @@ export default class GraphViewGraph extends React.Component<TimelineGraphViewPro
 
 	public render() {
 		// % protected region % [Override render here] off begin
-		
 		if (this.loadingState == 'Error'){
 			return 'Error';
 		}

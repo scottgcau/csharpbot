@@ -203,7 +203,6 @@ export default class TimelineGraphView extends React.Component<ITimelineGraphVie
 	
 	public render() {
 		// % protected region % [Override render here] off begin
-
 		if (this.loadingState == 'Error'){
 			return 'Error';
 		}
