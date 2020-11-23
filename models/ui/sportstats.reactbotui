@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <reactbotUi:UserInterfaceModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reactbotUi="http://codebots.com/emf/reactbot/ui" Uuid="40cbec04-3be5-11ea-c0e9-6d6f75736579" TargetProject="sportstats">
   <Pages xsi:type="reactbotUi:Page" Uuid="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Name="Home" Title="Home" Description="Home" IsHomePage="true"/>
-  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="bad9494a-e646-4534-8fac-3666a94bd08e" Name="Home Wrapping Tile" IsDefaultTile="true">
-    <ViewElements xsi:type="reactbotUi:View" Uuid="e9e2d2f5-d882-49f1-9582-7f94152a151d" Name="Home Wrapping View" DefaultView="true"/>
+  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="233ea225-9765-4178-ea84-28c5c9f901aa" Name="Home Wrapping Tile" IsDefaultTile="true">
+    <ViewElements xsi:type="reactbotUi:View" Uuid="120966e9-8ae6-4393-849c-f25c0a75c088" Name="Home Wrapping View" DefaultView="true"/>
   </Tiles>
   <Tiles xsi:type="reactbotUi:TileForm" Uuid="a10301b5-3e21-424a-9e30-7856f7b193d1" Name="SportForm">
     <Entity href="../entity/sportstats.csharpbotentity#d469786e-3d85-4cc1-ad6f-36f959703fd7"/>
   </Tiles>
-  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="b11c0f11-d684-4a91-b791-0b7feb4b3e8e" DisplayIndex="1" Source="e9e2d2f5-d882-49f1-9582-7f94152a151d" Target="a10301b5-3e21-424a-9e30-7856f7b193d1"/>
-  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="2ad5f548-9057-44c0-bf9f-a27fb82141d3" Source="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Target="bad9494a-e646-4534-8fac-3666a94bd08e"/>
+  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="92af2eef-6329-401f-9197-c0c44ac05867" DisplayIndex="1" Source="120966e9-8ae6-4393-849c-f25c0a75c088" Target="a10301b5-3e21-424a-9e30-7856f7b193d1"/>
+  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="0f2c49e6-17d0-48e7-98da-bbf3759b7605" Source="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Target="233ea225-9765-4178-ea84-28c5c9f901aa"/>
 </reactbotUi:UserInterfaceModel>
