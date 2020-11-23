@@ -37,8 +37,8 @@ import { getErrorMessages } from 'Util/GraphQLUtils';
 import Spinner from 'Views/Components/Spinner/Spinner';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
 import { IUserEntity, UserFields } from 'Models/UserEntity';
-// % protected region % [Add any extra imports here] off begin
-// % protected region % [Add any extra imports here] end
+// % protected region % [Add any extra imports or interfaces here] off begin
+// % protected region % [Add any extra imports or interfaces here] end
 
 interface IRegistrationState {
 	errors: { [attr: string]: string };
@@ -60,32 +60,34 @@ const defaultRegistrationState: IRegistrationState = {
 	// % protected region % [Instantiate extra registration state properties here] end
 }
 
+// % protected region % [Customise class signature and class properties] off begin
 @observer
 export default class RegistrationPage extends React.Component<RouteComponentProps> {
+	// % protected region % [Customise class signature and class properties] end
 	@observable
 	private registrationState: IRegistrationState = defaultRegistrationState;
 
 	@observable
 	private displayMode: 'select-type' | 'register' = 'register';
 
-	private registerableEntities =
-		[
-		];
-
+	private registerableEntities: {value: string, display: string}[] = [
+	];
+	
+	// % protected region % [Add extra constructor logic here] off begin
 	constructor(props: RouteComponentProps, context: any) {
 		super(props, context);
-		// % protected region % [Add extra constructor logic here] off begin
+
 		if (this.registerableEntities.length > 1) {
 			this.displayMode = 'select-type';
 		} else {
 			this.displayMode = 'register';
 			if (this.registerableEntities.length === 1) {
-				this.registrationState.selectedRegisterType = this.registerableEntities[0];
-				this.registrationState.modelToRegister = this.userEntityFactory(this.registerableEntities[0]);
+				this.registrationState.selectedRegisterType = this.registerableEntities[0].display;
+				this.registrationState.modelToRegister = this.userEntityFactory(this.registerableEntities[0].value);
 			}
 		}
-		// % protected region % [Add extra constructor logic here] end
 	}
+	// % protected region % [Add extra constructor logic here] end
 
 	public render() {
 		let contents = null;
@@ -104,7 +106,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 					<Combobox
 						label='User Type'
 						model={this.registrationState}
-						options={this.registerableEntities.map(value => ({ value: value, display: value }))}
+						options={this.registerableEntities}
 						modelProperty='selectedRegisterType'
 						isRequired={true}
 						errors={this.registrationState.errors['selectedRegisterType']}
@@ -120,18 +122,20 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 		const entityAttrs = this.getRegisterEntityAttributes();
 
 		const registerNode = (
-			<form className="register" onSubmit={this.onSubmitRegisterClicked}>
-				<If condition={this.registerableEntities.length > 1}>
-					<a className='change-user-type icon-chevron-left icon-left' onClick={this.onChangeUserType}>Change User Type</a>
-				</If>
-				<h2>Registration</h2>
-				<h5>Registering as a {_.startCase(this.registrationState.selectedRegisterType)}</h5>
-				{entityAttrs}
-				<ButtonGroup alignment={Alignment.HORIZONTAL} className="register-buttons">
-					<Button type='submit' className="submit-register" display={Display.Solid} sizes={Sizes.Medium} buttonProps={{ id: "submit_register" }}>Register</Button>
-					<Button className="cancel-register" display={Display.Outline} sizes={Sizes.Medium} buttonProps={{ id: "cancel_register" }} onClick={this.onCancelRegisterClicked}>Cancel</Button>
-				</ButtonGroup>
-			</form>
+			<div className="body-content">
+				<form className="register" onSubmit={this.onSubmitRegisterClicked}>
+					<If condition={this.registerableEntities.length > 1}>
+						<a className='change-user-type icon-chevron-left icon-left' onClick={this.onChangeUserType}>Change User Type</a>
+					</If>
+					<h2>Registration</h2>
+					<h5>Registering as a {_.startCase(this.registrationState.selectedRegisterType)}</h5>
+					{entityAttrs}
+					<ButtonGroup alignment={Alignment.HORIZONTAL} className="register-buttons">
+						<Button type='submit' className="submit-register" display={Display.Solid} sizes={Sizes.Medium} buttonProps={{ id: "submit_register" }}>Register</Button>
+						<Button className="cancel-register" display={Display.Outline} sizes={Sizes.Medium} buttonProps={{ id: "cancel_register" }} onClick={this.onCancelRegisterClicked}>Cancel</Button>
+					</ButtonGroup>
+				</form>
+			</div>
 		);
 
 		const emailSentMessageNode = (
@@ -211,7 +215,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 	private submitRegister = () => {
 		// % protected region % [Override submitRegister here] off begin
 		if (this.registrationState.modelToRegister) {
-			const userType = this.registrationState.selectedRegisterType;
+			const userType = this.registrationState.modelToRegister.getModelName();
 			const data = this.registrationState.modelToRegister.toJSON({password: {}});
 
 			this.registrationState.emailSending = true;
@@ -264,7 +268,7 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 			if (this.registerableEntities.length > 1 && !!this.registrationState.selectedRegisterType) {
 				entityToRegister = this.registrationState.selectedRegisterType;
 			} else if (this.registerableEntities.length === 1) {
-				entityToRegister = this.registerableEntities[0];
+				entityToRegister = this.registerableEntities[0].value;
 			}
 			this.displayMode = 'register';
 			this.registrationState.modelToRegister = this.userEntityFactory(entityToRegister);
@@ -314,3 +318,6 @@ export default class RegistrationPage extends React.Component<RouteComponentProp
 	// % protected region % [Add class methods here] off begin
 	// % protected region % [Add class methods here] end
 }
+
+// % protected region % [Add extra features here] off begin
+// % protected region % [Add extra features here] end

@@ -29,7 +29,7 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.PasswordReset
 {
 	[Binding]
-	public sealed class ResetPasswordSteps
+	public sealed class ResetPasswordSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private readonly RequestResetPasswordPage _requestResetPasswordPage;
@@ -39,7 +39,7 @@ namespace SeleniumTests.Steps.BotWritten.PasswordReset
 		private Email _passwordResetEmail;
 		private UserBaseEntity _userEntity;
 
-		public ResetPasswordSteps(ContextConfiguration contextConfiguration)
+		public ResetPasswordSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			_requestResetPasswordPage = new RequestResetPasswordPage(_contextConfiguration);
@@ -58,8 +58,8 @@ namespace SeleniumTests.Steps.BotWritten.PasswordReset
 		[Given(@"I complete the form requesting to reset my (.*) account password")]
 		public void GivenICompleteTheFormRequestingToResetMyPassword(string userType)
 		{
-			_userEntity = new UserEntityFactory(userType).ConstructAndSave(_contextConfiguration.TestOutputHelper);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
+			_userEntity = new UserEntityFactory(userType).ConstructAndSave(_testOutputHelper);
+			WaitUtils.waitForPage(_driverWait);
 			_requestResetPasswordPage.SetEmailAndSubmit(_userEntity.EmailAddress);
 		}
 
@@ -73,8 +73,8 @@ namespace SeleniumTests.Steps.BotWritten.PasswordReset
 		[When(@"I follow the link and complete the reset password form")]
 		public void WhenIFollowTheLinkAndCompleteTheResetPasswordForm()
 		{
-			_contextConfiguration.WebDriver.Navigate().GoToUrl(_passwordResetEmail.Link);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
+			_driver.Navigate().GoToUrl(_passwordResetEmail.Link);
+			WaitUtils.waitForPage(_driverWait);
 			Assert.NotNull(_passwordResetEmail.Link);
 			_resetPasswordPage.EnterNewPasswordAndSubmit(_newPassword);
 		}
@@ -82,20 +82,20 @@ namespace SeleniumTests.Steps.BotWritten.PasswordReset
 		[Then(@"I expect that my old password will not log me in")]
 		public void ThenIExpectThatMyOldPasswordWillNotLogMeIn()
 		{
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
+			WaitUtils.waitForPage(_driverWait);
 			_loginPage.Login(_userEntity.EmailAddress, _userEntity.Password);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
-			Assert.Equal(_contextConfiguration.WebDriver.Url, _contextConfiguration.BaseUrl + "/login");
+			WaitUtils.waitForPage(_driverWait);
+			Assert.Equal(_driver.Url, _baseUrl + "/login");
 		}
 
 		[Then(@"I expect my new password will log me in")]
 		public void ThenIExpectMyNewPasswordWillLogMeIn()
 		{
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
+			WaitUtils.waitForPage(_driverWait);
 			_loginPage.Login(_userEntity.EmailAddress, _newPassword);
-			_contextConfiguration.WebDriverWait.Until(d => d.Manage().Cookies.AllCookies.Any(x => x.Name == "XSRF-TOKEN"));
+			_driverWait.Until(d => d.Manage().Cookies.AllCookies.Any(x => x.Name == "XSRF-TOKEN"));
 
-			var cookies = _contextConfiguration.WebDriver.Manage().Cookies;
+			var cookies = _driver.Manage().Cookies;
 			Assert.NotNull(cookies.AllCookies.FirstOrDefault(x => x.Name == "XSRF-TOKEN"));
 		}
 	}

@@ -33,8 +33,9 @@ import { ICollectionFilterPanelProps } from './CollectionFilterPanel';
 import { IOrderByCondition } from '../ModelCollection/ModelQuery';
 
 export type actionFn<T> = (model: T, event: React.MouseEvent<Element, MouseEvent>) => void;
-export type bulkActionFn<T> = (event: React.MouseEvent<Element, MouseEvent>) => void;
+export type bulkActionFn<T> = (models: T[], event: React.MouseEvent<Element, MouseEvent>) => void;
 export type expandFn<T> = (model: T) => React.ReactNode | string;
+export type showExpandFn<T> = (model: T) => boolean;
 export type actionFilterFn<T> = (item: T) => Array<ICollectionItemActionProps<T>>;
 
 export interface ICollectionActionProps<T> {
@@ -83,6 +84,10 @@ export interface ICollectionListProps<T> {
 	 * If this property exists an expand button is rendered on every row
 	 */
 	expandList?: expandFn<T>;
+	/**
+	 * A function that takes a row and returns a boolean, to determine whether to show the expand button
+	 */
+	showExpandButton?: showExpandFn<T>;
 	/** A class name for the collection */
 	className?: string;
 	/** Pass through for any props to pass to the top level section */
@@ -129,6 +134,7 @@ export interface ICollectionProps<T> extends ICollectionListProps<T> {
 	pagination?: IPaginationData;
 	/** Function to call on page change */
 	onPageChange?: () => void;
+	filterOrientationRow?: boolean;
 }
 
 /**
@@ -212,6 +218,7 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 				data-total={this.totalItems}
 				{...this.props.innerProps}>
 				<CollectionMenu
+					selectedItems={this.selectedItems}
 					search={!!this.props.onSearchTriggered}
 					filterConfig={this.props.menuFilterConfig}
 					onSearchTriggered={this.props.onSearchTriggered}
@@ -223,7 +230,9 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 					showSelectAll={this.showSelectAll}
 					onSelectAll={this.checkAllPages}
 					totalSelectedItems={this.selectedItemsCount}
-					selectedBulkActions={this.props.selectedBulkActions} />
+					selectedBulkActions={this.props.selectedBulkActions}
+					filterOrientationRow={this.props.filterOrientationRow}
+				/>
 				<this.list />
 				<this.pagination />
 			</section>
@@ -251,19 +260,21 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 	 */
 	private list = () => {
 		const collectionId = uuid.v4();
+		// % protected region % [change any classes for all collectionlists] off begin
 		const className = classNames('collection__list', `${this.props.expandList ? 'collection__list--expandable' : null}`);
+		// % protected region % [change any classes for all collectionlists] end
+		const filter = this.props.filter || (() => true);
 		return (
 			<section aria-label="collection list" className={className}>
 				<table>
-					<this.header />
+					{this.header()}
 					<tbody>
-						<this.row id={collectionId} />
+						{this.row({id: collectionId}) }
 					</tbody>
 				</table>
 			</section>
 		);
 	}
-
 	/**
 	 * The table row component
 	 * @param props Contains the id of the row
@@ -283,6 +294,7 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 							checked={this.selectedItems.some(i => isEqual(i, item))}
 							onChecked={this.onRowChecked}
 							expandAction={this.props.expandList}
+							showExpandButton={this.props.showExpandButton}
 							key={this.props.idColumn ? item[this.props.idColumn] : `${idx}-${props.id}`}
 							keyValue={this.props.idColumn ? item[this.props.idColumn] : `${idx}-${props.id}`}
 							idColumn={this.props.idColumn}

@@ -25,6 +25,19 @@ import { SERVER_URL } from 'Constants';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+export interface AuthProps extends Partial<RouteComponentProps> {
+	/** If true then don't redirect on login check failure. */
+	checkOnly?: boolean
+	/** The location that the component will redirect to on login check failure. */
+	redirectLocation?: string;
+	/** Callback on login check success. */
+	onAfterSuccess?: () => void;
+	/** Callback on login check failure. Note that if checkOnly is not set to true the user will still be redirected. */
+	onAfterError?: () => void;
+	// % protected region % [Add any extra props here] off begin
+	// % protected region % [Add any extra props here] end
+}
+
 /**
  * This component handles the requirement for a user being logged in before they can access the child components.
  *
@@ -35,9 +48,14 @@ import { SERVER_URL } from 'Constants';
  * page.
  */
 @observer
-export default class Auth extends React.Component<RouteComponentProps> {
+export default class Auth extends React.Component<AuthProps> {
+	// % protected region % [Add any extra fields here] off begin
+	// % protected region % [Add any extra fields here] end
+
 	@observable
+	// % protected region % [Override requestState here] off begin
 	private requestState: 'pending' | 'error' | 'success' = 'pending';
+	// % protected region % [Override requestState here] end
 
 	@action
 	private onSuccess = (userResult?: IUserResult) => {
@@ -46,6 +64,7 @@ export default class Auth extends React.Component<RouteComponentProps> {
 			store.setLoggedInUser(userResult);
 		}
 		this.requestState = 'success';
+		this.props.onAfterSuccess?.();
 		// % protected region % [Override onSuccess here] end
 	};
 
@@ -54,6 +73,7 @@ export default class Auth extends React.Component<RouteComponentProps> {
 		// % protected region % [Override onError here] off begin
 		store.clearLoggedInUser();
 		this.requestState = 'error';
+		this.props.onAfterError?.()
 		// % protected region % [Override onError here] end
 	}
 
@@ -74,14 +94,23 @@ export default class Auth extends React.Component<RouteComponentProps> {
 
 	public render() {
 		// % protected region % [Override contents here] off begin
+		const { location, children, redirectLocation, checkOnly } = this.props;
+		const redirect = redirectLocation ?? location?.pathname ?? store.routerHistory.location.pathname;
+
 		switch (this.requestState) {
 			case 'pending':
 				return <Spinner />;
 			case 'success':
 				return this.props.children;
 			case 'error':
-				return <Redirect to={{pathname: '/login', search: `?redirect=${this.props.location.pathname}`}} />
+				if (checkOnly) {
+					return children;
+				}
+				return <Redirect to={{pathname: '/login', search: `?redirect=${redirect}`}} />;
 		}
 		// % protected region % [Override contents here] end
 	}
+
+	// % protected region % [Add any extra functions here] off begin
+	// % protected region % [Add any extra functions here] end
 }

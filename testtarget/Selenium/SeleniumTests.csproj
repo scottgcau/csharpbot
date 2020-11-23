@@ -16,7 +16,7 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -29,6 +29,7 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 		<None Include="../API/SiteConfig.ini" Link="SiteConfig.ini" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="../API/UserConfig.ini" Link="UserConfig.ini" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="../API/BaseChoiceConfig.ini" Link="BaseChoiceConfig.ini" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="../TestDataLib/Resources/RedCircle.svg" Link="Resources/RedCircle.svg" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="../../Serverside/src/appsettings.Test.xml" CopyToOutputDirectory="Always" />
 		<None Include="SeleniumConfig.ini" CopyToOutputDirectory="Always" />
 		<None Include="xunit.runner.json" CopyToOutputDirectory="Always" />
@@ -38,21 +39,21 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 
 	<ItemGroup>
 		<PackageReference Include="dotnet-test-xunit" Version="2.2.0-preview2-build1029" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="3.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.2" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
 		<PackageReference Include="RestSharp" Version="106.6.10" />
 		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
 		<!-- % protected region % [The default web driver versions, change to suit needs] off begin -->
-		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="79.0.3945.3600" />
-		<PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.26.0" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="86.0.4240.2200" />
+		<PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.26.0.1" />
 		<!-- % protected region % [The default web driver versions, change to suit needs] end -->
 		<PackageReference Include="Selenium.Support" Version="3.141.0" />
 		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-		<PackageReference Include="SpecFlow" Version="3.1.78" />
-		<PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.78" />
-		<PackageReference Include="SpecFlow.xUnit" Version="3.1.78" />
+		<PackageReference Include="SpecFlow" Version="3.3.57" />
+		<PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.3.57" />
+		<PackageReference Include="SpecFlow.xUnit" Version="3.3.57" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.console" Version="2.4.1">
 			<PrivateAssets>all</PrivateAssets>
@@ -63,9 +64,12 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 		<!-- % protected region % [Add any further imports here] off begin -->
 		<!-- % protected region % [Add any further imports here] end -->
 	</ItemGroup>
+
+	<!-- % protected region % [Customize ItemGroup for ProjectReference here] off begin -->
 	<ItemGroup>
 		<ProjectReference Include="../API/APITests.csproj" />
 	</ItemGroup>
+	<!-- % protected region % [Customize ItemGroup for ProjectReference here] end -->
 
 	<ItemGroup>
 		<Reference Include="System.Configuration" />

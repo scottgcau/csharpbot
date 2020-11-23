@@ -28,7 +28,7 @@ export default function validate() {
 		target[Symbols.validatorMap][key].push('Unique');
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => new Promise((resolve) => {
-				if(!model[key]){
+				if(model[key] === null || model[key] === undefined){
 					resolve(null);
 					return;
 				}

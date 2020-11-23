@@ -4,7 +4,8 @@
 		" protected region % [Configure the version of dotnet here] off begin "
 	],
 	"sdk": {
-		"version": "3.0.100"
+		"version": "3.1.300",
+		"rollForward": "latestMinor"
 	},
 	"//": [
 		" protected region % [Configure the version of dotnet here] end "

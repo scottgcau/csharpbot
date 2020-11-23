@@ -23,11 +23,11 @@ using TechTalk.SpecFlow;
 namespace SeleniumTests.Steps.BotWritten.Utility
 {
 	[Binding]
-	public sealed class NavigationSteps
+	public sealed class NavigationSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public NavigationSteps (ContextConfiguration contextConfiguration)
+		public NavigationSteps (ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 		}
@@ -36,13 +36,13 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		[StepDefinition("I navigate to url (.*)")]
 		public void NavigateToUrl(string url)
 		{
-			NavigationUtils.GoToUrl(_contextConfiguration.WebDriver, _contextConfiguration.WebDriverWait, url);
+			NavigationUtils.GoToUrl(_driver, _driverWait, url);
 		}
 
 		[StepDefinition("I refresh the page")]
 		public void RefreshThePage()
 		{
-			NavigationUtils.RefreshPage(_contextConfiguration.WebDriver, _contextConfiguration.WebDriverWait);
+			NavigationUtils.RefreshPage(_driver, _driverWait);
 		}
 	}
 }

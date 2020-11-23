@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using SeleniumTests.Setup;
 using APITests.Settings;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -234,6 +233,10 @@ namespace SeleniumTests.Setup
 					WebDriver = new ChromeDriver(".", defaultOptions);
 					break;
 			}
+
+			// % protected region % [Add any additional WebDriver configuration here] off begin
+			// % protected region % [Add any additional WebDriver configuration here] end
+
 			return WebDriver;
 		}
 

@@ -14,8 +14,18 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+import * as uuid from 'uuid';
 import { observable, runInAction, computed } from 'mobx';
-import { validator as validatorSymbol, attributes as attributesSymbol, crudOptions, references as referencesSymbol, modelName as modelNameSymbol, displayName as displayNameSymbol } from 'Symbols';
+import {
+	validator as validatorSymbol,
+	attributes as attributesSymbol,
+	crudOptions,
+	references as referencesSymbol,
+	modelName as modelNameSymbol,
+	displayName as displayNameSymbol,
+	fileAttributes,
+	APPLICATION_ID,
+} from 'Symbols';
 import { store } from './Store';
 import gql from 'graphql-tag';
 import { lowerCaseFirst } from 'Util/StringUtils';
@@ -31,16 +41,30 @@ import { ICollectionFilterPanelProps } from 'Views/Components/Collection/Collect
 import _ from 'lodash';
 import co from "co";
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
+import axios from 'axios';
+import { SERVER_URL } from 'Constants';
+import { DocumentNode } from 'graphql';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
 export type jsonReplacerFn = (input: {[key: string]: any}) => {[key: string]: any};
 
-export interface IModelType {
-	new (attributes?: Partial<IModelAttributes>): Model;
+export interface QueryOptions<TVariables = { [key: string]: any }> {
+	query: DocumentNode;
+	variables?: TVariables;
+	errorPolicy?: 'none' | 'ignore' | 'all';
+	fetchResults?: boolean;
+	metadata?: any;
+	context?: any;
+	fetchPolicy?: 'cache-first' | 'network-only' | 'cache-only' | 'no-cache' | 'standby';
+	[key: string]: any;
+}
+
+export interface IModelType<T extends Model = Model> {
+	new (attributes?: Partial<IModelAttributes>): T;
 	acls?: IAcl[];
-	getOrderByField?: () => IOrderByCondition<Model> | undefined;
-	fetch<T>(variables?: IConditionalFetchArgs<T>): Promise<T[]>;
+	getOrderByField?: () => IOrderByCondition<T> | undefined;
+	fetch(variables?: IConditionalFetchArgs<T>): Promise<T[]>;
 }
 
 export interface IModelAttributes {
@@ -58,6 +82,8 @@ export interface ISaveOptions {
 	updateOptions?: SaveOption[];
 	graphQlInputType?: string;
 	jsonTransformFn?: jsonReplacerFn;
+	contentType?: 'application/json' | 'multipart/form-data';
+	files?: {attributeName: string, file: Blob}[];
 }
 
 interface IBaseFetchArgs<T> {
@@ -89,11 +115,15 @@ function initAttributes(target: any) {
 		if (!target[referencesSymbol]) {
 			target[referencesSymbol] = [];
 		}
+		if (!target[fileAttributes]) {
+			target[fileAttributes] = [];
+		}
 	}
 }
 
 export interface IAttributeOptions {
 	isReference?: boolean;
+	file?: string;
 }
 
 /**
@@ -108,8 +138,10 @@ export function attribute(options?: IAttributeOptions) {
 		initAttributes(target);
 
 		// Add to the attributes array for any attributes
-		if (options && options.isReference === true) {
+		if (options?.isReference) {
 			target[referencesSymbol].push(key);
+		} else if (options?.file) {
+			target[fileAttributes].push({name: key, blob: options.file});
 		} else {
 			target[attributesSymbol].push(key);
 		}
@@ -136,6 +168,7 @@ export interface IAttributeGroup {
 	id: number;
 	name: string;
 	order: number;
+	showName?: boolean;
 }
 
 export class Model implements IModelAttributes {
@@ -146,6 +179,11 @@ export class Model implements IModelAttributes {
 
 	public static excludeFromCreate: string[] = [];
 	public static excludeFromUpdate: string[] = [];
+
+	/**
+	 * Client only id for identifying entities before they are sent up to the server
+	 */
+	public _clientId = uuid.v4();
 
 	/* The default order by field when the collection is loaded */
 	public get orderByField(): IOrderByCondition<Model> | undefined {
@@ -195,7 +233,17 @@ export class Model implements IModelAttributes {
 		return [];
 	}
 
+	/**
+	 * Graphql query fragment that is always included when fetching this entity
+	 */
 	public defaultExpands = '';
+
+	/**
+	 * Graphql query fragment that is only included when fetched from the crud list.
+	 * This normally does not contain any references.
+	 * This field will not be used when defaultExpands is used.
+	 */
+	public listExpands = '';
 
 	public attributeGroups?: IAttributeGroup[];
 
@@ -362,7 +410,7 @@ export class Model implements IModelAttributes {
 					});
 				} else {
 					if(!!this[reference]){
-						if(typeof (this[reference] as Model).clearErrors == 'function') {
+						if(typeof (this[reference] as Model).clearErrors === 'function') {
 							(this[reference] as Model).clearErrors();
 						}
 					}
@@ -433,10 +481,44 @@ export class Model implements IModelAttributes {
 					}
 			}
 		}
+
+		for (const file of this.files) {
+			const fileBlob = this[file.blob];
+			if (fileBlob instanceof Blob) {
+				json[file.name] = uuid.v5(`${this._clientId}.${file.name}`, APPLICATION_ID);
+			} else if (this[file.name]) {
+				json[file.name] = this[file.name];
+			}
+		}
+
 		if (replacer) {
 			return replacer(json);
 		}
 		return json;
+	}
+
+	public getFiles(
+		path: {} = {},
+		excludeCrudFields = false,
+		result: { attributeName: string, file: Blob }[] = []):
+		{ attributeName: string, file: Blob }[] {
+
+		for (const file of this.files) {
+			const fileBlob = this[file.blob];
+			if (fileBlob instanceof Blob) {
+				result.push({attributeName: uuid.v5(`${this._clientId}.${file.name}`, APPLICATION_ID), file: fileBlob});
+			}
+		}
+
+		const referenceKeys = Object.keys(path);
+		for (const key of referenceKeys) {
+			const referenceObj = this[key];
+			if (referenceObj instanceof Model) {
+				referenceObj.getFiles(path[key], excludeCrudFields, result);
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -454,27 +536,40 @@ export class Model implements IModelAttributes {
 	/*
 	 * Gets all attributes for the model
 	 */
-	public get attributes() {
+	public get attributes(): string[] {
 		return [...this[attributesSymbol]];
 	}
 
-	public get references() {
+	public get references(): string[] {
 		return [...this[referencesSymbol]];
 	}
 
-	public static getAttributes() {
+	public get files(): {name: string, blob: string}[] {
+		return [...this[fileAttributes]];
+	}
+
+	public static getAttributes(): string[] {
 		return this.prototype[attributesSymbol];
 	}
 
-	public static getReferences() {
+	public static getReferences(): string[] {
 		return this.prototype[referencesSymbol];
 	}
 
-	public static async fetch<T>(variables?: IConditionalFetchArgs<T>, expendString?: string): Promise<T[]> {
+	public static getFiles(): {name: string, blob: string}[] {
+		return this.prototype[fileAttributes];
+	}
+
+	public static async fetch<T>(
+		variables?: IConditionalFetchArgs<T>,
+		expendString?: string,
+		apolloOptions?: Partial<QueryOptions<{[key: string]: any}>>,
+		useListExpands?: boolean): Promise<T[]> {
 		const { data } = await store.apolloClient.query({
-			query: getFetchAllConditional(this, expendString),
+			query: getFetchAllConditional(this, expendString, useListExpands),
 			variables: variables,
 			fetchPolicy: 'network-only',
+			...apolloOptions
 		});
 		return data[lowerCaseFirst(getModelName(this)) + 's'].map((r: any) => new this(r));
 	}
@@ -484,17 +579,19 @@ export class Model implements IModelAttributes {
 	 * @param expandString A graphql subquery for this entity
 	 * @param operationName The name of the graphql operation. Will default to the model name
 	 * @param queryName The name of the query query to run
+	 * @param useListExpands Should the query only use the list query expands
 	 */
-	public getFetchWithExpands(expandString: string, operationName?: string, queryName?: string) {
+	public getFetchWithExpands(expandString: string, operationName?: string, queryName?: string, useListExpands?: boolean) {
 		queryName = queryName || lowerCaseFirst(this.getModelName()) + 's';
 		const modelsName = operationName || queryName;
 
 		return gql`
 			query ${modelsName}($args: [WhereExpressionGraph], $skip:Int, $take:Int, $orderBy: [OrderByGraph], $ids: [ID] ) {
 				${modelsName}: ${queryName}(where: $args, skip:$skip, take:$take, orderBy: $orderBy, ids: $ids) {
-					${this.attributes.join('\n')}
-					${this.defaultExpands}
 					${expandString}
+					${this.attributes.join('\n')}
+					${useListExpands ? this.listExpands : this.defaultExpands}
+					${this.files.map(f => f.name).join('\n')}
 				}
 				count${this.getModelName()}s(where: $args) {
 					number
@@ -502,6 +599,7 @@ export class Model implements IModelAttributes {
 			}`;
 	}
 
+	// % protected region % [Customize fetchAllQuery method here] off begin
 	/*
 	 * Gets all models
 	 */
@@ -512,7 +610,7 @@ export class Model implements IModelAttributes {
 			query ${modelsName}($args: [WhereExpressionGraph], $skip:Int, $take:Int, $orderBy: [OrderByGraph], $ids: [ID] ) {
 				${modelsName}s(where: $args, skip:$skip, take:$take, orderBy: $orderBy, ids: $ids) {
 					${this.attributes.join('\n')}
-					${this.defaultExpands}
+					${this.files.map(f => f.name).join('\n')}
 					${this.defaultExpands}
 				}
 				count${this.getModelName()}s(where: $args) {
@@ -520,6 +618,7 @@ export class Model implements IModelAttributes {
 				}
 			}`;
 	}
+	// % protected region % [Customize fetchAllQuery method here] end
 
 	/*
 	 * Gets all models
@@ -532,6 +631,7 @@ export class Model implements IModelAttributes {
 			query ${modelsName} {
 				${modelsName} {
 					${this.attributes.join('\n')}
+					${this.files.map(f => f.name).join('\n')}
 					${this.defaultExpands}
 				}
 			}`;
@@ -654,9 +754,11 @@ export class Model implements IModelAttributes {
 	 * @param options
 	 */
 	public async save(relationPath: {} = {}, options: ISaveOptions = {}) {
-		const variables = options.options ? options.options : [];
-		const createOptions = options.createOptions ? options.createOptions : [];
-		const updateOptions = options.updateOptions ? options.updateOptions : [];
+		const variables = options.options ?? [];
+		const createOptions = options.createOptions ?? [];
+		const updateOptions = options.updateOptions ?? [];
+		const contentType = options.contentType ?? 'application/json';
+		const files = options.files ?? [];
 
 		// Before we save, we run this overwriteable method.
 		this.beforeSave();
@@ -679,26 +781,55 @@ export class Model implements IModelAttributes {
 			mutation ${functionName}($${modelsName}:${graphQlInputType}${variables.map(v => `,$${v.key}:${v.graphQlType}`).join(',')}) {
 				${functionName}(${modelsName}s: $${modelsName}${variables.map(v => `,${v.key}: $${v.key}`)}) {
 					${this.attributes.join('\n')}
+					${this.files.map(f => f.name).join('\n')}
 				}
-			}`;
+			}` as DocumentNode;
 
-		return store.apolloClient
-			.mutate({
-				mutation: mutation,
-				variables: {
-					[modelsName]: [jsonModel],
-					...variables.reduce((a, n) => ({[n.key]: n.value, ...a}), {})
-				},
-				update: (cache, results) => {
+		const queryVariables = {
+			[modelsName]: [jsonModel],
+			...variables.reduce((a, n) => ({[n.key]: n.value, ...a}), {})
+		};
 
-				},
-			})
-			.then((response) => {
-				const data = response.data[functionName][0];
-				runInAction(() => {
-					this.assignAttributes(data);
+		switch (contentType) {
+			case 'application/json':
+				return store.apolloClient
+					.mutate({
+						mutation: mutation,
+						variables: queryVariables,
+						update: (cache, results) => {
+
+						},
+					})
+					.then((response) => {
+						const data = response.data[functionName][0];
+						runInAction(() => {
+							this.assignAttributes(data);
+						});
+					});
+			case 'multipart/form-data':
+				const data = new FormData();
+				data.append('variables', JSON.stringify(queryVariables));
+				data.append('operationName', functionName);
+				data.append('query', mutation.loc?.source.body ?? '');
+
+				for (const file of this.getFiles(relationPath, true)) {
+					data.append(file.attributeName, file.file);
+				}
+
+				return axios({
+					method: 'POST',
+					url: `${SERVER_URL}/api/graphql`,
+					data: data,
+				}).then((response) => {
+					const data = response.data.data[functionName][0];
+					runInAction(() => {
+						this.assignAttributes(data);
+					});
 				});
-			});
+			default:
+				return Promise.reject("Invalid content type");
+
+		}
 	}
 
 	public beforeSave() {
@@ -775,10 +906,17 @@ export class Model implements IModelAttributes {
 				.filter(filter => filter.active)
 				.flatMap(filter => {
 					if (filter.comparison === 'range') {
-						return [
-							{ ...filter, path: filter.path, comparison: 'greaterThanOrEqual' as Comparators, value1: filter.value1 },
-							{ ...filter, path: filter.path, comparison: 'lessThanOrEqual' as Comparators, value1: filter.value2 }
-						];
+						if (filter.displayType === 'datepicker') {
+							return [
+								{ ...filter, path: filter.path, comparison: 'greaterThanOrEqual' as Comparators, value1: filter.value1 },
+								{ ...filter, path: filter.path, comparison: 'lessThanOrEqual' as Comparators, value1: moment(filter.value2 as Date).add('day', 1).format('YYYY-MM-DD')}
+							];
+						} else {
+							return [
+								{ ...filter, path: filter.path, comparison: 'greaterThanOrEqual' as Comparators, value1: filter.value1 },
+								{ ...filter, path: filter.path, comparison: 'lessThanOrEqual' as Comparators, value1: filter.value2 }
+							];
+						}
 					}
 					else {
 						return [filter];
@@ -801,4 +939,7 @@ export class Model implements IModelAttributes {
 		}
 		return undefined;
 	}
+
+	// % protected region % [Add additional methods here] off begin
+	// % protected region % [Add additional methods here] end
 }

@@ -146,6 +146,7 @@ namespace Sportstats.Services
 		private EmailAccount EmailAccount { get; }
 
 		/// <inheritdoc />
+		// % protected region % [Configure SendEmail method here] off begin
 		public async Task<bool> SendEmail(EmailEntity emailToSend)
 		{
 			var to = emailToSend.To;
@@ -194,12 +195,21 @@ namespace Sportstats.Services
 
 			//send email
 			ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallBack;
-			var smtp = new SmtpClient();
+			using var smtp = new SmtpClient
+			{
+				UseDefaultCredentials = false,
+				Credentials = new NetworkCredential(EmailAccount.Username, EmailAccount.Password),
+				Host = EmailAccount.Host,
+				EnableSsl = EmailAccount.EnableSsl
+			};
+
+			if (EmailAccount.Port > 0) smtp.Port = EmailAccount.Port;
+
 			smtp.UseDefaultCredentials = false;
 			smtp.Credentials = new NetworkCredential(EmailAccount.Username, EmailAccount.Password);
 			smtp.Host = EmailAccount.Host;
 			smtp.EnableSsl = EmailAccount.EnableSsl;
-			
+
 			if (EmailAccount.Port > 0) smtp.Port = EmailAccount.Port;
 
 			if (EmailAccount.SaveToLocalFile)
@@ -212,6 +222,7 @@ namespace Sportstats.Services
 
 			return true;
 		}
+		// % protected region % [Configure SendEmail method here] end
 
 		private bool CertificateValidationCallBack(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{

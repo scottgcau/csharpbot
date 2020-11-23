@@ -33,6 +33,7 @@ namespace Sportstats.Services
 			_antiforgery = antiforgery;
 		}
 
+		// % protected region % [customize exchange signature] off begin
 		public void AddXsrfToken(HttpContext context)
 		{
 			if (string.IsNullOrEmpty(context.User.Identity.Name))
@@ -54,6 +55,8 @@ namespace Sportstats.Services
 					Expires = new DateTimeOffset(date, TimeSpan.FromHours(0))
 				});
 		}
+		// % protected region % [customize exchange signature] end
+
 
 		public void AddXsrfToken(HttpContext context, ClaimsPrincipal userClaim)
 		{

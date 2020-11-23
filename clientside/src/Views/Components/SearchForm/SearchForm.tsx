@@ -41,6 +41,10 @@ export interface ISearchProps {
 	 * Clicking this button is counted as a submission, not a change
 	 */
 	clickToClear?: boolean;
+	/**
+	 * Any extra react nodes to be rendered in the form 
+	 */
+	extraNodes?: React.ReactNode;
 }
 
 /**
@@ -72,6 +76,7 @@ export default class SearchForm extends React.Component<ISearchProps> {
 					onAfterChange={this.onChange}
 					clickToClear={this.props.clickToClear}
 					onClickToClear={this.onClickToClear} />
+				{this.props.extraNodes}
 				<Button display={Display.Solid} type='submit'>
 					Go
 				</Button>

@@ -19,6 +19,8 @@ import { observer } from 'mobx-react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { PageWrapper } from 'Views/Components/PageWrapper/PageWrapper';
 import { store } from '../../../Models/Store';
+import Card from '../../Components/Card/Card';
+import CardGroup from '../../Components/Card/CardGroup';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -29,8 +31,53 @@ export default class AdminPage extends React.Component<RouteComponentProps> {
 		// % protected region % [Override contents here] off begin
 		return (
 			<PageWrapper {...this.props}>
-				<div>
-					<h2>Admin Section</h2>
+				<div className={'dashboard'}>
+					<div className={'dashboard-heading'}>
+						<h2>Admin Dashboard</h2>
+						<p>Welcome to the admin section. Get started on the home page by going to a featured lesson or
+							straight to <a href={'https://codebots.app/academy'} target={'_blank'}>Codebots Academy</a></p>
+					</div>
+					<div className={'dashboard-cards'}>
+						<CardGroup>
+							<Card 
+								href={'/admin/graphiql'}
+								rounded={true} 
+								iconOnly={true}
+								icon={'icon-globe'}>
+								<h4>View GraphiQL</h4>
+								<p>View the GraphiQL developer tool to write your api requests.</p>
+							</Card>
+							<Card
+								href={'/api/swagger'}
+								icon={'icon-git-merge'}
+								iconOnly={true}
+								rounded={true}>
+								<h4>View OpenAPI</h4>
+								<p>View the app's swagger docs and the structure of the API.</p>
+							</Card>
+						</CardGroup>
+						<CardGroup>
+							<Card
+								href={'https://codebots.app/app-settings-and-details/git'}
+								icon={'icon-api'}
+								iconOnly={true}
+								rounded={true}>
+								<h4>View Git</h4>
+								<p>Access your source code by cloning from your git repository.</p>
+							</Card>
+							<Card 
+								href={'https://codebots.app/academy'}
+								className={'card--learn-more'} 
+								rounded={true}>
+								<h4>Want to learn more?</h4>
+								<p>Codebots academy has a variety of lessons and courses that can help you build your
+									app.</p>
+								<div className="planet planet--primary"/>
+								<div className="planet planet--secondary"/>
+								<div className="planet--sub"/>
+							</Card>
+						</CardGroup>
+					</div>
 				</div>
 			</PageWrapper>
 		);

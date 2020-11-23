@@ -16,6 +16,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -23,6 +24,8 @@ using System.Threading.Tasks;
 using Sportstats.Graphql.Types;
 using Sportstats.Models;
 using Sportstats.Models.RegistrationModels;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Services.Interfaces
 {
@@ -54,10 +57,12 @@ namespace Sportstats.Services.Interfaces
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="model">The model to be created</param>
 		/// <param name="options">Any extra option to pass to create</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>A graphql execution result</returns>
 		Task<T> Create<T>(
 			T model,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new();
 		
 		/// <summary>
@@ -66,10 +71,12 @@ namespace Sportstats.Services.Interfaces
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="models">The model to be created</param>
 		/// <param name="options">Any extra option to pass to create</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>A graphql execution result</returns>
 		Task<ICollection<T>> Create<T>(
 			ICollection<T> models,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new();
 
 		/// <summary>
@@ -78,10 +85,12 @@ namespace Sportstats.Services.Interfaces
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="model">The model to update</param>
 		/// <param name="options">Extra options to be passed in for the update</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>The model after it has been updated</returns>
 		Task<T> Update<T>(
 			T model,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new();
 
 		/// <summary>
@@ -90,10 +99,12 @@ namespace Sportstats.Services.Interfaces
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="models">The model to update</param>
 		/// <param name="options">Extra options to be passed in for the update</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>The model after it has been updated</returns>
 		Task<ICollection<T>> Update<T>(
 			ICollection<T> models,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new();
 
 		/// <summary>
@@ -101,8 +112,9 @@ namespace Sportstats.Services.Interfaces
 		/// </summary>
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="id">The id of the model to be deleted</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>A graphql execution result</returns>
-		Task<Guid> Delete<T>(Guid id)
+		Task<Guid> Delete<T>(Guid id, CancellationToken cancellation = default)
 			where T : class, IAbstractModel;
 
 		/// <summary>
@@ -110,8 +122,9 @@ namespace Sportstats.Services.Interfaces
 		/// </summary>
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="ids">The id of the model to be deleted</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>A graphql execution result</returns>
-		Task<ICollection<Guid>> Delete<T>(List<Guid> ids)
+		Task<ICollection<Guid>> Delete<T>(List<Guid> ids, CancellationToken cancellation = default)
 			where T : class, IAbstractModel;
 
 		/// <summary>
@@ -120,10 +133,12 @@ namespace Sportstats.Services.Interfaces
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="models">The IQueryable to find the models to be queried</param>
 		/// <param name="updateMemberInitExpression">The update expression</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>A graphql execution result</returns>
 		Task<BooleanObject> ConditionalUpdate<T>(
 			IQueryable<T> models,
-			MemberInitExpression updateMemberInitExpression)
+			MemberInitExpression updateMemberInitExpression,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new();
 
 		/// <summary>
@@ -131,56 +146,41 @@ namespace Sportstats.Services.Interfaces
 		/// </summary>
 		/// <typeparam name="T">The type of the model</typeparam>
 		/// <param name="models">The IQueryable to find the models to be deleted</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <returns>A graphql execution result</returns>
-		Task<BooleanObject> ConditionalDelete<T>(IQueryable<T> models) where T : class, IOwnerAbstractModel, new();
+		Task<BooleanObject> ConditionalDelete<T>(
+			IQueryable<T> models,
+			CancellationToken cancellation = default)
+			where T : class, IOwnerAbstractModel, new();
 
 		/// <summary>
 		/// Creates a user entity
 		/// </summary>
 		/// <param name="models">The registration models for the users to create</param>
 		/// <param name="options">Any extra option to pass to create</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
 		/// <typeparam name="TModel">The type of the user to create</typeparam>
 		/// <typeparam name="TRegisterModel">The registration type of the user to create</typeparam>
 		/// <returns>A list of created users</returns>
 		/// <exception cref="AggregateException">On Validation or registration error</exception>
 		Task<ICollection<User>> CreateUser<TModel, TRegisterModel>(
 			ICollection<TRegisterModel> models,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where TModel : User, IOwnerAbstractModel, new()
 			where TRegisterModel : IRegistrationModel<TModel>;
 
 		/// <summary>
-		/// Exports a collection of entities as a collection of strings
+		/// Gets a file from a storage provider, respecting security
 		/// </summary>
-		/// <typeparam name="TModel">The type of the database model</typeparam>
-		/// <typeparam name="TModelDto">The type of the DTO for the database model</typeparam>
-		/// <param name="queryable">The queryable to export data from</param>
-		/// <param name="cancellation">A cancellation token</param>
-		/// <param name="exportHeaders">Should the headers be exported</param>
-		/// <param name="openDelimiter">The opening delimiter for a value</param>
-		/// <param name="closeDelimiter">The closing delimiter for a value</param>
-		/// <param name="separator">The separator to insert between values</param>
-		/// <returns>A collection of strings that can be joined on new lines to form a CSV</returns>
-		Task<IEnumerable<string>> Export<TModel, TModelDto>(
-			IQueryable<TModel> queryable,
-			CancellationToken cancellation = default,
-			bool exportHeaders = true,
-			string openDelimiter = "\"",
-			string closeDelimiter = "\"",
-			string separator = ",")
-			where TModelDto : ModelDto<TModel>, new();
+		/// <param name="id">The id of the file to retrieve</param>
+		/// <param name="cancellation">The cancellation token for this operation</param>
+		/// <returns>A task that evaluates to a file</returns>
+		/// <exception cref="FileNotFoundException">If the file could not be found</exception>
+		/// <exception cref="UnauthorizedAccessException">If the user does not have access to view the file</exception>
+		Task<UploadFile> GetFile(Guid id, CancellationToken cancellation = default);
 
-		/// <summary>
-		/// Exports an entity as a csv. This is a wrapper for the export function
-		/// </summary>
-		/// <typeparam name="TModel">The type of the model to export</typeparam>
-		/// <typeparam name="TModelDto"></typeparam>
-		/// <param name="queryable">The queryable to export data from</param>
-		/// <param name="cancellation">A cancellation token</param>
-		/// <returns></returns>
-		Task<string> ExportAsCsv<TModel, TModelDto>(
-			IQueryable<TModel> queryable,
-			CancellationToken cancellation = default)
-			where TModelDto : ModelDto<TModel>, new();
+		// % protected region % [Add extra ICrudServide methods here] off begin
+		// % protected region % [Add extra ICrudServide methods here] end
 	}
 }

@@ -18,10 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using APITests.Setup;
+using APITests.Utils;
 using EntityObject.Enums;
 using Microsoft.EntityFrameworkCore;
 using SportstatsDBContext = Sportstats.Models.SportstatsDBContext;
 using RestSharp;
+// % protected region % [Custom imports] off begin
+// % protected region % [Custom imports] end
 
 namespace APITests.EntityObjects.Models
 {
@@ -34,22 +37,24 @@ namespace APITests.EntityObjects.Models
 		public ReferenceType Type { get; set; }
 		public ReferenceType OppositeType { get; set; }
 	}
+
 	public class Attribute
 	{
 		public string Name { get; set; }
 		public bool IsRequired { get; set;}
 	}
+
 	public abstract class BaseEntity
 	{
 		public abstract void Configure(ConfigureOptions option);
 		public abstract Guid Save();
-		public abstract Dictionary<string, string> toDictionary();
+		public abstract Dictionary<string, string> ToDictionary();
 		public abstract List<Guid> GetManyToManyReferences (string reference);
 		public abstract void SetReferences (Dictionary<string, ICollection<Guid>> entityReferences);
 		public abstract string GetInvalidAttribute(string attribute, string validator);
-		public abstract JsonObject toJson();
+		public abstract RestSharp.JsonObject ToJson();
 		public abstract (int min, int max) GetLengthValidatorMinMax(string attribute);
-		public abstract ICollection<(List<string> expectedErrors, JsonObject jsonObject)> GetInvalidMutatedJsons();
+		public abstract ICollection<(List<string> expectedErrors, RestSharp.JsonObject jsonObject)> GetInvalidMutatedJsons();
 		public ICollection<Reference> References = new List<Reference>();
 		public ICollection<Attribute> Attributes = new List<Attribute>();
 		public ICollection<BaseEntity> ParentEntities = new List<BaseEntity>();
@@ -58,11 +63,39 @@ namespace APITests.EntityObjects.Models
 		public DateTime Modified = DateTime.Now;
 		public Dictionary<string, Guid?> ReferenceIdDictionary { get; set;} = new Dictionary<string, Guid?>();
 		public string EntityName { get; set; }
+		public virtual bool HasFile { get; set; } = false;
+		private readonly StartupTestFixture _configure = new StartupTestFixture();
+
+		internal Guid SaveThroughGraphQl(BaseEntity model)
+		{
+			var api = new WebApi(_configure);
+			var query = QueryBuilder.CreateEntityQueryBuilder(new List<BaseEntity>{model});
+			api.ConfigureAuthenticationHeaders();
+			
+			if (model is IFileContainingEntity fileContainingEntity)
+			{
+				var headers = new Dictionary<string, string>{{"Content-Type", "multipart/form-data"}};
+				var files = fileContainingEntity.GetFiles().Where(file => file != null);;
+				var param = new Dictionary<string, object>
+				{
+					{"operationName", query["operationName"]},
+					{"variables", query["variables"]},
+					{"query", query["query"]}
+				};
+				
+				api.Post($"/api/graphql", param, headers, DataFormat.None, files);
+				return Id;
+			}
+			api.Post($"/api/graphql", query);
+			return Id;
+		}
 
 		internal Guid SaveToDB<T>(T model) where T : class, Sportstats.Models.IOwnerAbstractModel
 		{
 			var configure = new StartupTestFixture();
+			// % protected region % [Adjust the db context if required] off begin
 			var context = new SportstatsDBContext(configure.DbContextOptions, null, null);
+			// % protected region % [Adjust the db context if required] end
 			model.Owner = configure.SuperOwnerId;
 			var dbSet = context.GetDbSet<T>(typeof(T).Name);
 			dbSet.Update(model);
@@ -76,6 +109,7 @@ namespace APITests.EntityObjects.Models
 			context.Dispose();
 			return model.Id;
 		}
+
 		public enum ConfigureOptions
 		{
 			CREATE_ATTRIBUTES_AND_REFERENCES,

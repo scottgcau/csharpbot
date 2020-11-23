@@ -21,6 +21,8 @@ using Sportstats.Graphql.Types;
 using Sportstats.Models;
 using GraphQL.Types;
 using Microsoft.EntityFrameworkCore;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Graphql.Fields
 {
@@ -34,6 +36,7 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateCountQuery<TModel>()
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateCountQuery here] off begin
 			return async context =>
 			{
 				// Fetch the models that we need
@@ -46,6 +49,7 @@ namespace Sportstats.Graphql.Fields
 
 				return new NumberObject {Number = await models.CountAsync()};
 			};
+			// % protected region % [Override CreateCountQuery here] end
 		}
 
 		/// <summary>
@@ -57,6 +61,7 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateConditionalCountQuery<TModel>()
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateConditionalCountQuery here] off begin
 			return async context =>
 			{
 				// Fetch the models that we need
@@ -69,6 +74,7 @@ namespace Sportstats.Graphql.Fields
 
 				return new NumberObject {Number = await models.CountAsync()};
 			};
+			// % protected region % [Override CreateConditionalCountQuery here] end
 		}
 	}
 }

@@ -29,7 +29,7 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.Forms
 {
 	[Binding]
-	public sealed class FormsSubmissionSteps
+	public sealed class FormsSubmissionSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private readonly FormsLandingPage _formsLandingPage;
@@ -38,7 +38,7 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 		private string _questionName;
 		private string _slideName;
 
-		public FormsSubmissionSteps(ContextConfiguration contextConfiguration)
+		public FormsSubmissionSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			_formsLandingPage = new FormsLandingPage(contextConfiguration);
@@ -65,37 +65,40 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 			_formsBuildPage.CreateNewSlide(_slideName);
 			_formsBuildPage.CreateNewQuestion(_questionName);
 			_formsBuildPage.SaveAndPublishButton.Click();
-			
+			_driverWait.Until(x => x.Url.EndsWith("/admin/forms"));
+
 			// Link to submission tile
-			var formTileUrl = $"{_contextConfiguration.BaseUrl}/admin/{formEntityName}formtileentity/create";
-			_contextConfiguration.WebDriver.Navigate().GoToUrl(formTileUrl);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait, formTileUrl);
+			var formTileUrl = $"{_baseUrl}/admin/{formEntityName}formtileentity/create";
+			_driver.Navigate().GoToUrl(formTileUrl);
+			WaitUtils.waitForPage(_driverWait, formTileUrl);
 			var createFormTile = new GenericEntityEditPage(formEntityName.RemoveWordsSpacing(), _contextConfiguration);
 			var createFormTilePage = _entityDetailFactory.CreateDetailSection($"{formEntityName.RemoveWordsSpacing()}FormTileEntity");
 			createFormTilePage.SetInputElement("Tile", tileName);
 
-			var formIdInput = createFormTilePage.GetInputElement("FormId").FindElement(By.TagName("input"));
-			formIdInput.SendKeys(formEntity.toDictionary()["name"]);
+			var formIdElement = createFormTilePage.GetInputElement("FormId");
+			var formIdInput = formIdElement.FindElement(By.TagName("input"));
+			formIdInput.SendKeys(formEntity.ToDictionary()["name"]);
+			_driverWait.Until(x => !formIdElement.GetAttribute("class").Contains("loading"));
 			formIdInput.SendKeys(Keys.Return);
 
 			createFormTile.SubmitButton.Click();
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait, $"{_contextConfiguration.BaseUrl}/admin/forms");
+			WaitUtils.waitForPage(_driverWait, $"{_baseUrl}/admin/forms");
 		}
 
 		[StepDefinition(@"I expect to be able to submit a (.*) form on the (.*) page")]
 		public void IExpectToBeAbleToSubmitAFormEntity(string formEntityName, string formPageName)
 		{
 			// Navigate to page
-			var formSubmissionUrl = $"{_contextConfiguration.BaseUrl}/{formPageName}";
-			_contextConfiguration.WebDriver.Navigate().GoToUrl(formSubmissionUrl);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait, formSubmissionUrl);
+			var formSubmissionUrl = $"{_baseUrl}/{formPageName}";
+			_driver.Navigate().GoToUrl(formSubmissionUrl);
+			WaitUtils.waitForPage(_driverWait, formSubmissionUrl);
 
 			// Check the contents are correct
 			var submissionPage = new FormsSubmissionPage(_contextConfiguration);
 			submissionPage.OpenFormButton.Click();
 			Assert.True(submissionPage.SlideExists(_slideName));
 			Assert.True(submissionPage.QuestionExists(_questionName));
-			
+
 			// Complete the submission
 			var answer = Guid.NewGuid().ToString();
 			submissionPage.AnswerTextQuestion(_questionName, answer);

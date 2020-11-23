@@ -14,6 +14,7 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+using System;
 using System.Collections.Generic;
 using Sportstats.Models;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,7 @@ namespace Sportstats.Security
 		public SportstatsDBContext DbContext { get; set; }
 		public UserManager<User> UserManager { get; set; }
 		public IList<string> Groups { get; set; }
+		public IServiceProvider ServiceProvider { get; set; }
 		// % protected region % [Add any security context objects here] off begin
 		// % protected region % [Add any security context objects here] end
 	}

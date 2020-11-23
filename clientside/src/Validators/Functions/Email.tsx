@@ -24,7 +24,7 @@ export default function validate() {
 		target[Symbols.validatorMap][key].push('Email');
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => new Promise((resolve) => {
-				if(!model[key]){
+				if(model[key] === null || model[key] === undefined){
 					resolve(null);
 				}else{
 					resolve(isEmail(model[key])

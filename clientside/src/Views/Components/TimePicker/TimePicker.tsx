@@ -16,7 +16,9 @@
  */
 import * as React from 'react';
 import { observer } from 'mobx-react';
+// % protected region % [Override flatpicker theme here] off begin
 import 'flatpickr/dist/themes/material_green.css'
+// % protected region % [Override flatpicker theme here] end
 import { DateTimePicker, IDateTimePickerProps } from '../DateTimePicker/DateTimePicker';
 
 /** TimePicker-specific properties. Extend as necessary. */
@@ -31,11 +33,11 @@ export interface ITimePickerProps<T> extends IDateTimePickerProps<T> {}
 export class TimePicker<T> extends React.Component<ITimePickerProps<T>> {
 
 	public render() {
-		
+
 		return (
 			<DateTimePicker
-				/* The two options below are only applied if the humanReadable 
-				 * property is set to true on Component instantiation. 
+				/* The two options below are only applied if the humanReadable
+				 * property is set to true on Component instantiation.
 				 * Displays the time in 12hr format. Default is 24hr. */
 				altFormat="h:i K"
 				dateFormat="H:i"

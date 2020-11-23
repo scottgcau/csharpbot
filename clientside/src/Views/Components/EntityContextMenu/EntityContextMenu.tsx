@@ -23,6 +23,7 @@ import { MenuItemEventHandler } from 'react-contexify/lib/types';
 export interface IEntityContextMenuItemActionProps<T> extends IContextMenuItemProps {
 	/** Callback function on click with entity */
 	onEntityClick: (args: MenuItemEventHandler, entity: T) => any;
+	condition?: (model: T) => boolean; 
 }
 
 interface IEntityContextMenuItemGroup<T> extends IContextMenuItemGroup {
@@ -43,9 +44,9 @@ export class EntityContextMenu<T> extends React.Component<IEntityContextMenuProp
 			<ContextMenu
 				{...this.props}
 				actions={
-					this.props.actions.map(this.tranformAction)
+					this.props.actions.filter(action => (isItemGroup(action) ? true : action.condition?.(this.props.entity) ?? true)).map(this.tranformAction)
 				}
-			></ContextMenu>
+			/>
 		);
 	}
 

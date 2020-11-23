@@ -69,7 +69,7 @@ namespace Sportstats.Utility
 				}
 				catch (AntiforgeryValidationException exception)
 				{
-					_logger.LogInformation("Invalid antiforgery request " + exception.Message, exception);
+					_logger.LogInformation("Invalid antiforgery request {Message}", exception.Message, exception);
 					context.Result = new AntiforgeryValidationFailedResult();
 				}
 			}

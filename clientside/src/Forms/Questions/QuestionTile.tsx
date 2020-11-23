@@ -14,16 +14,27 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import * as React from 'react';
-import {Form, Question} from '../Schema/Question';
+import React, { Component, ReactNode } from 'react';
+import { observable, computed, action } from 'mobx';
+import { observer } from 'mobx-react';
+
+import { Form, Question, ShowConditions, Validators } from '../Schema/Question';
+import CheckDisplayConditions from '../Conditions/ConditionUtils';
+import { buildValidationErrorMessage } from '../Validators/ValidationUtils';
+import { QuestionComponent } from 'Forms/Questions/QuestionComponent';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export interface QuestionTileOptionsProps {
 	schema: Form;
 	question: Question;
+	// % protected region % [Add extra question tile options props here] off begin
+	// % protected region % [Add extra question tile options props here] end
 }
 
 export interface IQuestionTile {
-	isConditionSatisfied: boolean;
+	// % protected region % [Add extra question tile methods here] off begin
+	// % protected region % [Add extra question tile methods here] end
 }
 
 export interface IQuestionTileProps<T> extends Question {
@@ -31,4 +42,78 @@ export interface IQuestionTileProps<T> extends Question {
 	schema: Form;
 	isReadOnly?: boolean;
 	disableShowConditions?: boolean;
+	title: string;
+	validators?: Validators;
+	toolTip?: string;
+	showConditions?: ShowConditions;
+	reValidate?: boolean;
+	selectedQuestion?: typeof QuestionComponent;
+	// % protected region % [Add extra question tile props here] off begin
+	// % protected region % [Add extra question tile props here] end
+}
+
+// % protected region % [Add any further Question Tile exports] off begin
+@observer
+export class QuestionTile<T> extends Component<IQuestionTileProps<T>> {
+	// Used for checking if any custom show logic
+	// Currently there is no way to set show logic in the UI
+	@observable
+	private validationErrors: string[] = [];
+	
+	@computed
+	public get isConditionSatisfied(): boolean {
+		const {
+			showConditions, disableShowConditions, model, schema,
+		} = this.props;
+
+		if (showConditions !== undefined && !disableShowConditions) {
+			return showConditions.every(condition => { return CheckDisplayConditions(condition, model, schema); });
+		}
+		
+		return true;
+	}
+
+	@computed
+	public get validationError() {
+		const {
+			validators, model, schema, disableValidation, 
+		} = this.props;
+		
+		return buildValidationErrorMessage(validators, model, schema, disableValidation);
+	}
+	
+	protected getErrorMessages(): string[] {
+		const { reValidate } = this.props;
+
+		if (reValidate && (this.validationErrors !== [])) {
+			return this.validationError;
+		} 
+		
+		return this.validationErrors;
+	}
+
+	@action
+	public isValidationSatisfied = (): void => {
+		const {
+			validators, model, schema, disableValidation,
+		} = this.props;
+
+		this.validationErrors = buildValidationErrorMessage(validators, model, schema, disableValidation);
+	};
+
+	public render(): ReactNode {
+		const errors: string[] = this.getErrorMessages();
+		const SelectedQuestion = this.props.selectedQuestion;
+
+		if (this.isConditionSatisfied) {
+			return (
+				<>
+					{SelectedQuestion && <SelectedQuestion checkValidation={this.isValidationSatisfied} {...this.props} />}
+					{errors.length !== 0 ? <p className="question__error">{errors.join('\n')}</p> : '' }
+				</>
+			);
+		}
+		
+		return <></>;
+	}
 }

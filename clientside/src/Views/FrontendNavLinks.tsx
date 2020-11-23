@@ -16,6 +16,7 @@
  */
 import { ILink } from 'Views/Components/Navigation/Navigation';
 import { RouteComponentProps } from 'react-router';
+import { store } from 'Models/Store';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -35,8 +36,9 @@ export function getFrontendNavLinks(pageProps: RouteComponentProps): ILink[][] {
 		],
 		[
 			// % protected region % [Customise bottom nav section here] off begin
-			{label: "Logout", path: '/logout', icon: "logout", iconPos: 'icon-left'}
+			{label: "Login", path: '/login', icon: "login", iconPos: 'icon-left', shouldDisplay: () => !store.loggedIn},
+			{label: "Logout", path: '/logout', icon: "room", iconPos: 'icon-left', shouldDisplay: () => store.loggedIn}
 			// % protected region % [Customise bottom nav section here] end
-		]
+		],
 	];
 }

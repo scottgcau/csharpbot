@@ -68,7 +68,7 @@ export class FormVersionTile extends React.Component<IFormVersionTileProps> {
 					</div>
 					<div className='form-item__footer'>
 						{/* this.formItemVersions() */}
-						{/* <Button className="icon-more-horizontal icon-right"/> */}
+						{/* <Button className="icon-more-horizontal icon-only icon-right"/> */}
 					</div>
 				</div>
 			</Link>

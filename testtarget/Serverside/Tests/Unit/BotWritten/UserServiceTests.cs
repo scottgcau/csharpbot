@@ -18,228 +18,171 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using AutoFixture;
+using Sportstats.Exceptions;
 using Sportstats.Models;
 using Sportstats.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+using ExpectedObjects;
+using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using MockQueryable.Moq;
 using Moq;
+using ServersideTests.Mocks;
+using TestDataLib;
 using Xunit;
-using Microsoft.EntityFrameworkCore.Query.Internal;
+
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace ServersideTests.Tests.Unit.BotWritten
 {
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Unit")]
 	public class UserServiceTests
 	{
-		[Fact(Skip = "Needs update to mocking")]
-		public async Task testUserAsync()
+		private readonly Fixture _fixture;
+		private readonly User _testUser;
+		private readonly MockUserManager _mockUserManager;
+		private readonly Mock<RoleManager<Group>> _mockRoleManager;
+		private readonly IList<string> _groupListNames;
+
+		public UserServiceTests()
 		{
-			var mockIdentityOptions = new Mock<IOptions<IdentityOptions>>();
+			_fixture = new Fixture();
 
-			var mockUserManager = new Mock<UserManager<User>>(
-					new Mock<IUserStore<User>>().Object,
-					new Mock<IOptions<IdentityOptions>>().Object,
-					new Mock<IPasswordHasher<User>>().Object,
-					new IUserValidator<User>[0],
-					new IPasswordValidator<User>[0],
-					new Mock<ILookupNormalizer>().Object,
-					new Mock<IdentityErrorDescriber>().Object,
-					new Mock<IServiceProvider>().Object,
-					new Mock<ILogger<UserManager<User>>>().Object);
-
-			var user = new User();
-			user.Email = "test@example.com";
-			user.UserName = "test@example.com";
-			IList<string> testList = new List<string>();
-			testList.Add("BBB");
-			testList.Add("ZZZ");
-			testList.Add("AAA");
-
-			//IQueryable<Group> groupList = (IQueryable<Group>)new List<Group>();
-			var group = new Group();
-			group.Name = "Fake Group";
-
-			//var data = new List<Group>() { group }.AsQueryable();
-
-			var data = new List<Group>
+			// create a user by setting creating
+			_testUser = new User
 			{
-				new Group { Name = "BBB" },
-				new Group { Name = "ZZZ" },
-				new Group { Name = "AAA" },
-			}.AsQueryable();
+				UserName = _fixture.Create("Username"),
+				Email = DataUtils.RandEmail()
+			};
+
+			_mockUserManager = MockUserManager.GetMockUserManager();
+			_mockRoleManager = MockRoleManager.GetMockRoleManager();
 
 
-			var mockSet = new Mock<DbSet<Group>>();
-			mockSet.As<IAsyncEnumerable<Group>>()
-				.Setup(m => m.GetAsyncEnumerator(default))
-				.Returns(new TestAsyncEnumerator<Group>(data.GetEnumerator()));
-
-
-
-			mockSet.As<IQueryable<Group>>()
-			   .Setup(m => m.Provider)
-			   .Returns(new TestAsyncQueryProvider<Group>(data.Provider));
-
-			mockSet.As<IQueryable<Group>>().Setup(m => m.Expression).Returns(data.Expression);
-			mockSet.As<IQueryable<Group>>().Setup(m => m.ElementType).Returns(data.ElementType);
-			mockSet.As<IQueryable<Group>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-
-			mockUserManager.Setup(x => x.GetRolesAsync(user)).Returns(Task.FromResult(testList));
-
-
-			//mockRoleManager
-			#region Mocked Items
-			//var roleName = mockUserManager.Setup(x => x.GetRolesAsync(user)).Returns(Task.FromResult(testList));
-			//mockRoleManager.Setup(x => x.Roles.Where(role => testList.Contains(role.Name))).Returns(groupList);
-
-
-			var mockIHttpContextAccessor = new Mock<IHttpContextAccessor>();
-
-
-			var mockEmailAccount = new Mock<IOptions<EmailAccount>>();
-			var mockEmailService = new Mock<EmailService>(mockEmailAccount.Object);
-
-			var mockIConfiguration = new Mock<IConfiguration>();
-
-			var mockPrincipalCLaims = new Mock<IUserClaimsPrincipalFactory<User>>().Object;
-			var mockOptionsAccessor = new Mock<IOptions<Microsoft.AspNetCore.Identity.IdentityOptions>>().Object;
-			var mockILogger = new Mock<ILogger<Microsoft.AspNetCore.Identity.SignInManager<User>>>().Object;
-			var MockAuthScheme = new Mock<IAuthenticationSchemeProvider>().Object;
-
-			var mockSignInManager = new Mock<SignInManager<User>>(mockUserManager.Object, mockIHttpContextAccessor.Object, mockPrincipalCLaims, mockOptionsAccessor, mockILogger, MockAuthScheme);
-
-			var mockIRoleStore = new Mock<IRoleStore<IdentityRole>>().Object;
-			var mockIEnumerable = new Mock<IEnumerable<IRoleValidator<IdentityRole>>>().Object;
-			var mockILookupNormalizer = new Mock<ILookupNormalizer>().Object;
-			var mockIdentityErrorDescriber = new Mock<IdentityErrorDescriber>().Object;
-			var mockIRoleLogger = new Mock<ILogger<RoleManager<IdentityRole>>>().Object;
-
-			#endregion
-			var mockRoleManager = new Mock<RoleManager<Group>>(
-					new Mock<IRoleStore<Group>>().Object,
-					new IRoleValidator<Group>[0],
-					new Mock<ILookupNormalizer>().Object,
-					new Mock<IdentityErrorDescriber>().Object,
-					new Mock<ILogger<RoleManager<Group>>>().Object);
-
-			mockRoleManager.Setup(x => x.Roles).Returns(mockSet.Object);
-
-
-			var userService = new UserService(
-				mockIdentityOptions.Object,
-				mockSignInManager.Object,
-				mockUserManager.Object,
-				mockIHttpContextAccessor.Object,
-				mockRoleManager.Object,
-				mockEmailService.Object,
-				mockIConfiguration.Object);
-
-			var result = await userService.GetUser(user);
-			var h = result.Groups;
-		}
-	}
-
-	internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
-	{
-		private readonly IQueryProvider _inner;
-
-		internal TestAsyncQueryProvider(IQueryProvider inner)
-		{
-			_inner = inner;
+			var testGroupListName = _fixture.Create("Group");
+			_groupListNames = new List<string> { testGroupListName };
 		}
 
-		public IQueryable CreateQuery(Expression expression)
+		// % protected region % [Customize UserServiceGetUserTest here] off begin
+		/// <summary>
+		/// Attempt to get a user
+		/// </summary>
+		[Fact]
+		public async void UserServiceGetUserTest()
 		{
-			return new TestAsyncEnumerable<TEntity>(expression);
+			//arrange
+			var testGroups = _groupListNames.Select(x => new Group { Name = x });
+			var mockTestGroups = testGroups.AsQueryable().BuildMock();
+
+			_mockUserManager.Setup(x => x.GetRolesAsync(_testUser)).Returns(Task.FromResult(_groupListNames));
+			_mockRoleManager.Setup(x => x.Roles).Returns(mockTestGroups.Object);
+
+			var userService =
+				MockUserService.GetMockUserService(
+					signInManager: MockSignInManager.GetMockSignInManager(userManager: _mockUserManager.Object).Object,
+					userManager: _mockUserManager.Object,
+					roleManager: _mockRoleManager.Object
+				).Object;
+
+			// act
+			var result = await userService.GetUser(_testUser);
+
+			// assert
+			result.Groups
+				.Should()
+				.HaveCount(testGroups.Count());
+
+			result.Groups.Select(x => x.Name).Should().Equal(_groupListNames);
+
+			Assert.Equal(_testUser.UserName, result.Email);
 		}
+		// % protected region % [Customize UserServiceGetUserTest here] end
 
-		public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+		// % protected region % [Customize UserServiceRegisterDuplicateUserTest here] off begin
+		/// <summary>
+		/// Attempt to create a user which is already in the system,
+		/// should return a duplicate user exception
+		/// </summary>
+		[Fact]
+		public void UserServiceRegisterDuplicateUserTest()
 		{
-			return new TestAsyncEnumerable<TElement>(expression);
-		}
-
-		public object Execute(Expression expression)
-		{
-			return _inner.Execute(expression);
-		}
-
-		public TResult Execute<TResult>(Expression expression)
-		{
-			return _inner.Execute<TResult>(expression);
-		}
-
-		public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
-		{
-			return new TestAsyncEnumerable<TResult>(expression);
-		}
-
-		public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-		{
-			return Task.FromResult(Execute<TResult>(expression));
-		}
-
-		TResult IAsyncQueryProvider.ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken) => throw new NotImplementedException();
-	}
-
-	internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
-	{
-		public TestAsyncEnumerable(IEnumerable<T> enumerable)
-			: base(enumerable)
-		{ }
-
-		public TestAsyncEnumerable(Expression expression)
-			: base(expression)
-		{ }
-
-		public IAsyncEnumerator<T> GetEnumerator()
-		{
-			return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
-		}
-
-		public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-		IQueryProvider IQueryable.Provider
-		{
-			get { return new TestAsyncQueryProvider<T>(this); }
-		}
-	}
-
-	internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
-	{
-		private readonly IEnumerator<T> _inner;
-
-		public TestAsyncEnumerator(IEnumerator<T> inner)
-		{
-			_inner = inner;
-		}
-
-		public void Dispose()
-		{
-			_inner.Dispose();
-		}
-
-		public T Current
-		{
-			get
+			// arrange
+			// create a registration model with same email as the test user
+			var registrationModel = new RegisterModel
 			{
-				return _inner.Current;
-			}
-		}
+				Email = _testUser.Email,
+				Password = _fixture.Create<string>(),
+				Groups = _groupListNames
+			};
 
-		public Task<bool> MoveNext(CancellationToken cancellationToken)
+			_mockUserManager
+				.Setup(x => x.FindByEmailAsync(_testUser.Email))
+				.Returns(Task.FromResult(_testUser));
+
+			var userService =
+				MockUserService.GetMockUserService(
+					signInManager: MockSignInManager.GetMockSignInManager(userManager: _mockUserManager.Object).Object,
+					userManager: _mockUserManager.Object,
+					roleManager: _mockRoleManager.Object
+				).Object;
+
+			// act
+			Func<Task> act = async () =>
+				await userService.RegisterUser(registrationModel, _groupListNames);
+
+			// assert
+			act.Should().Throw<DuplicateUserException>();
+		}
+		// % protected region % [Customize UserServiceRegisterDuplicateUserTest here] end
+
+		// % protected region % [Customize UserServiceRegisterUserTest here] off begin
+		/// <summary>
+		/// Attempt to create a user successfully,
+		/// should return a duplicate user exception
+		/// </summary>
+		[Fact]
+		public async void UserServiceRegisterUserTest()
 		{
-			return Task.FromResult(_inner.MoveNext());
-		}
+			// arrange
+			var mockedResult = new MockIdentityResult().MockResultSuccession(true);
 
-		public ValueTask<bool> MoveNextAsync() => throw new NotImplementedException();
-		public ValueTask DisposeAsync() => throw new NotImplementedException();
+			var testPassword = _fixture.Create<string>();
+
+			// create a registration model with same email as the test user
+			var registrationModel = new RegisterResult
+			{
+				Result = mockedResult,
+				User = _testUser
+			};
+
+			_mockUserManager
+				.Setup(x => x.CreateAsync(_testUser, testPassword))
+				.Returns(Task.FromResult((IdentityResult)mockedResult));
+
+			var usersList = new List<User> { _testUser };
+
+			var mockUsers = usersList.AsQueryable().BuildMock();
+			_mockUserManager.Setup(x => x.Users).Returns(mockUsers.Object);
+
+			var userService =
+				MockUserService.GetMockUserService(
+					signInManager: MockSignInManager.GetMockSignInManager(userManager: _mockUserManager.Object).Object,
+					userManager: _mockUserManager.Object,
+					roleManager: _mockRoleManager.Object
+				).Object;
+
+			// act
+			var result = await userService.RegisterUser(_testUser, testPassword, _groupListNames);
+
+			// assert
+			registrationModel.ToExpectedObject().ShouldMatch(result);
+		}
+		// % protected region % [Customize UserServiceRegisterUserTest here] end	
+	
+		// % protected region % [Add any additional tests here] off begin
+		// % protected region % [Add any additional tests here] end
 	}
 }

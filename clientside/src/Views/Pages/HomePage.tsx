@@ -25,20 +25,40 @@ import { getFrontendNavLinks } from 'Views/FrontendNavLinks';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+// % protected region % [Customise class signature and class properties] off begin
 @observer
 export default class HomePage extends React.Component<RouteComponentProps> {
+// % protected region % [Customise class signature and class properties] end
+
 	// % protected region % [Add class properties here] off begin
 	// % protected region % [Add class properties here] end
 
 	public render() {
 		// % protected region % [Customise the page here] off begin
+		const {
+			history, location, match, staticContext,
+		} = this.props;
+
 		const navigationLinks = getFrontendNavLinks(this.props);
 
-		let contents = (
+		const contents = (
 			<SecuredPage>
-				<Navigation linkGroups={navigationLinks} orientation={Orientation.VERTICAL} {...this.props} />
+				<Navigation
+					linkGroups={navigationLinks}
+					orientation={Orientation.VERTICAL}
+					match={match}
+					location={location}
+					history={history}
+					staticContext={staticContext}
+				/>
+
 				<div className="body-content">
-					<HomeWrappingTileTile {...this.props} />
+					<HomeWrappingTileTile
+						history={history}
+						location={location}
+						match={match}
+						staticContext={staticContext}
+					/>
 				</div>
 			</SecuredPage>
 		);

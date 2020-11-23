@@ -31,6 +31,7 @@ namespace Sportstats.Services.Interfaces
 {
 	public interface IUserService
 	{
+		// % protected region % [Customise CheckCredentials signature here] off begin
 		/// <summary>
 		/// Check the username and password of a user.
 		/// </summary>
@@ -41,6 +42,7 @@ namespace Sportstats.Services.Interfaces
 		/// <returns>On success returns the user object, on failure throws an exception</returns>
 		/// <exception cref="InvalidUserPasswordException">On the username or password being invalid</exception>
 		Task<User> CheckCredentials(string username, string password, bool lockoutOnFailure = true, bool validateEmailConfirmation = true);
+		// % protected region % [Customise CheckCredentials signature here] end
 
 		/// <summary>
 		/// Confirm an email for a user
@@ -65,6 +67,8 @@ namespace Sportstats.Services.Interfaces
 		/// <returns>Task containing boolean indicating success</returns>
 		Task<bool> DeleteUser(Guid id);
 
+
+		// % protected region % [customize exchange signature] off begin
 		/// <summary>
 		/// Creates a authentication ticket to identify a user
 		/// </summary>
@@ -73,6 +77,7 @@ namespace Sportstats.Services.Interfaces
 		/// <exception cref="InvalidUserPasswordException">Thrown when an invalid username or password is provided</exception>
 		/// <exception cref="InvalidGrantTypeException">Thrown when an invalid OpenId grant type is provided</exception>
 		Task<AuthenticationTicket> Exchange(OpenIdConnectRequest request);
+		// % protected region % [customize exchange signature] end
 
 		/// <summary>
 		/// Gets a user result from a given claims principal
@@ -128,12 +133,14 @@ namespace Sportstats.Services.Interfaces
 		/// <returns>An identity result indicating the success of the operation</returns>
 		Task<RegisterResult> RegisterUser(User user, string password, IEnumerable<string> groups, bool sendRegisterEmail = false);
 
+		// % protected region % [customize sendpassportresetemail signature] off begin
 		/// <summary>
 		/// Sends a reset password email to a user
 		/// </summary>
 		/// <param name="user">The user to reset the password of</param>
 		/// <returns>True if the email was successfully sent</returns>
 		Task<bool> SendPasswordResetEmail(User user);
+		// % protected region % [customize sendpassportresetemail signature] end
 
 		/// <summary>
 		/// updates a new user

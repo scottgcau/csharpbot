@@ -42,11 +42,14 @@ interface ITextAreaProps<T> {
 	placeholder?: string;
 	errors?: string | string[];
 	onAfterChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+	onChangeAndBlur?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 @observer
 export class TextArea<T> extends React.Component<ITextAreaProps<T>, any> {
 	private uuid = uuid.v4();
+	public textAreaInput = React.createRef<HTMLTextAreaElement>();
+	private valueWhenFocused: string = '';
 
 	public render() {
 		const { model, modelProperty, name, className, displayType, label, isRequired, isDisabled, isReadOnly, staticInput, tooltip, subDescription, placeholder, errors } = this.props;
@@ -63,15 +66,24 @@ export class TextArea<T> extends React.Component<ITextAreaProps<T>, any> {
 					id={fieldId}
 					value={this.props.model[this.props.modelProperty] || ''}
 					onChange={this.onChange}
+					onBlur={this.onBlur}
+					onFocus={this.onFocus}
 					placeholder={this.props.placeholder}
 					disabled={isDisabled}
 					readOnly={staticInput || isReadOnly}
 					aria-label={ariaLabel}
 					aria-describedby = {ariaDescribedby}
+					ref={this.textAreaInput}
 					{...this.props.textAreaProps}
 				/>
 			</InputWrapper>
 		);
+	}
+
+	public focus = () => {
+		if(this.textAreaInput.current){
+			this.textAreaInput.current.focus();
+		}
 	}
 
 	@action
@@ -87,5 +99,17 @@ export class TextArea<T> extends React.Component<ITextAreaProps<T>, any> {
 		if (this.props.onAfterChange) {
 			this.props.onAfterChange(event);
 		}
+	}
+
+	@action
+	private onBlur = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+		if(this.valueWhenFocused !== event.target.value && this.props.onChangeAndBlur){
+			this.props.onChangeAndBlur(event);
+		}
+	}
+	
+	@action
+	private onFocus = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+		this.valueWhenFocused = event.target.value;
 	}
 }

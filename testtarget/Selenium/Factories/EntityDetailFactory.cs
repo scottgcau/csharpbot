@@ -45,8 +45,28 @@ namespace SeleniumTests.Factories
 		{
 			return entityName switch
 			{
-				"SportentityEntity" => new SportentityEntityDetailSection(_contextConfiguration, (SportentityEntity) entity),
-				"SportentitySubmissionEntity" => new SportentitySubmissionEntityDetailSection(_contextConfiguration, (SportentitySubmissionEntity) entity),
+				"ScheduleEntity" => new ScheduleEntityDetailSection(_contextConfiguration, (ScheduleEntity) entity),
+				"SeasonEntity" => new SeasonEntityDetailSection(_contextConfiguration, (SeasonEntity) entity),
+				"VenueEntity" => new VenueEntityDetailSection(_contextConfiguration, (VenueEntity) entity),
+				"GameEntity" => new GameEntityDetailSection(_contextConfiguration, (GameEntity) entity),
+				"SportEntity" => new SportEntityDetailSection(_contextConfiguration, (SportEntity) entity),
+				"LeagueEntity" => new LeagueEntityDetailSection(_contextConfiguration, (LeagueEntity) entity),
+				"TeamEntity" => new TeamEntityDetailSection(_contextConfiguration, (TeamEntity) entity),
+				"PersonEntity" => new PersonEntityDetailSection(_contextConfiguration, (PersonEntity) entity),
+				"RosterEntity" => new RosterEntityDetailSection(_contextConfiguration, (RosterEntity) entity),
+				"RosterassignmentEntity" => new RosterassignmentEntityDetailSection(_contextConfiguration, (RosterassignmentEntity) entity),
+				"ScheduleSubmissionEntity" => new ScheduleSubmissionEntityDetailSection(_contextConfiguration, (ScheduleSubmissionEntity) entity),
+				"SeasonSubmissionEntity" => new SeasonSubmissionEntityDetailSection(_contextConfiguration, (SeasonSubmissionEntity) entity),
+				"VenueSubmissionEntity" => new VenueSubmissionEntityDetailSection(_contextConfiguration, (VenueSubmissionEntity) entity),
+				"GameSubmissionEntity" => new GameSubmissionEntityDetailSection(_contextConfiguration, (GameSubmissionEntity) entity),
+				"SportSubmissionEntity" => new SportSubmissionEntityDetailSection(_contextConfiguration, (SportSubmissionEntity) entity),
+				"LeagueSubmissionEntity" => new LeagueSubmissionEntityDetailSection(_contextConfiguration, (LeagueSubmissionEntity) entity),
+				"TeamSubmissionEntity" => new TeamSubmissionEntityDetailSection(_contextConfiguration, (TeamSubmissionEntity) entity),
+				"PersonSubmissionEntity" => new PersonSubmissionEntityDetailSection(_contextConfiguration, (PersonSubmissionEntity) entity),
+				"RosterSubmissionEntity" => new RosterSubmissionEntityDetailSection(_contextConfiguration, (RosterSubmissionEntity) entity),
+				"RosterassignmentSubmissionEntity" => new RosterassignmentSubmissionEntityDetailSection(_contextConfiguration, (RosterassignmentSubmissionEntity) entity),
+				"SportEntityFormTileEntity" => new SportEntityFormTileEntityDetailSection(_contextConfiguration, (SportEntityFormTileEntity) entity),
+				"RosterTimelineEventsEntity" => new RosterTimelineEventsEntityDetailSection(_contextConfiguration, (RosterTimelineEventsEntity) entity),
 				_ => throw new Exception($"Cannot find entity type {entityName}"),
 			};
 		}

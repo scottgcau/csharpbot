@@ -26,6 +26,8 @@ export interface IModalProps {
 	label: string;
 	/** The classname for the modal */
 	className?: string;
+	/** The classname for the modal overlay */
+	overlayClassName?: string;
 	/** Function that will be run after the modal has opened. */
 	onAfterOpen?: () => void;
 	/** Function that will be run after the modal has closed. */
@@ -57,7 +59,7 @@ export default class Modal extends React.Component<IModalProps> {
 		return (
 			<ReactModal
 				className={classNames('modal-content', this.props.className)}
-				overlayClassName={'modal-container'}
+				overlayClassName={classNames('modal-container', this.props.overlayClassName)}
 				portalClassName={classNames('portal', store.appLocation)}
 				appElement={modalElement}
 				isOpen={this.props.isOpen}

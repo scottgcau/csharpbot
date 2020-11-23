@@ -22,10 +22,14 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
+
 namespace Sportstats.Services.CertificateProvider
 {
 	public class CertificateSetting
 	{
+		// % protected region % [Customise CertificateSetting fields here] off begin
 		/// <summary>
 		/// The name of the certificate file
 		/// </summary>
@@ -42,10 +46,17 @@ namespace Sportstats.Services.CertificateProvider
 		/// The JwtBearer Audience
 		/// </summary>
 		public string JwtBearerAudience { get; set; }
+		// % protected region % [Customise CertificateSetting fields here] end
+
+		// % protected region % [Add any additional CertificateSetting fields here] off begin
+		// % protected region % [Add any additional CertificateSetting fields here] end
 	}
 
 	public abstract class BaseCertificateProvider: ICertificateProvider
 	{
+		// % protected region % [Add any additional fields here] off begin
+		// % protected region % [Add any additional fields here] end
+
 		public BaseCertificateProvider(CertificateSetting certSetting)
 		{
 			CertificateSetting = certSetting;
@@ -54,5 +65,8 @@ namespace Sportstats.Services.CertificateProvider
 		protected CertificateSetting CertificateSetting { get; }
 
 		public abstract X509Certificate2 ReadX509SigningCert();
+
+		// % protected region % [Add any BaseCertificateProvider methods here] off begin
+		// % protected region % [Add any BaseCertificateProvider methods here] end
 	}
 }

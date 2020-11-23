@@ -32,10 +32,18 @@ namespace SeleniumTests.PageObjects.CRUDPageObject
 			_modalOnPage = new ModalOnPage(contextConfiguration);
 		}
 
-		public IWebElement DeleteButton => ListElement.FindElement(By.XPath(".//*[contains(@class,'icon-bin-full')]"));
-		public IWebElement EditButton => ListElement.FindElement(By.XPath(".//*[contains(@class,'icon-edit')]"));
-		public IWebElement SelectCheckbox => ListElement.FindElement(By.XPath(".//td[@class='select-box']//input"));
-		public IWebElement ViewButton => ListElement.FindElement(By.XPath(".//*[contains(@class,'icon-look')]"));
+		public readonly By DeleteButtonBy = By.XPath(".//*[contains(@class,'icon-bin-full')]");
+		public IWebElement DeleteButton => ListElement.FindElement(DeleteButtonBy);
+		public readonly By EditButtonBy = By.XPath(".//*[contains(@class,'icon-edit')]");
+		public IWebElement EditButton => ListElement.FindElement(EditButtonBy);
+		public readonly By SelectCheckboxBy = By.XPath(".//td[@class='select-box']//input");
+		public IWebElement SelectCheckbox => ListElement.FindElement(SelectCheckboxBy);
+		public readonly By ViewButtonBy = By.XPath(".//*[contains(@class,'icon-look')]");
+		public IWebElement ViewButton => ListElement.FindElement(ViewButtonBy);
+		public readonly By MoreButtonBy = By.XPath(".//*[contains(@class,'icon-more-horizontal')]");
+		public IWebElement MoreButton => ListElement.FindElement(MoreButtonBy);
+		public readonly By TimelineButtonBy = By.XPath("//button[.='View timeline']");
+		public IWebElement TimelineButton => driver.FindElement(TimelineButtonBy);
 
 		public void SelectItem(bool select)
 		{

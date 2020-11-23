@@ -20,5 +20,5 @@ Feature: Login Invalid
 Scenario: Login Invalid
 Given I login to the site with username nouser and password failedpassword then I expect login failure
 
-# % protected region % [Add any addition tests here] off begin
-# % protected region % [Add any addition tests here] end
+# % protected region % [Add any additional tests here] off begin
+# % protected region % [Add any additional tests here] end

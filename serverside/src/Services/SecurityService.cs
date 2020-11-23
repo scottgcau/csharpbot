@@ -25,6 +25,7 @@ using Sportstats.Security;
 using Sportstats.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Sportstats.Services
 {
@@ -60,10 +61,21 @@ namespace Sportstats.Services
 		private const bool ALLOW_DEFAULT = false;
 
 		private readonly UserManager<User> _userManager;
+		private readonly IServiceProvider _serviceProvider;
 
-		public SecurityService(UserManager<User> userManager)
+		// % protected region % [Add any additional fields here] off begin
+		// % protected region % [Add any additional fields here] end
+
+		public SecurityService(
+			// % protected region % [Add any constructor arguments here] off begin
+			// % protected region % [Add any constructor arguments here] end
+			UserManager<User> userManager,
+			IServiceProvider serviceProvider)
 		{
 			_userManager = userManager;
+			_serviceProvider = serviceProvider;
+			// % protected region % [Add any constructor logic here] off begin
+			// % protected region % [Add any constructor logic here] end
 		}
 
 		/// <summary>
@@ -73,15 +85,19 @@ namespace Sportstats.Services
 		/// <param name="identityService">The identity service to fetch the user from</param>
 		/// <param name="userManager">A userManager to pass to the ACLs</param>
 		/// <param name="dbContext">A dbContext to pass to the ACLs</param>
+		/// <param name="serviceProvider">Service provider to pass to the ACLs</param>
 		/// <typeparam name="TModel">The type of the model to add security to</typeparam>
 		/// <returns>An expression that can be user for the where condition of a linq query</returns>
 		public static Expression<Func<TModel, bool>> CreateSecurityFilter<TModel>(
 			DATABASE_OPERATION operation,
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where TModel : IOwnerAbstractModel, new()
 		{
+
+			// % protected region % [Customise CreateSecurityFilter logic here] off begin
 			identityService.RetrieveUserAsync().Wait();
 			var model = new TModel();
 			var userGroups = identityService.Groups;
@@ -104,6 +120,7 @@ namespace Sportstats.Services
 					DbContext = dbContext,
 					UserManager = userManager,
 					Groups = identityService.Groups,
+					ServiceProvider = serviceProvider,
 				};
 				IEnumerable<Expression<Func<TModel, bool>>> acls = null;
 				switch (operation)
@@ -115,7 +132,7 @@ namespace Sportstats.Services
 						acls = userModelAcls.Select(acl => acl.GetUpdateConditions<TModel>(identityService.User, securityContext));
 						break;
 					case DATABASE_OPERATION.DELETE:
-						acls = userModelAcls.Select(acl => acl.GetUpdateConditions<TModel>(identityService.User, securityContext));
+						acls = userModelAcls.Select(acl => acl.GetDeleteConditions<TModel>(identityService.User, securityContext));
 						break;
 					default:
 						break;
@@ -129,6 +146,7 @@ namespace Sportstats.Services
 			var replacer = new ParameterReplacer(param);
 
 			return Expression.Lambda<Func<TModel, bool>>(replacer.Visit(filter), param);
+			// % protected region % [Customise CreateSecurityFilter logic here] end
 		}
 
 		/// <summary>
@@ -137,15 +155,17 @@ namespace Sportstats.Services
 		/// <param name="identityService"></param>
 		/// <param name="userManager">A userManager to pass to the ACLs</param>
 		/// <param name="dbContext">A dbContext to pass to the ACLs</param>
+		/// <param name="serviceProvider">Service provider to pass to the ACLs</param>
 		/// <typeparam name="TModel">The type of the model to add security to</typeparam>
 		/// <returns>An expression that can be used for the where condition of a linq query</returns>
 		public static Expression<Func<TModel, bool>> CreateReadSecurityFilter<TModel>(
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where TModel : IOwnerAbstractModel, new()
 		{
-			return CreateSecurityFilter<TModel>(DATABASE_OPERATION.READ, identityService, userManager, dbContext);
+			return CreateSecurityFilter<TModel>(DATABASE_OPERATION.READ, identityService, userManager, dbContext, serviceProvider);
 		}
 
 		/// <summary>
@@ -154,15 +174,17 @@ namespace Sportstats.Services
 		/// <param name="identityService"></param>
 		/// <param name="userManager">A userManager to pass to the ACLs</param>
 		/// <param name="dbContext">A dbContext to pass to the ACLs</param>
+		/// <param name="serviceProvider">Service provider to pass to the ACLs</param>
 		/// <typeparam name="TModel">The type of the model to add security to</typeparam>
 		/// <returns>An expression that can be used for the where condition of a linq query</returns>
 		public static Expression<Func<TModel, bool>> CreateUpdateSecurityFilter<TModel>(
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where TModel : IOwnerAbstractModel, new()
 		{
-			return CreateSecurityFilter<TModel>(DATABASE_OPERATION.UPDATE, identityService, userManager, dbContext);
+			return CreateSecurityFilter<TModel>(DATABASE_OPERATION.UPDATE, identityService, userManager, dbContext, serviceProvider);
 		}
 
 		/// <summary>
@@ -171,26 +193,30 @@ namespace Sportstats.Services
 		/// <param name="identityService"></param>
 		/// <param name="userManager">A userManager to pass to the ACLs</param>
 		/// <param name="dbContext">A dbContext to pass to the ACLs</param>
+		/// <param name="serviceProvider">Service provider to pass to the ACLs</param>
 		/// <typeparam name="TModel">The type of the model to add security to</typeparam>
 		/// <returns>An expression that can be used for the where condition of a linq query</returns>
 		public static Expression<Func<TModel, bool>> CreateDeleteSecurityFilter<TModel>(
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where TModel : IOwnerAbstractModel, new()
 		{
-			return CreateSecurityFilter<TModel>(DATABASE_OPERATION.DELETE, identityService, userManager, dbContext);
+			return CreateSecurityFilter<TModel>(DATABASE_OPERATION.DELETE, identityService, userManager, dbContext, serviceProvider);
 		}
 
 		public async Task<List<string>> CheckDbSecurityChanges(IIdentityService identityService, SportstatsDBContext dbContext)
 		{
+			// % protected region % [Customise CheckDbSecurityChanges logic here] off begin
 			await identityService.RetrieveUserAsync();
 
 			var securityContext = new SecurityContext
 			{
 				DbContext = dbContext,
 				UserManager = _userManager,
-				Groups = identityService.Groups
+				Groups = identityService.Groups,
+				ServiceProvider = _serviceProvider,
 			};
 
 			return dbContext.ChangeTracker
@@ -226,7 +252,7 @@ namespace Sportstats.Services
 					{
 						if (!ALLOW_DEFAULT)
 						{
-							modelErrors.Add("No applicable schemes for this group");
+							modelErrors.Add($"No applicable schemes for this group on the model '{model.GetType()}'");
 						}
 
 						return modelErrors;
@@ -245,13 +271,9 @@ namespace Sportstats.Services
 					// For each type of mutation call the rule on the acls that is applicable to that model
 					foreach (var state in entityStates)
 					{
-						// We will always have at least one entry and all entries are the same type so fetch the acl
-						// from the first model
-						var acls = state.Entities.First().Acls.ToList();
-
 						// Construct a list of auth functions to iterate over
 						var authFunctionList = new List<Func<User, IEnumerable<IAbstractModel>, SecurityContext, bool>>();
-						AddAuthFunctions(authFunctionList, acls, state.State);
+						AddAuthFunctions(authFunctionList, schemes, state.State);
 
 						// Iterate over each of the auth functions, and work out weather we have permissions to do this
 						// operation. Permissions are additive so we can use a bitwise or to represent the adding of
@@ -283,6 +305,7 @@ namespace Sportstats.Services
 					list.AddRange(pair.Value);
 					return list;
 				});
+			// % protected region % [Customise CheckDbSecurityChanges logic here] end
 		}
 
 		/// <summary>
@@ -340,9 +363,14 @@ namespace Sportstats.Services
 		/// <param name="user">The user trying to access the entity</param>
 		/// <param name="groups">The groups that the user belongs to</param>
 		/// <param name="operation"> The database operation the user is trying to perform  </param>
+		/// <param name="serviceProvider">Service provider to pass to the ACLs</param>
 		/// <typeparam name="TModel">The entity model the user wishes to read</typeparam>
 		/// <returns>An expression that can be used for the where condition of a linq query</returns>
-		public static Expression<Func<User, bool>> GetAggregatedUserModelAcls<TModel>(User user, IList<string> groups, DATABASE_OPERATION operation)
+		public static Expression<Func<User, bool>> GetAggregatedUserModelAcls<TModel>(
+			User user, 
+			IList<string> groups, 
+			DATABASE_OPERATION operation,
+			IServiceProvider serviceProvider)
 			where TModel : IOwnerAbstractModel, new()
 		{
 			var groupAcls = new TModel().Acls.Where(a => groups.Contains(a.Group));
@@ -351,13 +379,31 @@ namespace Sportstats.Services
 			switch (operation)
 			{
 				case DATABASE_OPERATION.READ:
-					operationAcls = groupAcls.Select(acl => acl.GetReadConditions<User>(user, new SecurityContext()));
+					operationAcls = groupAcls.Select(acl => acl.GetReadConditions<User>(user, new SecurityContext
+					{
+						Groups = groups,
+						DbContext = serviceProvider.GetRequiredService<SportstatsDBContext>(),
+						ServiceProvider = serviceProvider,
+						UserManager = serviceProvider.GetRequiredService<UserManager<User>>(),
+					}));
 					break;
 				case DATABASE_OPERATION.UPDATE:
-					operationAcls = groupAcls.Select(acl => acl.GetUpdateConditions<User>(user, new SecurityContext()));
+					operationAcls = groupAcls.Select(acl => acl.GetUpdateConditions<User>(user, new SecurityContext
+					{
+						Groups = groups,
+						DbContext = serviceProvider.GetRequiredService<SportstatsDBContext>(),
+						ServiceProvider = serviceProvider,
+						UserManager = serviceProvider.GetRequiredService<UserManager<User>>(),
+					}));
 					break;
 				case DATABASE_OPERATION.DELETE:
-					operationAcls = groupAcls.Select(acl => acl.GetUpdateConditions<User>(user, new SecurityContext()));
+					operationAcls = groupAcls.Select(acl => acl.GetDeleteConditions<User>(user, new SecurityContext
+					{
+						Groups = groups,
+						DbContext = serviceProvider.GetRequiredService<SportstatsDBContext>(),
+						ServiceProvider = serviceProvider,
+						UserManager = serviceProvider.GetRequiredService<UserManager<User>>(),
+					}));
 					break;
 				default:
 					break;

@@ -73,8 +73,8 @@ export class NumberTextField<T> extends React.Component<ITextFieldProps<T>> {
 
 		let modelProps;
 		if (
-			modelValue == Number(stringValue) || 
-			(modelValue === undefined && stringValue == '-')
+			modelValue === Number(stringValue) ||
+			(modelValue === undefined && stringValue === '-')
 		) {
 			modelProps = {
 				model: this.model,

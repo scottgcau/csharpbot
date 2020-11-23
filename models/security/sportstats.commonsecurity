@@ -6,14 +6,50 @@
   <Authorization>
     <Acl Uuid="1068b09b-2980-458d-8f1d-417cc545335c" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Read="true"/>
     <Acl Uuid="ecd90c3a-5b39-4ee5-9ff5-816a76b7d02a" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="d469786e-3d85-4cc1-ad6f-36f959703fd7" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="7f8a6fa0-12f3-4a76-983c-b73f335ae9f8" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="225d1057-1366-497e-9dca-5303ce6276d8" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="7ed999be-8028-47cc-b046-b36cd9ba0879" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="3501bf92-5f73-4015-a23c-02c5d3d5f410" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="1662be09-717a-4cd1-9ae6-d3e159acb3ff" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="b4af8fa7-4c55-4b96-a7fe-b0068d081bf5" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="6dd55c79-3564-48ee-a4a7-6a2991c52dbc" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="e63c0a20-cec0-48e8-8414-86ffed98cf33" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="51170f53-0047-47aa-b141-8da0cebaf8ab" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="435311c5-a3ea-4c20-b0c6-25fa9af18070" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="9ea28543-4016-44db-b439-928df130db28" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="7252dc84-f4d8-43fc-b48f-aaae34208533" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="727cdb92-d522-4ad3-8b15-962529ab7d4d" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="eba56741-1b60-45fe-8668-54d30793a185" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="c53f04bd-2a20-487f-883a-4452e35e3bda" Create="true" Read="true" Update="true" Delete="true"/>
+    <Acl Uuid="d4c4ea75-bc3e-4221-8e31-749b2dc52475" Group="40cc6828-3be5-11ea-b18d-6d6f75736579" SecurityScheme="d284625a-f181-4ec2-a2c9-308bb7459031" Create="true" Read="true" Update="true" Delete="true"/>
   </Authorization>
   <Auditing/>
   <SecuritySchemes>
     <SecuritySchemes Uuid="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Name="Home">
       <Object href="../ui/sportstats.reactbotui#4d754dc1-54d6-4c5a-b725-c19d55b435bd"/>
     </SecuritySchemes>
-    <SecuritySchemes Uuid="d469786e-3d85-4cc1-ad6f-36f959703fd7" Name="SportEntity Entity">
+    <SecuritySchemes Uuid="d469786e-3d85-4cc1-ad6f-36f959703fd7" Name="Sport Entity">
       <Object href="../entity/sportstats.csharpbotentity#d469786e-3d85-4cc1-ad6f-36f959703fd7"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="225d1057-1366-497e-9dca-5303ce6276d8" Name="Venue Entity">
+      <Object href="../entity/sportstats.csharpbotentity#225d1057-1366-497e-9dca-5303ce6276d8"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="3501bf92-5f73-4015-a23c-02c5d3d5f410" Name="Team Entity">
+      <Object href="../entity/sportstats.csharpbotentity#3501bf92-5f73-4015-a23c-02c5d3d5f410"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Name="Season Entity">
+      <Object href="../entity/sportstats.csharpbotentity#bc85fac3-207d-4eb1-bc55-a75be87a6c12"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="6dd55c79-3564-48ee-a4a7-6a2991c52dbc" Name="Schedule Entity">
+      <Object href="../entity/sportstats.csharpbotentity#6dd55c79-3564-48ee-a4a7-6a2991c52dbc"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="51170f53-0047-47aa-b141-8da0cebaf8ab" Name="RosterAssignment Entity">
+      <Object href="../entity/sportstats.csharpbotentity#51170f53-0047-47aa-b141-8da0cebaf8ab"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="9ea28543-4016-44db-b439-928df130db28" Name="Roster Entity">
+      <Object href="../entity/sportstats.csharpbotentity#9ea28543-4016-44db-b439-928df130db28"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="727cdb92-d522-4ad3-8b15-962529ab7d4d" Name="Person Entity">
+      <Object href="../entity/sportstats.csharpbotentity#727cdb92-d522-4ad3-8b15-962529ab7d4d"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="c53f04bd-2a20-487f-883a-4452e35e3bda" Name="League Entity">
+      <Object href="../entity/sportstats.csharpbotentity#c53f04bd-2a20-487f-883a-4452e35e3bda"/>
+    </SecuritySchemes>
+    <SecuritySchemes Uuid="d284625a-f181-4ec2-a2c9-308bb7459031" Name="Game Entity">
+      <Object href="../entity/sportstats.csharpbotentity#d284625a-f181-4ec2-a2c9-308bb7459031"/>
     </SecuritySchemes>
   </SecuritySchemes>
   <TwoFactorAuthenticationProviders/>

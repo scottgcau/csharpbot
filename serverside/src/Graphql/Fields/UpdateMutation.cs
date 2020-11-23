@@ -27,6 +27,8 @@ using Sportstats.Utility;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.EntityFrameworkCore;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Graphql.Fields
 {
@@ -41,6 +43,7 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateUpdateMutation<TModel>(string name)
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateUpdateMutation here] off begin
 			return async context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
@@ -57,7 +60,8 @@ namespace Sportstats.Graphql.Fields
 
 					return await crudService.Update(models, new UpdateOptions
 					{
-						MergeReferences = mergeReferences
+						MergeReferences = mergeReferences,
+						Files = graphQlContext.Files,
 					});
 				}
 				catch (AggregateException exception)
@@ -66,6 +70,7 @@ namespace Sportstats.Graphql.Fields
 					return new List<TModel>();
 				}
 			};
+			// % protected region % [Override CreateUpdateMutation here] end
 		}
 
 		/// <summary>
@@ -77,12 +82,13 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateConditionalUpdateMutation<TModel>(string name)
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateConditionalUpdateMutation here] off begin
 			return async context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext)context.UserContext;
 				var crudService = graphQlContext.CrudService;
 				var user = graphQlContext.User;
-				var dbSet = graphQlContext.DbContext.GetDbSet<TModel>(typeof(TModel).Name).AsQueryable();
+				var dbSet = graphQlContext.DbContext.Set<TModel>().AsQueryable();
 
 				var models = QueryHelpers.CreateConditionalWhere(context, dbSet);
 				models = QueryHelpers.CreateIdsCondition(context, models);
@@ -107,7 +113,7 @@ namespace Sportstats.Graphql.Fields
 					{
 						throw new ArgumentException($"Property {field} does not exist in the entity");
 					}
-					
+
 					var target = Expression.Constant(value, prop.PropertyType);
 
 					fields.Add(Expression.Bind(prop, target));
@@ -127,6 +133,7 @@ namespace Sportstats.Graphql.Fields
 					return false;
 				}
 			};
+			// % protected region % [Override CreateConditionalUpdateMutation here] end
 		}
 	}
 }

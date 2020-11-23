@@ -27,11 +27,11 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.ViewReadonly
 {
 	[Binding]
-	public class ViewItemReadonlySteps
+	public class ViewItemReadonlySteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public ViewItemReadonlySteps(ContextConfiguration contextConfiguration)
+		public ViewItemReadonlySteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			// % protected region % [Add any additional setup options here] off begin
@@ -48,17 +48,17 @@ namespace SeleniumTests.Steps.BotWritten.ViewReadonly
 		[Then(@"I assert that the entity input fields  are readonly on the (.*) page")]
 		public void ThenIAssertThatTheEntityInputFieldsAreReadonlyOnThePage(string entityName)
 		{
-			_contextConfiguration.WebDriverWait.Until(d =>
-				d.Url.ToLower().StartsWith(_contextConfiguration.BaseUrl + $"/admin/{entityName.ToLower()}/view/"));
+			_driverWait.Until(d =>
+				d.Url.ToLower().StartsWith(_baseUrl + $"/admin/{entityName.ToLower()}/view/"));
 			var entityFactory = new EntityDetailFactory(_contextConfiguration);
 			// Get a detail section Object
 			var detailSection = entityFactory.CreateDetailSection(entityName);
 			var readonlyInputFields = detailSection.GetReadonlyInputFieldAttributes();
 			foreach (var readonlyInputField in readonlyInputFields)
 			{
-				var isReadOnly = string.IsNullOrEmpty(readonlyInputField.GetAttribute("readonly")) 
+				var isReadOnly = string.IsNullOrEmpty(readonlyInputField.GetAttribute("readonly"))
 						|| string.IsNullOrEmpty(readonlyInputField.GetAttribute("aria-disabled"));
-				
+
 				Assert.True(isReadOnly);
 			}
 		}

@@ -16,15 +16,15 @@ This file is bot-written.
 Any changes out side of "protected regions" will be lost next time the bot makes any changes.
 -->
 <configuration>
-	<logging>
-		<LogLevel>
+	<Serilog>
+		<MinimumLevel>
 			<!-- % protected region % [Configure log levels] off begin -->
 			<Default>Warning</Default>
 			<!-- % protected region % [Configure log levels] end -->
-		</LogLevel>
+		</MinimumLevel>
 		<!-- % protected region % [Configure extra logging here] off begin -->
 		<!-- % protected region % [Configure extra logging here] end -->
-	</logging>
+	</Serilog>
 	<!-- % protected region % [Configure allowed hosts here] off begin -->
 	<AllowedHosts>*</AllowedHosts>
 	<!-- % protected region % [Configure allowed hosts here] end -->

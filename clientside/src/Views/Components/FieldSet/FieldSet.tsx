@@ -18,6 +18,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 interface IFieldSet {
 	/** The unique id for FieldSet component which will be used as key */
 	id: string;
@@ -25,6 +28,8 @@ interface IFieldSet {
 	name: string;
 	/** The extra class for fieldSet */
 	className?: string;
+	/** Whether to display the name of the group */
+	showName?: boolean;
 }
 
 @observer
@@ -32,11 +37,11 @@ export class FieldSet extends React.Component<IFieldSet> {
 	render() {
 		return (
 			<fieldset key={this.props.id} className={this.props.className}>
-				<legend>{this.props.name}</legend>
-				{
-					this.props.children
-				}
+				{this.props.name.length > 0 ? <legend>{this.props.name}</legend> : <></>}
+				<div>{this.props.children}</div>
 			</fieldset>
 		);
 	}
+	// % protected region % [Add extra methods here] off begin
+	// % protected region % [Add extra methods here] end
 }

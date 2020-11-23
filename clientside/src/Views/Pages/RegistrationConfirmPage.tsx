@@ -28,16 +28,18 @@ import alert from '../../Util/ToastifyUtils';
 import { store } from 'Models/Store';
 import { ButtonGroup, Alignment } from 'Views/Components/Button/ButtonGroup';
 import { Button, Display, Sizes } from 'Views/Components/Button/Button';
-// % protected region % [Add any extra imports here] off begin
-// % protected region % [Add any extra imports here] end
+// % protected region % [Add any extra imports or interfaces here] off begin
+// % protected region % [Add any extra imports or interfaces here] end
 
 /**
  * Logs the user out of the application
  *
  * Can take a location query param that will redirect after the logout occurs
  */
+// % protected region % [Customise class signature and class properties] off begin
 @observer
 export default class RegistrationConfirmPage extends React.Component<RouteComponentProps> {
+	// % protected region % [Customise class signature and class properties] end
 	@observable
 	private loading: boolean = false;
 	@observable
@@ -124,3 +126,6 @@ export default class RegistrationConfirmPage extends React.Component<RouteCompon
 	// % protected region % [Add class methods here] off begin
 	// % protected region % [Add class methods here] end
 }
+
+// % protected region % [Add extra features here] off begin
+// % protected region % [Add extra features here] end

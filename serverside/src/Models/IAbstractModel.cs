@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Sportstats.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +26,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 // % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Models {
-	public class EntityAttribute : Attribute {
+	public class EntityAttribute : Attribute
+	{
 		// % protected region % [Add any extra entity attribute fields here] off begin
 		// % protected region % [Add any extra entity attribute fields here] end
+	}
+
+	public class FileReference : Attribute
+	{
+		// % protected region % [Add any extra file reference attribute fields here] off begin
+		// % protected region % [Add any extra file reference attribute fields here] end
 	}
 
 	public class EntityForeignKey : Attribute
@@ -56,8 +64,8 @@ namespace Sportstats.Models {
 		DateTime Created { get; set; }
 		DateTime Modified { get; set; }
 
-		void BeforeSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider);
-		void AfterSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider);
+		Task BeforeSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider, CancellationToken cancellationToken = default);
+		Task AfterSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider, ICollection<ChangeState> changes, CancellationToken cancellationToken = default);
 
 		// % protected region % [Add any extra abstract model fields here] off begin
 		// % protected region % [Add any extra abstract model fields here] end
@@ -77,6 +85,7 @@ namespace Sportstats.Models {
 		public static void Configure<T>(EntityTypeBuilder<T> builder)
 			where T : class, IAbstractModel
 		{
+			// % protected region % [Alter base database configurations here] off begin
 			// Configuration for a POSTGRES database
 			builder
 				.Property(e => e.Id)
@@ -87,6 +96,7 @@ namespace Sportstats.Models {
 			builder
 				.Property(e => e.Modified)
 				.HasDefaultValueSql("CURRENT_TIMESTAMP");
+			// % protected region % [Alter base database configurations here] end
 
 			// % protected region % [Add any extra abstract model configuration here] off begin
 			// % protected region % [Add any extra abstract model configuration here] end

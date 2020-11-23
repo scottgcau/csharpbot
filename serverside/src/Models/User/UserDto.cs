@@ -30,6 +30,9 @@ namespace Sportstats.Models
 
 		public string Discriminator { get; set; }
 
+		// % protected region % [Add extra UserDto properties] off begin
+		// % protected region % [Add extra UserDto properties] end
+
 		public UserDto(User model)
 		{
 			LoadModelData(model);
@@ -46,6 +49,8 @@ namespace Sportstats.Models
 				Email = Email,
 				EmailConfirmed = EmailConfirmed,
 				Discriminator = Discriminator,
+				// % protected region % [Add extra ToModel fields] off begin
+				// % protected region % [Add extra ToModel fields] end
 			};
 		}
 
@@ -56,7 +61,8 @@ namespace Sportstats.Models
 			Email = model.Email;
 			EmailConfirmed = model.EmailConfirmed;
 			Discriminator = model.Discriminator;
-
+			// % protected region % [Add extra LoadModelData properties] off begin
+			// % protected region % [Add extra LoadModelData properties] end
 			return this;
 		}
 	}

@@ -22,8 +22,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
-using AspNet.Security.OpenIdConnect.Extensions;
-using AspNet.Security.OpenIdConnect.Primitives;
 using Sportstats.Exceptions;
 using Sportstats.Models;
 using Sportstats.Services.Interfaces;
@@ -34,8 +32,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+
+// % protected region % [Customise Authorization Library imports here] off begin
 using OpenIddict.Abstractions;
 using OpenIddict.Server;
+using AspNet.Security.OpenIdConnect.Extensions;
+using AspNet.Security.OpenIdConnect.Primitives;
+// % protected region % [Customise Authorization Library imports here] end
 
 // % protected region % [Add any extra user service imports here] off begin
 // % protected region % [Add any extra user service imports here] end
@@ -47,6 +50,8 @@ namespace Sportstats.Services
 	/// </summary>
 	public class RegisterModel
 	{
+
+		// % protected region % [Customise RegisterModel fields] off begin
 		[Required]
 		public string Email { get; set; }
 
@@ -54,6 +59,7 @@ namespace Sportstats.Services
 		public string Password { get; set; }
 
 		public ICollection<string> Groups { get; set; }
+		// % protected region % [Customise RegisterModel fields] end
 
 		// % protected region % [Add extra properties to the register model here] off begin
 		// % protected region % [Add extra properties to the register model here] end
@@ -62,19 +68,28 @@ namespace Sportstats.Services
 	public class RegisterResult
 	{
 		public User User { get; set; }
+
 		public IdentityResult Result { get; set; }
+
+		// % protected region % [Add extra properties to the register result model here] off begin
+		// % protected region % [Add extra properties to the register result model here] end
 	}
 
+	// % protected region % [Customise UpdateUserModel here] off begin
 	public class UserUpdateModel : RegisterModel
 	{
 		public Guid Id { get; set; }
+
 		public new string Password { get; set; }
 	}
+	// % protected region % [Customise UpdateUserModel here] end
 
 	public class UserResult
 	{
 		public Guid Id { get; set; }
+
 		public string Email { get; set; }
+
 		public List<GroupResult> Groups { get; set; } = new List<GroupResult>();
 
 		// % protected region % [Add extra properties to the user result here] off begin
@@ -95,7 +110,9 @@ namespace Sportstats.Services
 	public class GroupResult
 	{
 		public string Name { get; set; }
+
 		public bool HasBackendAccess { get; set; }
+
 		// % protected region % [Add extra properties to the group result here] off begin
 		// % protected region % [Add extra properties to the group result here] end
 
@@ -125,6 +142,8 @@ namespace Sportstats.Services
 		// % protected region % [Add any extra readonly fields here] end
 
 		public UserService(
+			// % protected region % [Add any extra params here] off begin
+			// % protected region % [Add any extra params here] end
 			IOptions<IdentityOptions> identityOptions,
 			SignInManager<User> signInManager,
 			UserManager<User> userManager,
@@ -136,6 +155,8 @@ namespace Sportstats.Services
 			// % protected region % [Add any extra params here] end
 			)
 		{
+			// % protected region % [Add initialisations here] off begin
+			// % protected region % [Add initialisations here] end
 			_identityOptions = identityOptions;
 			_signInManager = signInManager;
 			_userManager = userManager;
@@ -148,11 +169,14 @@ namespace Sportstats.Services
 		}
 
 		public async Task<List<UserResult>> GetUsers() {
+			// % protected region % [Change get users here] off begin
 			return await _userManager.Users.Select(user => new UserResult(user, null)).ToListAsync();
+			// % protected region % [Change get users here] end
 		}
 
 		public async Task<UserResult> GetUser(ClaimsPrincipal principal)
 		{
+			// % protected region % [Change get user claims principal overload here] off begin
 			try
 			{
 				var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == principal.Identity.Name);
@@ -160,25 +184,28 @@ namespace Sportstats.Services
 			}
 			catch
 			{
-				// % protected region % [Change invalid user logic here] off begin
 				throw new InvalidIdException();
-				// % protected region % [Change invalid user logic here] end
 			}
+			// % protected region % [Change get user claims principal overload here] end
 		}
 
 		public async Task<UserResult> GetUser(User user)
 		{
+			// % protected region % [Change get user method here] off begin
 			var roleNames = (await _userManager.GetRolesAsync(user)).ToList();
 			var roles = await _roleManager.Roles.Where(role => roleNames.Contains(role.Name)).ToListAsync();
 			return new UserResult(user, roles);
+			// % protected region % [Change get user method here] end
 		}
 
 		public async Task<User> GetUserFromClaim(ClaimsPrincipal principal)
 		{
+			// % protected region % [Change get user from claim method here] off begin
 			return await _userManager
 				.Users
 				.AsNoTracking()
 				.FirstOrDefaultAsync(u => u.UserName == principal.Identity.Name);
+			// % protected region % [Change get user from claim method here] end
 		}
 
 		public async Task<RegisterResult> RegisterUser(
@@ -186,6 +213,7 @@ namespace Sportstats.Services
 			IEnumerable<string> groups,
 			bool sendRegisterEmail = false)
 		{
+			// % protected region % [Change register user method here] off begin
 			var user = await _userManager.FindByEmailAsync(model.Email);
 			if (user != null)
 			{
@@ -196,11 +224,10 @@ namespace Sportstats.Services
 			{
 				UserName = model.Email,
 				Email = model.Email,
-				// % protected region % [Add extra parameters to the user here] off begin
-				// % protected region % [Add extra parameters to the user here] end
 			};
 
 			return await RegisterUser(user, model.Password, groups, sendRegisterEmail);
+			// % protected region % [Change register user method here] end
 		}
 
 		public async Task<RegisterResult> RegisterUser(
@@ -209,6 +236,7 @@ namespace Sportstats.Services
 			IEnumerable<string> groups,
 			bool sendRegisterEmail = false)
 		{
+			// % protected region % [Change register user here] off begin
 			// A user should own their own entity
 			if(user.Id == default(Guid))
 			{
@@ -257,14 +285,19 @@ namespace Sportstats.Services
 			}
 
 			return new RegisterResult { Result = result, User = newUser};
+			// % protected region % [Change register user here] end
 		}
 
 		public async Task<IdentityResult> ConfirmEmail(string email, string token)
 		{
+			// % protected region % [Change confirm email method here] off begin
 			var user = await _userManager.Users.FirstAsync(u => u.Email == email);
 			return await _userManager.ConfirmEmailAsync(user, token);
+			// % protected region % [Change confirm email method here] end
 		}
 
+
+		// % protected region % [Customise UpdateUser here.] off begin
 		public async Task<IdentityResult> UpdateUser(UserUpdateModel model)
 		{
 			var user = await _userManager.FindByNameAsync(model.Email);
@@ -275,10 +308,9 @@ namespace Sportstats.Services
 
 			user.UserName = model.Email;
 			user.Email = model.Email;
-			// % protected region % [Add extra user update fields here] off begin
-			// % protected region % [Add extra user update fields here] end
 
 			var result = await _userManager.UpdateAsync(user);
+		
 			if (result.Succeeded && model.Password != null) {
 				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 				result = await _userManager.ResetPasswordAsync(user, token, model.Password);
@@ -293,7 +325,9 @@ namespace Sportstats.Services
 
 			return result;
 		}
+		// % protected region % [Customise UpdateUser here.] end
 
+		// % protected region % [Customise SendPasswordResetEmail method implementation here] off begin
 		public async Task<bool> SendPasswordResetEmail(User user)
 		{
 			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -311,9 +345,11 @@ namespace Sportstats.Services
 				Subject = "Reset Password",
 			});
 		}
+		// % protected region % [Customise SendPasswordResetEmail method implementation here] end
 
 		public async Task<bool> DeleteUser(Guid id)
 		{
+			// % protected region % [Change delete user method here] off begin
 			var user = await _userManager.FindByIdAsync(id.ToString());
 
 			if (user == null)
@@ -323,8 +359,10 @@ namespace Sportstats.Services
 
 			var result = await _userManager.DeleteAsync(user);
 			return result.Succeeded;
+			// % protected region % [Change delete user method here] end
 		}
 
+		// % protected region % [Customise CheckCredentials method implementation here] off begin
 		public async Task<User> CheckCredentials(
 			string username,
 			string password,
@@ -349,23 +387,28 @@ namespace Sportstats.Services
 
 			return user;
 		}
+		// % protected region % [Customise CheckCredentials method implementation here] end
 
 		public async Task<ClaimsPrincipal> CreateUserPrincipal(
 			User user,
 			string authenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme)
 		{
+			// % protected region % [Adjust the claims if required] off begin
+			// You may need to adjust subject and the like if you are interacting with an AD server
 			var identity = new ClaimsIdentity(
 				authenticationScheme,
-				ClaimTypes.Name,
-				ClaimTypes.Role);
+				OpenIdConnectConstants.Claims.Name,
+				OpenIdConnectConstants.Claims.Role);
 			identity.AddClaim(new Claim("UserId", user.Id.ToString()));
-			identity.AddClaim(new Claim(OpenIdConnectConstants.Claims.Subject, user.UserName));
-			identity.AddClaim(new Claim(ClaimTypes.Name, user.Email));
-			identity.AddClaims((await _userManager.GetRolesAsync(user)).Select(r => new Claim(ClaimTypes.Role, r)));
+			identity.AddClaim(new Claim(OpenIdConnectConstants.Claims.Subject, user.Id.ToString()));
+			identity.AddClaim(new Claim(OpenIdConnectConstants.Claims.Name, user.UserName));
+			identity.AddClaims((await _userManager.GetRolesAsync(user)).Select(r => new Claim(OpenIdConnectConstants.Claims.Role, r)));
 
 			return new ClaimsPrincipal(identity);
+			// % protected region % [Adjust the claims if required] end
 		}
 
+		// % protected region % [Customise Exchange method implementation here] off begin
 		public async Task<AuthenticationTicket> Exchange(OpenIdConnectRequest request)
 		{
 			if (request.IsPasswordGrantType())
@@ -398,7 +441,9 @@ namespace Sportstats.Services
 
 			throw new InvalidGrantTypeException();
 		}
+		// % protected region % [Customise Exchange method implementation here] end
 
+		// % protected region % [Customise CreateTicketAsync method implementation here] off begin
 		/// <summary>
 		/// Creates a ticket for an OpenId connect request
 		/// </summary>
@@ -466,6 +511,7 @@ namespace Sportstats.Services
 
 			return ticket;
 		}
+		// % protected region % [Customise CreateTicketAsync method implementation here] end
 
 		// % protected region % [Add any extra user service methods here] off begin
 		// % protected region % [Add any extra user service methods here] end

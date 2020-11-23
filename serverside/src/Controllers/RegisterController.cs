@@ -49,6 +49,8 @@ namespace Sportstats.Controllers
 			_logger = logger;
 		}
 
+
+		// % protected region % [Customise confirm email here] off begin
 		[HttpPost]
 		[Route("confirm-email")]
 		[AllowAnonymous]
@@ -58,14 +60,16 @@ namespace Sportstats.Controllers
 
 			if (!result.Succeeded)
 			{
-				_logger.LogInformation($"User confirm email validation failed for {model.Email}");
+				_logger.LogInformation("User confirm email validation failed for {Email}", model.Email);
 				_logger.LogInformation(JsonConvert.SerializeObject(result));
 				return Unauthorized();
 			}
 
 			return Ok();
 		}
+		// % protected region % [Customise confirm email here] end
 
+		// % protected region % [The default register function] off begin
 		private async Task<IActionResult> Register(User model, string password, IEnumerable<string> groups)
 		{
 			try
@@ -74,7 +78,7 @@ namespace Sportstats.Controllers
 
 				if (result.Result.Succeeded == false)
 				{
-					_logger.LogInformation($"Failed to create user {model.Email}");
+					_logger.LogInformation("Failed to create user {Email}", model.Email);
 					_logger.LogInformation(JsonConvert.SerializeObject(result.Result));
 					return BadRequest(new ApiErrorResponse(result.Result.Errors.Select(e => e.Description)));
 				}
@@ -84,13 +88,17 @@ namespace Sportstats.Controllers
 			}
 			catch (DuplicateUserException e)
 			{
-				_logger.LogInformation($"Attempted to create duplicate user. Email: {model.Email}");
+				_logger.LogInformation("Attempted to create duplicate user. Email: {Email}", model.Email);
 				// In the case of a duplicate user return a 409 Conflict response code
 				return StatusCode(StatusCodes.Status409Conflict, new ApiErrorResponse(e.Message));
 			}
 		}
+		// % protected region % [The default register function] end
 
 		// % protected region % [Add any extra registration methods here] off begin
 		// % protected region % [Add any extra registration methods here] end
 	}
+
+	// % protected region % [Add any extra content here] off begin
+	// % protected region % [Add any extra content here] end
 }

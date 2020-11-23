@@ -26,7 +26,7 @@ export default function validate(seconds: boolean = true) {
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => new Promise((resolve) => {
 				const format = `HH:mm${seconds ? ':ss' : null}`;
-				if(!model[key]){
+				if(model[key] === null || model[key] === undefined){
 					resolve(null);
 				}else{
 					resolve(moment(model[key], format).isValid()

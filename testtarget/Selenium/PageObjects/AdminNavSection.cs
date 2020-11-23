@@ -70,7 +70,8 @@ namespace SeleniumTests.PageObjects
 			selectorDict.Add("AdminNavToggle", (selector: "//a[contains(@class,'expand-icon')]", type: SelectorType.XPath));
 			selectorDict.Add("AdminNavIconUsers", (selector: "//a[contains(@class,'icon-person-group')]", type: SelectorType.XPath));
 			selectorDict.Add("AdminNavIconEntities", (selector: "//a[contains(@class,'icon-list')]", type: SelectorType.XPath));
-			selectorDict.Add("AdminNavIconLogout", (selector: "//a[contains(@class,'icon-logout')]", type: SelectorType.XPath));
+			selectorDict.Add("AdminNavIconLogout", (selector: "//a[contains(@class,'icon-room')]", type: SelectorType.XPath));
+			selectorDict.Add("AdminNavIconTimelines", (selector: "//a[contains(@class,'icon-timeline')]", type: SelectorType.XPath));
 		}
 
 		// Admin Nav Menu section
@@ -91,6 +92,7 @@ namespace SeleniumTests.PageObjects
 		public IWebElement AdminNavIconUsers => FindElementExt("AdminNavIconUsers");
 		public IWebElement AdminNavIconEntities => FindElementExt("AdminNavIconEntities");
 		public IWebElement AdminNavIconLogout => FindElementExt("AdminNavIconLogout");
+		public IWebElement AdminNavIconTimelines => FindElementExt("AdminNavIconTimelines");
 
 		// % protected region % [Add any methods which can be performed from the admin navigation section] off begin
 		// % protected region % [Add any methods which can be performed from the admin navigation section] end

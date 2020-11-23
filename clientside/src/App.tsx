@@ -15,17 +15,18 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
+import _ from 'lodash';
 import Cookies from 'js-cookie';
-import Admin from "./Views/Admin";
-import Frontend from "./Views/Frontend";
+import Admin from './Views/Admin';
+import Frontend from './Views/Frontend';
 import { Route, Router, Switch } from 'react-router';
-import { Provider } from "mobx-react";
-import { store } from "./Models/Store";
-import { ApolloProvider } from "react-apollo";
+import { Provider } from 'mobx-react';
+import { store } from './Models/Store';
+import { ApolloProvider } from 'react-apollo';
 import { default as ApolloClient, Operation } from 'apollo-boost';
-import { SERVER_URL } from "./Constants";
-import { isServerError } from "./Util/GraphQLUtils";
-import { configure, runInAction } from "mobx";
+import { SERVER_URL } from 'Constants';
+import { isServerError } from './Util/GraphQLUtils';
+import { configure, runInAction } from 'mobx';
 import { createBrowserHistory } from 'history';
 import { ErrorResponse } from 'apollo-link-error';
 import { ToastContainer } from 'react-toastify';
@@ -45,10 +46,23 @@ export default class App extends React.Component {
 		});
 		
 		// All state changes should be run in an action so enforce that
-		configure({enforceActions: "observed"});
-	}
+		configure({ enforceActions: 'observed' });
+		
+		// For cross platform mobile responsiveness
+		const defineViewportHeight = () => {
+			let vh = window.innerHeight * 0.01;
+			document.documentElement.style.setProperty('--vh', `${vh}px`);
+		};
+		defineViewportHeight();
+		window.addEventListener('resize', () => defineViewportHeight());
+
+		// % protected region % [Add extra constructor logic here] off begin
+		// % protected region % [Add extra constructor logic here] end
+
+	};
 
 	public render() {
+		// % protected region % [Override render here] off begin
 		return (
 			<ApolloProvider client={store.apolloClient}>
 				<Provider store={store}>
@@ -62,12 +76,13 @@ export default class App extends React.Component {
 								<Route path="/" component={Frontend} />
 							</Switch>
 						</Router>
-						<GlobalModal ref={(ref) => ref ? store.modal = ref : undefined} />
+						<GlobalModal ref={ref => ref ? store.modal = ref : undefined} />
 					</>
 				</Provider>
 			</ApolloProvider>
 		);
-	}
+		// % protected region % [Override render here] end
+	};
 
 	/**
 	 * Request handler for the apollo client
@@ -79,7 +94,7 @@ export default class App extends React.Component {
 				'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
 			},
 		});
-	}
+	};
 
 	/**
 	 * Error Handler for the apollo client
@@ -92,5 +107,8 @@ export default class App extends React.Component {
 				store.routerHistory.push(`/login?redirect=${store.routerHistory.location.pathname}`);
 			});
 		}
-	}
+	};
+
+	// % protected region % [Add extra methods here] off begin
+	// % protected region % [Add extra methods here] end
 }

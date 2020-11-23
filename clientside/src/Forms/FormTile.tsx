@@ -14,55 +14,152 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import * as React from 'react';
+import React, { Component, ReactNode } from 'react';
+import { observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
-import { Form } from './Schema/Question';
-import { SlideTile } from './SlideTile';
+import _ from 'lodash';
+import classNames from 'classnames';
+
 import { Button } from 'Views/Components/Button/Button';
 import If from 'Views/Components/If/If';
-import classNames from 'classnames';
+import { Form, Question } from './Schema/Question';
+import { SlideTile } from './SlideTile';
+import { buildValidationErrorMessage } from './Validators/ValidationUtils';
+import CheckDisplayConditions from './Conditions/ConditionUtils';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 export interface IFormProps<T> {
 	isReadOnly?: boolean;
 	className?: string;
 	submitText?: string;
-	disableShowConditions? : boolean
+	disableShowConditions? : boolean;
+	// % protected region % [Add extra form tile props here] off begin
+	// % protected region % [Add extra form tile props here] end
 }
 
 export interface IFormTileProps<T> extends IFormProps<T> {
 	schema: Form;
 	model: T;
 	onSubmit?: (model: T) => void;
+	// % protected region % [Add to IFormTileProps here] off begin
+	// % protected region % [Add to IFormTileProps here] end
 }
 
 @observer
-export class FormTile<T> extends React.Component<IFormTileProps<T>> {
+export class FormTile<T> extends Component<IFormTileProps<T>> {
+	@observable
+	private reValidate: boolean = false;
+	
 	static defaultProps: Partial<IFormProps<{}>> = {
 		submitText: 'Submit',
+		// % protected region % [Add to defaultProps here] off begin
+		// % protected region % [Add to defaultProps here] end
 	};
 
-	private onSubmit = () => {
-		if (this.props.onSubmit) {
-			this.props.onSubmit(this.props.model);
-		}
-	}
+	// % protected region % [Add extra class fields here] off begin
+	// % protected region % [Add extra class fields here] end
 
-	public render() {
+	private onSubmit = (): void => {
+		// % protected region % [Override onSubmit here] off begin
+		const { onSubmit, model } = this.props;
+	
+		if (onSubmit) {
+			if (this.validateForm()) {
+				onSubmit(model);
+			} else {
+				runInAction((): void => {
+					this.reValidate = true;
+				});
+			}
+		}
+		// % protected region % [Override onSubmit here] end
+	};
+
+	private isQuestionShown = (question: Question): boolean => {
+		// % protected region % [Override isQuestionShown here] off begin
+		const { showConditions } = question;
+		const { disableShowConditions, model, schema } = this.props;
+		
+		if (showConditions !== undefined && !disableShowConditions) {
+			return showConditions.every(condition => { return CheckDisplayConditions(condition, model, schema); });
+		}
+		
+		return true;
+		// % protected region % [Override isQuestionShown here] end
+	};
+
+	private validateQuestion = (question: Question): boolean => {
+		// % protected region % [Override validateQuestion here] off begin
+		const { model, schema } = this.props;
+		const { validators } = question;
+		let errorMessage: string[] = [];
+
+		if (this.isQuestionShown(question)) {
+			if (question.validators !== undefined) {
+				errorMessage = buildValidationErrorMessage(validators, model, schema, false);
+				return _.filter(errorMessage, e => { return e; }).length === 0;
+			}
+		}
+		
+		return true;
+		// % protected region % [Override validateQuestion here] end
+	};
+
+	private validateQuestions = (questions: Question[]): boolean => {
+		// % protected region % [Override validateQuestions here] off begin
+		let valid: boolean = true;
+		
+		questions.forEach(q => {
+			valid = valid && this.validateQuestion(q);
+		});
+		
+		return valid;
+		// % protected region % [Override validateQuestions here] end
+	};
+
+	private validateForm = (): boolean => {
+		// % protected region % [Override validateForm here] off begin
+		const { schema } = this.props;
+		const questions = _.flatMap(schema, o => { return o.contents; });
+		
+		return this.validateQuestions(questions);
+		// % protected region % [Override validateForm here] end
+	};
+
+	public render(): ReactNode {
+		// % protected region % [Customize render here] off begin
+		const {
+			className, schema, isReadOnly, disableShowConditions, submitText, onSubmit, model, 
+		} = this.props;
+		
 		return (
-			<div className={classNames('forms-tile', this.props.className)}>
-				{this.props.schema.map((slide, i) => (
-					<SlideTile
-						key={i}
-						model={this.props.model}
-						schema={this.props.schema}
-						isReadOnly={this.props.isReadOnly}
-						disableShowConditions={this.props.disableShowConditions}
-						{...slide} />
-				))}
-				<If condition={this.props.onSubmit !== undefined}>
-					<Button onClick={this.onSubmit}>{this.props.submitText}</Button>
+			<div className={classNames('forms-tile', className)}>
+				{schema.map((slide, i): ReactNode => {
+					const key = `${slide.name}-${i}`;
+					
+					return (
+						<SlideTile
+							key={key}
+							model={model}
+							schema={schema}
+							isReadOnly={isReadOnly}
+							disableShowConditions={disableShowConditions}
+							contents={slide.contents}
+							name={slide.name}
+							reValidate={this.reValidate}
+						/>
+					); 
+				})}
+				
+				<If condition={onSubmit !== undefined}>
+					<Button onClick={this.onSubmit}>{submitText}</Button>
 				</If>
 			</div>
 		);
+		// % protected region % [Customize render here] end
 	}
+
+	// % protected region % [Add any extra form tile methods here] off begin
+	// % protected region % [Add any extra form tile methods here] end
 }

@@ -62,6 +62,9 @@ namespace Sportstats.Helpers
 			// % protected region % [Add any extra seeded groups here] end
 		};
 
+		// % protected region % [Add any extra core seed data here] off begin
+		// % protected region % [Add any extra core seed data here] end
+
 		public DataSeedHelper(
 			RoleManager<Group> roleManager,
 			IUserService userService,
@@ -98,16 +101,16 @@ namespace Sportstats.Helpers
 				await CreateRole(role);
 			}
 
-			// Create users for testing in development environments
+			// % protected region % [Configure development seeding here] off begin
 			if (_environment.IsDevelopment())
 			{
+				// Create users for testing in development environments
 				await CreateUser(
 					new User {Email = "super@example.com", Discriminator = "User"},
 					"password",
 					new [] {"Visitors", "Super Administrators"});
-				// % protected region % [Add any extra development seeding here] off begin
-				// % protected region % [Add any extra development seeding here] end
 			}
+			// % protected region % [Configure development seeding here] end
 
 			// % protected region % [Add any extra seeding here] off begin
 			// % protected region % [Add any extra seeding here] end
@@ -120,6 +123,7 @@ namespace Sportstats.Helpers
 			{
 				await _roleManager.CreateAsync(new Group
 				{
+					Id = Guid.NewGuid(),
 					Name = seedGroup.Name,
 					HasBackendAccess = seedGroup.HasBackendAccess,
 				});
@@ -135,7 +139,7 @@ namespace Sportstats.Helpers
 				// % protected region % [Configure any extra user updates here] off begin
 				// % protected region % [Configure any extra user updates here] end
 
-				_logger.LogInformation($"Not creating group {seedGroup.Name} since this group already exists");
+				_logger.LogInformation("Not creating group {GroupName} since this group already exists", seedGroup.Name, seedGroup);
 			}
 		}
 
@@ -155,20 +159,20 @@ namespace Sportstats.Helpers
 					{
 						throw new AggregateException(result.Result.Errors.Select(e => new Exception(e.Description)));
 					}
-					_logger.LogInformation($"Not creating user {user.Email} since this user already exists");
+					_logger.LogInformation("Not creating user {SeedUserName} since this user already exists", user.Email);
 				}
 			}
 			catch (DuplicateUserException)
 			{
-				_logger.LogInformation($"Not creating user {user.Email} since this user already exists");
+				_logger.LogInformation("Not creating user {SeedUserName} since this user already exists", user.Email);
 			}
 			catch (DbUpdateException e)
 			{
-				_logger.LogError(e, $"Not creating user {user.Email} because of a database error");
+				_logger.LogError(e, "Not creating user {SeedUserName} because of a database error", user.Email);
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Unable to create {user.Email} because of an unhandled error");
+				_logger.LogError(e, "Unable to create {SeedUserName} because of an unhandled error", user.Email);
 			}
 		}
 

@@ -21,7 +21,6 @@ using System.Net;
 using APITests.Setup;
 using APITests.TheoryData.BotWritten;
 using APITests.Utils;
-using APITests.EntityObjects.Models;
 using APITests.Factories;
 using RestSharp;
 using Xunit;
@@ -43,17 +42,19 @@ namespace APITests.Tests.BotWritten
 		}
 
 		#region GraphQl Batch Update
+		// % protected region % [Customize GraphqlBatchUpdateEntities here] off begin
 		[SkippableTheory]
 		[Trait("Category", "BotWritten")]
 		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityFactoryMultipleTheoryData))]
 		public void GraphqlBatchUpdateEntities(EntityFactory entityFactory, int numEntities)
 		{
-			var entityProperties = entityFactory.Construct().GetType().GetProperties();
+			var entity = entityFactory.Construct();
+			var entityProperties = entity.GetType().GetProperties();
 
-			if (entityProperties.Any(x => x.PropertyType.IsEnum))
+			if (entityProperties.Any(x => x.PropertyType.IsEnum) || entity.HasFile)
 			{
-				throw new SkipException("Batch update is currently not supported on entities with enum");
+				throw new SkipException("Batch update is currently not supported on entities with enum or file");
 			}
 
 			var entityList = entityFactory.ConstructAndSave(_output, numEntities);
@@ -86,6 +87,7 @@ namespace APITests.Tests.BotWritten
 			// mass update all entities in the list in a single request and check status code is ok
 			RequestHelpers.ValidateResponse(client, Method.POST, request, HttpStatusCode.OK);
 		}
+		// % protected region % [Customize GraphqlBatchUpdateEntities here] end
 		#endregion
 	}
 }

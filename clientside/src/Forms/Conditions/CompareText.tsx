@@ -14,13 +14,21 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import {Condition} from "../Schema/Question";
+import { Condition } from '../Schema/Question';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
-export function CompareText (condition: Condition, conditionalValue: any) :boolean{
+function CompareText(condition: Condition, conditionalValue: string): boolean {
+	// % protected region % [Customize CompareText conditions here] off begin
 	switch (condition.condition) {
-		case "equal":
+		case 'equal':
 			return conditionalValue === condition.value;
+		case 'contains':
+			return conditionalValue.indexOf(condition.value) > -1;
 		default:
 			return false;
 	}
+	// % protected region % [Customize CompareText conditions here] end
 }
+
+export default CompareText;

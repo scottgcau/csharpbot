@@ -55,8 +55,6 @@ export interface IContextMenuProps {
 	className?: string;
 	actions: IContextMenuActions;
 	menuId: string;
-	/** Is the menu displayed on the frontend or admin section */
-	location?: 'frontend' | 'admin';
 }
 
 export function isItemGroup(item: IContextMenuItemProps | IContextMenuItemGroup): item is IContextMenuItemGroup {
@@ -65,15 +63,12 @@ export function isItemGroup(item: IContextMenuItemProps | IContextMenuItemGroup)
 
 @observer
 export class ContextMenu extends React.Component<IContextMenuProps> {
-	static defaultProps = {
-		location: 'frontend',
-	};
 	
 	public render() {
 		const menuItems = this.getSubMenu(this.props.actions, this.props.menuId);
 
 		return (
-			<Menu id={this.props.menuId} className={classNames(this.props.className, this.props.location)}>
+			<Menu id={this.props.menuId} className={classNames(this.props.className)}>
 				{menuItems}
 			</Menu>
 		);

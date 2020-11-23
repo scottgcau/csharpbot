@@ -59,10 +59,47 @@ namespace Sportstats.Graphql
 		public SportstatsQuery(IEfGraphQLService<SportstatsDBContext> efGraphQlService) : base(efGraphQlService)
 		{
 			// Add query types for each entity
-			AddModelQueryField<SportentityEntityType, SportentityEntity>("SportentityEntity");
-			AddModelQueryField<SportentityEntityFormVersionType, SportentityEntityFormVersion>("SportentityEntityFormVersion");
-			AddModelQueryField<SportentitySubmissionEntityType, SportentitySubmissionEntity>("SportentitySubmissionEntity");
-			AddModelQueryField<SportentityEntityFormTileEntityType, SportentityEntityFormTileEntity>("SportentityEntityFormTileEntity");
+			AddModelQueryField<ScheduleEntityType, ScheduleEntity>("ScheduleEntity");
+			AddModelQueryField<ScheduleEntityFormVersionType, ScheduleEntityFormVersion>("ScheduleEntityFormVersion");
+			AddModelQueryField<SeasonEntityType, SeasonEntity>("SeasonEntity");
+			AddModelQueryField<SeasonEntityFormVersionType, SeasonEntityFormVersion>("SeasonEntityFormVersion");
+			AddModelQueryField<VenueEntityType, VenueEntity>("VenueEntity");
+			AddModelQueryField<VenueEntityFormVersionType, VenueEntityFormVersion>("VenueEntityFormVersion");
+			AddModelQueryField<GameEntityType, GameEntity>("GameEntity");
+			AddModelQueryField<GameEntityFormVersionType, GameEntityFormVersion>("GameEntityFormVersion");
+			AddModelQueryField<SportEntityType, SportEntity>("SportEntity");
+			AddModelQueryField<SportEntityFormVersionType, SportEntityFormVersion>("SportEntityFormVersion");
+			AddModelQueryField<LeagueEntityType, LeagueEntity>("LeagueEntity");
+			AddModelQueryField<LeagueEntityFormVersionType, LeagueEntityFormVersion>("LeagueEntityFormVersion");
+			AddModelQueryField<TeamEntityType, TeamEntity>("TeamEntity");
+			AddModelQueryField<TeamEntityFormVersionType, TeamEntityFormVersion>("TeamEntityFormVersion");
+			AddModelQueryField<PersonEntityType, PersonEntity>("PersonEntity");
+			AddModelQueryField<PersonEntityFormVersionType, PersonEntityFormVersion>("PersonEntityFormVersion");
+			AddModelQueryField<RosterEntityType, RosterEntity>("RosterEntity");
+			AddModelQueryField<RosterEntityFormVersionType, RosterEntityFormVersion>("RosterEntityFormVersion");
+			AddModelQueryField<RosterassignmentEntityType, RosterassignmentEntity>("RosterassignmentEntity");
+			AddModelQueryField<RosterassignmentEntityFormVersionType, RosterassignmentEntityFormVersion>("RosterassignmentEntityFormVersion");
+			AddModelQueryField<ScheduleSubmissionEntityType, ScheduleSubmissionEntity>("ScheduleSubmissionEntity");
+			AddModelQueryField<SeasonSubmissionEntityType, SeasonSubmissionEntity>("SeasonSubmissionEntity");
+			AddModelQueryField<VenueSubmissionEntityType, VenueSubmissionEntity>("VenueSubmissionEntity");
+			AddModelQueryField<GameSubmissionEntityType, GameSubmissionEntity>("GameSubmissionEntity");
+			AddModelQueryField<SportSubmissionEntityType, SportSubmissionEntity>("SportSubmissionEntity");
+			AddModelQueryField<LeagueSubmissionEntityType, LeagueSubmissionEntity>("LeagueSubmissionEntity");
+			AddModelQueryField<TeamSubmissionEntityType, TeamSubmissionEntity>("TeamSubmissionEntity");
+			AddModelQueryField<PersonSubmissionEntityType, PersonSubmissionEntity>("PersonSubmissionEntity");
+			AddModelQueryField<RosterSubmissionEntityType, RosterSubmissionEntity>("RosterSubmissionEntity");
+			AddModelQueryField<RosterassignmentSubmissionEntityType, RosterassignmentSubmissionEntity>("RosterassignmentSubmissionEntity");
+			AddModelQueryField<ScheduleEntityFormTileEntityType, ScheduleEntityFormTileEntity>("ScheduleEntityFormTileEntity");
+			AddModelQueryField<SeasonEntityFormTileEntityType, SeasonEntityFormTileEntity>("SeasonEntityFormTileEntity");
+			AddModelQueryField<VenueEntityFormTileEntityType, VenueEntityFormTileEntity>("VenueEntityFormTileEntity");
+			AddModelQueryField<GameEntityFormTileEntityType, GameEntityFormTileEntity>("GameEntityFormTileEntity");
+			AddModelQueryField<SportEntityFormTileEntityType, SportEntityFormTileEntity>("SportEntityFormTileEntity");
+			AddModelQueryField<LeagueEntityFormTileEntityType, LeagueEntityFormTileEntity>("LeagueEntityFormTileEntity");
+			AddModelQueryField<TeamEntityFormTileEntityType, TeamEntityFormTileEntity>("TeamEntityFormTileEntity");
+			AddModelQueryField<PersonEntityFormTileEntityType, PersonEntityFormTileEntity>("PersonEntityFormTileEntity");
+			AddModelQueryField<RosterEntityFormTileEntityType, RosterEntityFormTileEntity>("RosterEntityFormTileEntity");
+			AddModelQueryField<RosterassignmentEntityFormTileEntityType, RosterassignmentEntityFormTileEntity>("RosterassignmentEntityFormTileEntity");
+			AddModelQueryField<RosterTimelineEventsEntityType, RosterTimelineEventsEntity>("RosterTimelineEventsEntity");
 
 			// Add query types for each many to many reference
 
@@ -80,21 +117,31 @@ namespace Sportstats.Graphql
 			where TModelType : ObjectGraphType<TModel>
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Add any extra logic before adding entity query fields here] off begin
+			// % protected region % [Add any extra logic before adding entity query fields here] end
+
+			// % protected region % [Override single query here] off begin
 			AddQueryField(
 				$"{name}s",
 				QueryHelpers.CreateResolveFunction<TModel>(),
 				typeof(TModelType)).Description = $"Query for fetching multiple {name}s";
+			// % protected region % [Override single query here] end
 
+			// % protected region % [Override multiple query here] off begin
 			AddSingleField(
 				name: name,
 				resolve: QueryHelpers.CreateResolveFunction<TModel>(),
 				graphType: typeof(TModelType)).Description = $"Query for fetching a single {name}";
+			// % protected region % [Override multiple query here] end
 
+			// % protected region % [Override connection query here] off begin
 			AddQueryConnectionField(
 				$"{name}sConnection",
 				QueryHelpers.CreateResolveFunction<TModel>(),
 				typeof(TModelType));
+			// % protected region % [Override connection query here] end
 
+			// % protected region % [Override count query here] off begin
 			FieldAsync<NumberObjectType>(
 				$"count{name}s",
 				arguments: new QueryArguments(
@@ -109,7 +156,9 @@ namespace Sportstats.Graphql
 				resolve: CountQuery.CreateCountQuery<TModel>(),
 				description: "Counts the number of models according to a given set of conditions"
 			);
+			// % protected region % [Override count query here] end
 
+			// % protected region % [Override conditional query here] off begin
 			AddQueryField(
 				$"{name}sConditional",
 				ConditionalQuery.CreateConditionalQuery<TModel>(),
@@ -122,7 +171,9 @@ namespace Sportstats.Graphql
 					}
 				)
 			);
+			// % protected region % [Override conditional query here] end
 
+			// % protected region % [Override count conditional query here] off begin
 			FieldAsync<NumberObjectType>(
 				$"count{name}sConditional",
 				arguments: new QueryArguments(
@@ -138,6 +189,7 @@ namespace Sportstats.Graphql
 				description: "Counts the number of models according to a given set of conditions. This query can " +
 							"perform both AND and OR conditions"
 			);
+			// % protected region % [Override count conditional query here] end
 
 			// % protected region % [Add any extra per entity fields here] off begin
 			// % protected region % [Add any extra per entity fields here] end
@@ -161,12 +213,67 @@ namespace Sportstats.Graphql
 			Name = "Mutation";
 
 			// Add input types for each entity
-			AddMutationField<SportentityEntityInputType, SportentityEntityInputType, SportentityEntityType, SportentityEntity>("SportentityEntity");
-			AddMutationField<SportentityEntityFormVersionInputType, SportentityEntityFormVersionInputType, SportentityEntityFormVersionType, SportentityEntityFormVersion>(
-				"SportentityEntityFormVersion",
+			AddMutationField<ScheduleEntityInputType, ScheduleEntityInputType, ScheduleEntityType, ScheduleEntity>("ScheduleEntity");
+			AddMutationField<ScheduleEntityFormVersionInputType, ScheduleEntityFormVersionInputType, ScheduleEntityFormVersionType, ScheduleEntityFormVersion>(
+				"ScheduleEntityFormVersion",
 				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
-			AddMutationField<SportentitySubmissionEntityInputType, SportentitySubmissionEntityInputType, SportentitySubmissionEntityType, SportentitySubmissionEntity>("SportentitySubmissionEntity");
-			AddMutationField<SportentityEntityFormTileEntityInputType, SportentityEntityFormTileEntityInputType, SportentityEntityFormTileEntityType, SportentityEntityFormTileEntity>("SportentityEntityFormTileEntity");
+			AddMutationField<SeasonEntityInputType, SeasonEntityInputType, SeasonEntityType, SeasonEntity>("SeasonEntity");
+			AddMutationField<SeasonEntityFormVersionInputType, SeasonEntityFormVersionInputType, SeasonEntityFormVersionType, SeasonEntityFormVersion>(
+				"SeasonEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<VenueEntityInputType, VenueEntityInputType, VenueEntityType, VenueEntity>("VenueEntity");
+			AddMutationField<VenueEntityFormVersionInputType, VenueEntityFormVersionInputType, VenueEntityFormVersionType, VenueEntityFormVersion>(
+				"VenueEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<GameEntityInputType, GameEntityInputType, GameEntityType, GameEntity>("GameEntity");
+			AddMutationField<GameEntityFormVersionInputType, GameEntityFormVersionInputType, GameEntityFormVersionType, GameEntityFormVersion>(
+				"GameEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<SportEntityInputType, SportEntityInputType, SportEntityType, SportEntity>("SportEntity");
+			AddMutationField<SportEntityFormVersionInputType, SportEntityFormVersionInputType, SportEntityFormVersionType, SportEntityFormVersion>(
+				"SportEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<LeagueEntityInputType, LeagueEntityInputType, LeagueEntityType, LeagueEntity>("LeagueEntity");
+			AddMutationField<LeagueEntityFormVersionInputType, LeagueEntityFormVersionInputType, LeagueEntityFormVersionType, LeagueEntityFormVersion>(
+				"LeagueEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<TeamEntityInputType, TeamEntityInputType, TeamEntityType, TeamEntity>("TeamEntity");
+			AddMutationField<TeamEntityFormVersionInputType, TeamEntityFormVersionInputType, TeamEntityFormVersionType, TeamEntityFormVersion>(
+				"TeamEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<PersonEntityInputType, PersonEntityInputType, PersonEntityType, PersonEntity>("PersonEntity");
+			AddMutationField<PersonEntityFormVersionInputType, PersonEntityFormVersionInputType, PersonEntityFormVersionType, PersonEntityFormVersion>(
+				"PersonEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<RosterEntityInputType, RosterEntityInputType, RosterEntityType, RosterEntity>("RosterEntity");
+			AddMutationField<RosterEntityFormVersionInputType, RosterEntityFormVersionInputType, RosterEntityFormVersionType, RosterEntityFormVersion>(
+				"RosterEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<RosterassignmentEntityInputType, RosterassignmentEntityInputType, RosterassignmentEntityType, RosterassignmentEntity>("RosterassignmentEntity");
+			AddMutationField<RosterassignmentEntityFormVersionInputType, RosterassignmentEntityFormVersionInputType, RosterassignmentEntityFormVersionType, RosterassignmentEntityFormVersion>(
+				"RosterassignmentEntityFormVersion",
+				deleteMutation: context => Task.FromResult((object)new Guid[]{}));
+			AddMutationField<ScheduleSubmissionEntityInputType, ScheduleSubmissionEntityInputType, ScheduleSubmissionEntityType, ScheduleSubmissionEntity>("ScheduleSubmissionEntity");
+			AddMutationField<SeasonSubmissionEntityInputType, SeasonSubmissionEntityInputType, SeasonSubmissionEntityType, SeasonSubmissionEntity>("SeasonSubmissionEntity");
+			AddMutationField<VenueSubmissionEntityInputType, VenueSubmissionEntityInputType, VenueSubmissionEntityType, VenueSubmissionEntity>("VenueSubmissionEntity");
+			AddMutationField<GameSubmissionEntityInputType, GameSubmissionEntityInputType, GameSubmissionEntityType, GameSubmissionEntity>("GameSubmissionEntity");
+			AddMutationField<SportSubmissionEntityInputType, SportSubmissionEntityInputType, SportSubmissionEntityType, SportSubmissionEntity>("SportSubmissionEntity");
+			AddMutationField<LeagueSubmissionEntityInputType, LeagueSubmissionEntityInputType, LeagueSubmissionEntityType, LeagueSubmissionEntity>("LeagueSubmissionEntity");
+			AddMutationField<TeamSubmissionEntityInputType, TeamSubmissionEntityInputType, TeamSubmissionEntityType, TeamSubmissionEntity>("TeamSubmissionEntity");
+			AddMutationField<PersonSubmissionEntityInputType, PersonSubmissionEntityInputType, PersonSubmissionEntityType, PersonSubmissionEntity>("PersonSubmissionEntity");
+			AddMutationField<RosterSubmissionEntityInputType, RosterSubmissionEntityInputType, RosterSubmissionEntityType, RosterSubmissionEntity>("RosterSubmissionEntity");
+			AddMutationField<RosterassignmentSubmissionEntityInputType, RosterassignmentSubmissionEntityInputType, RosterassignmentSubmissionEntityType, RosterassignmentSubmissionEntity>("RosterassignmentSubmissionEntity");
+			AddMutationField<ScheduleEntityFormTileEntityInputType, ScheduleEntityFormTileEntityInputType, ScheduleEntityFormTileEntityType, ScheduleEntityFormTileEntity>("ScheduleEntityFormTileEntity");
+			AddMutationField<SeasonEntityFormTileEntityInputType, SeasonEntityFormTileEntityInputType, SeasonEntityFormTileEntityType, SeasonEntityFormTileEntity>("SeasonEntityFormTileEntity");
+			AddMutationField<VenueEntityFormTileEntityInputType, VenueEntityFormTileEntityInputType, VenueEntityFormTileEntityType, VenueEntityFormTileEntity>("VenueEntityFormTileEntity");
+			AddMutationField<GameEntityFormTileEntityInputType, GameEntityFormTileEntityInputType, GameEntityFormTileEntityType, GameEntityFormTileEntity>("GameEntityFormTileEntity");
+			AddMutationField<SportEntityFormTileEntityInputType, SportEntityFormTileEntityInputType, SportEntityFormTileEntityType, SportEntityFormTileEntity>("SportEntityFormTileEntity");
+			AddMutationField<LeagueEntityFormTileEntityInputType, LeagueEntityFormTileEntityInputType, LeagueEntityFormTileEntityType, LeagueEntityFormTileEntity>("LeagueEntityFormTileEntity");
+			AddMutationField<TeamEntityFormTileEntityInputType, TeamEntityFormTileEntityInputType, TeamEntityFormTileEntityType, TeamEntityFormTileEntity>("TeamEntityFormTileEntity");
+			AddMutationField<PersonEntityFormTileEntityInputType, PersonEntityFormTileEntityInputType, PersonEntityFormTileEntityType, PersonEntityFormTileEntity>("PersonEntityFormTileEntity");
+			AddMutationField<RosterEntityFormTileEntityInputType, RosterEntityFormTileEntityInputType, RosterEntityFormTileEntityType, RosterEntityFormTileEntity>("RosterEntityFormTileEntity");
+			AddMutationField<RosterassignmentEntityFormTileEntityInputType, RosterassignmentEntityFormTileEntityInputType, RosterassignmentEntityFormTileEntityType, RosterassignmentEntityFormTileEntity>("RosterassignmentEntityFormTileEntity");
+			AddMutationField<RosterTimelineEventsEntityInputType, RosterTimelineEventsEntityInputType, RosterTimelineEventsEntityType, RosterTimelineEventsEntity>("RosterTimelineEventsEntity");
 
 			// Add input types for each many to many reference
 
@@ -194,11 +301,15 @@ namespace Sportstats.Graphql
 			Func<ResolveFieldContext<object>, Task<object>> deleteMutation = null,
 			Func<ResolveFieldContext<object>, Task<object>> conditionalUpdateMutation = null,
 			Func<ResolveFieldContext<object>, Task<object>> conditionalDeleteMutation = null)
-			where TModelCreateInputType : InputObjectGraphType
-			where TModelUpdateInputType : InputObjectGraphType
+			where TModelCreateInputType : InputObjectGraphType<TModel>
+			where TModelUpdateInputType : InputObjectGraphType<TModel>
 			where TModelType : ObjectGraphType<TModel>
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Add any extra logic before adding entity mutation fields here] off begin
+			// % protected region % [Add any extra logic before adding entity mutation fields here] end
+
+			// % protected region % [Override create mutation here] off begin
 			FieldAsync<ListGraphType<TModelType>>(
 				$"create{name}",
 				arguments: new QueryArguments(
@@ -207,7 +318,9 @@ namespace Sportstats.Graphql
 				),
 				resolve: createMutation ?? CreateMutation.CreateCreateMutation<TModel>(name)
 			);
+			// % protected region % [Override create mutation here] end
 
+			// % protected region % [Override update mutation here] off begin
 			FieldAsync<ListGraphType<TModelType>>(
 				$"update{name}",
 				arguments: new QueryArguments(
@@ -216,7 +329,9 @@ namespace Sportstats.Graphql
 				),
 				resolve: updateMutation ?? UpdateMutation.CreateUpdateMutation<TModel>(name)
 			);
+			// % protected region % [Override update mutation here] end
 
+			// % protected region % [Override delete mutation here] off begin
 			FieldAsync<ListGraphType<IdObjectType>>(
 				$"delete{name}",
 				arguments: new QueryArguments(
@@ -224,7 +339,9 @@ namespace Sportstats.Graphql
 				),
 				resolve: deleteMutation ?? DeleteMutation.CreateDeleteMutation<TModel>(name)
 			);
+			// % protected region % [Override delete mutation here] end
 
+			// % protected region % [Override update conditional mutation here] off begin
 			FieldAsync<BooleanObjectType>(
 				$"update{name}sConditional",
 				arguments: new QueryArguments(
@@ -240,7 +357,9 @@ namespace Sportstats.Graphql
 				),
 				resolve: conditionalUpdateMutation ?? UpdateMutation.CreateConditionalUpdateMutation<TModel>(name)
 			);
+			// % protected region % [Override update conditional mutation here] end
 
+			// % protected region % [Override delete conditional mutation here] off begin
 			FieldAsync<BooleanObjectType>(
 				$"delete{name}sConditional",
 				arguments: new QueryArguments(
@@ -254,6 +373,7 @@ namespace Sportstats.Graphql
 				),
 				resolve: conditionalDeleteMutation ?? DeleteMutation.CreateConditionalDeleteMutation<TModel>(name)
 			);
+			// % protected region % [Override delete conditional mutation here] end
 
 			// % protected region % [Add any extra per entity mutations here] off begin
 			// % protected region % [Add any extra per entity mutations here] end

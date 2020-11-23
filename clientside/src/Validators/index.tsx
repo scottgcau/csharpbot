@@ -14,16 +14,20 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-export {default as Custom} from './Functions/Custom';
-export {default as Date} from './Functions/Date';
-export {default as DateTime} from './Functions/DateTime';
-export {default as Email} from './Functions/Email';
-export {default as Integer} from './Functions/Integer';
-export {default as Length} from './Functions/Length';
-export {default as Max} from './Functions/Max';
-export {default as Min} from './Functions/Min';
-export {default as Numeric} from './Functions/Numeric';
-export {default as Regex} from './Functions/Regex';
-export {default as Required} from './Functions/Required';
-export {default as Time} from './Functions/Time';
-export {default as Unique} from './Functions/Unique';
+export { default as Custom } from './Functions/Custom';
+export { default as Date } from './Functions/Date';
+export { default as DateTime } from './Functions/DateTime';
+export { default as Email } from './Functions/Email';
+export { default as Integer } from './Functions/Integer';
+export { default as Length } from './Functions/Length';
+export { default as Max } from './Functions/Max';
+export { default as Min } from './Functions/Min';
+export { default as Numeric } from './Functions/Numeric';
+export { default as Regex } from './Functions/Regex';
+export { default as Required } from './Functions/Required';
+export { default as Time } from './Functions/Time';
+export { default as Unique } from './Functions/Unique';
+export { default as Url } from './Functions/Url';
+export { default as IpAddress } from './Functions/IpAddress';
+// % protected region % [Add any extra exports here] off begin
+// % protected region % [Add any extra exports here] end

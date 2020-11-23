@@ -14,16 +14,31 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import {Condition} from "../Schema/Question";
+import { Condition } from '../Schema/Question';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
-export function CompareNumber (condition: Condition, conditionalValue: any) :boolean{
-	if (isNaN(Number(conditionalValue))){
-		return false;
-	}
+function CompareNumber(condition: Condition, conditionalValue: string): boolean {
+	// % protected region % [Customize CompareNumber conditions here] off begin
 	switch (condition.condition) {
-		case "equal":
-			return conditionalValue === condition.value;
+		case 'equal':
+			return Number(conditionalValue) === Number(condition.value);
+		case 'greaterThan': 
+			return Number(conditionalValue) > Number(condition.value);
+		case 'contains':
+			return (String(conditionalValue).indexOf(String(condition.value))) > -1;
+		case 'greaterThanOrEqual':
+			return Number(conditionalValue) >= Number(condition.value);
+		case 'lessThan':
+			return Number(conditionalValue) < Number(condition.value);
+		case 'lessThanOrEqual':
+			return Number(conditionalValue) <= Number(condition.value);
+		case 'notEqual':
+			return Number(conditionalValue) !== Number(condition.value);
 		default:
 			return false;
 	}
+	// % protected region % [Customize CompareNumber conditions here] end
 }
+
+export default CompareNumber;

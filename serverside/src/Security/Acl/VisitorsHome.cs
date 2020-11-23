@@ -73,6 +73,22 @@ namespace Sportstats.Security.Acl
 			// % protected region % [Override delete rule contents here here] end
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+
+			// Acls have no setable properties so if they are the same type then they will be the same
+			return GetType() == obj.GetType();
+		}
+
+		public override int GetHashCode()
+		{
+			return GetType().GetHashCode();
+		}
+
 		// % protected region % [Add any extra ACL functions here] off begin
 		// % protected region % [Add any extra ACL functions here] end
 	}

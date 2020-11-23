@@ -21,6 +21,7 @@ import { Redirect } from 'react-router';
 import { Button, Display, Sizes } from '../Components/Button/Button';
 import { action, observable } from 'mobx';
 import { store } from 'Models/Store';
+import { SERVER_URL } from 'Constants';
 import axios from 'axios';
 import { ButtonGroup, Alignment } from 'Views/Components/Button/ButtonGroup';
 import _ from 'lodash';
@@ -124,7 +125,7 @@ export default class ResetPasswordPage extends React.Component<RouteComponentPro
 			return;
 		} else {
 			axios.post(
-				'/api/account/reset-password',
+				`${SERVER_URL}/api/account/reset-password`,
 				{
 					token: this.resetPasswordState.token,
 					username: this.resetPasswordState.username,

@@ -29,7 +29,7 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.BulkDelete
 {
 	[Binding]
-	public class BulkDeleteFeatureSteps
+	public class BulkDeleteFeatureSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private readonly GenericEntityPage _genericEntityPage;
@@ -37,7 +37,7 @@ namespace SeleniumTests.Steps.BotWritten.BulkDelete
 		private int _totalNumSelectedItems;
 		private readonly static List<string> ToasterAlertMessages = new List<string> { "All selected items are deleted successfully", "These records could not be deleted because of an association"};
 
-		public BulkDeleteFeatureSteps(ContextConfiguration contextConfiguration)
+		public BulkDeleteFeatureSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			_genericEntityPage = new GenericEntityPage(_contextConfiguration);

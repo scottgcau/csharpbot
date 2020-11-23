@@ -16,7 +16,7 @@
 ###
 
 # % protected region % [Customise your compose file here] off begin
-version: '3.3'
+version: '3.4'
 services:
   db:
     image: postgres:11
@@ -51,13 +51,19 @@ services:
     volumes:
       - ./clientside:/usr/src/app/
       - node_modules:/usr/src/app/node_modules
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:3000" ]
+      interval: 60s
+      timeout: 2s
+      retries: 12
+      start_period: 60s
   server:
     image: mcr.microsoft.com/dotnet/core/sdk:3.1
     working_dir: /usr/src/app/
     command: bash -c 'bash -s <<EOF;
       echo "Creating manifest...";
       dotnet new tool-manifest;
-      dotnet tool install --local dotnet-ef --version 3.0.0;
+      dotnet tool install --local dotnet-ef --version 3.1.1;
       mkdir -p Migrations;
       MIGRATION=$$(date +"%s");
       echo "Creating new migration $$MIGRATION...";
@@ -86,7 +92,13 @@ services:
     volumes:
       - ./serverside/src:/usr/src/app
     ports:
-      - 8001:5000
+      - 8000:5000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api"]
+      interval: 60s
+      timeout: 2s
+      retries: 12
+      start_period: 60s
 
 networks:
   bridge:

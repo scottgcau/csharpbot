@@ -25,11 +25,11 @@ using System.Linq;
 namespace SeleniumTests.Steps.BotWritten.Utility
 {
 	[Binding]
-	public sealed class WaitForSteps
+	public sealed class WaitForSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public WaitForSteps (ContextConfiguration contextConfiguration)
+		public WaitForSteps (ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 		}
@@ -41,7 +41,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void WaitForAnElementToBePresentBy (SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy, ElementState.EXISTS);
+			WaitUtils.elementState(_driverWait, elementBy, ElementState.EXISTS);
 		}
 
 		[ObsoleteAttribute]
@@ -49,7 +49,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void WaitForAnElementToNotBePresentBy(SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy, ElementState.NOT_EXIST);
+			WaitUtils.elementState(_driverWait, elementBy, ElementState.NOT_EXIST);
 		}
 
 		[ObsoleteAttribute]
@@ -57,7 +57,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void WaitForAnElementToBeVisibleBy (SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy, ElementState.VISIBLE);
+			WaitUtils.elementState(_driverWait, elementBy, ElementState.VISIBLE);
 		}
 
 		[ObsoleteAttribute]
@@ -65,7 +65,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void WaitForAnElementToNotBeVisibleBy(SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy, ElementState.NOT_VISIBLE);
+			WaitUtils.elementState(_driverWait, elementBy, ElementState.NOT_VISIBLE);
 		}
 
 		// page wait
@@ -73,7 +73,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		[StepDefinition ("I wait for the url to be (.*)")]
 		public void WaitForUrl(string url)
 		{
-			_contextConfiguration.WebDriverWait.Until(_ => _contextConfiguration.WebDriver.Url == url);
+			_driverWait.Until(_ => _driver.Url == url);
 		}
 
 		[ObsoleteAttribute]

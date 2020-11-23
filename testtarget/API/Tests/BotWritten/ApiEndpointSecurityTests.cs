@@ -14,6 +14,7 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+
 using System;
 using System.Net;
 using APITests.Setup;
@@ -25,6 +26,8 @@ using Xunit.Abstractions;
 
 namespace APITests.Tests.BotWritten
 {
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Integration")]
 	public class ApiSecurityTests : IClassFixture<StartupTestFixture>
 	{
 		private readonly StartupTestFixture _configure;
@@ -42,69 +45,27 @@ namespace APITests.Tests.BotWritten
 		/// </summary>
 		/// <param name="entityName"></param>
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityNamePluralizedTheoryData))]
 		public void TestGraphqlEndPointsUnauthorized(string entityName)
 		{
-			//setup the rest client
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/graphql")
-			};
+			var api = new WebApi(_configure, _output);
 
-			//setup the request
-			var request = new RestRequest
-			{
-				Method = Method.POST,
-				RequestFormat = DataFormat.Json
-			};
-
-			JsonObject query = new JsonObject();
-
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "application/json, text/html, */*");
-
+			var query = new RestSharp.JsonObject();
 			query.Add("query", "{ " + entityName + "{id}}");
-			request.AddParameter("text/json", query, ParameterType.RequestBody);
+			var response = api.Post($"/api/graphql", query);
 
-			// execute the request
-			var response = client.Execute(request);
-
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
-
-			//valid ids returned and a valid response
+			// we should get a valid response back
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 		}
 
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
-		[ClassData(typeof(EntityNameTheoryData))]
+		[ClassData(typeof(VisitorUnauthorisedEntityNameTheoryData))]
 		public void TestApiEndPointsUnauthorized(string entityName)
 		{
-			//setup the rest client
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/entity/{entityName}")
-			};
+			var api = new WebApi(_configure, _output);
+			var response = api.Get($"/api/entity/{entityName}");
 
-			//setup the request
-			var request = new RestRequest
-			{
-				Method = Method.GET,
-				RequestFormat = DataFormat.Json
-			};
-
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "application/json, text/html, */*");
-
-			// execute the request
-			var response = client.Execute(request);
-
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
-
-			//valid ids returned and a valid response
+			// valid response code
 			Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
 		}
 	}

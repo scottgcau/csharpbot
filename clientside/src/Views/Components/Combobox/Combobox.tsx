@@ -21,7 +21,6 @@ import { DisplayType } from '../Models/Enums';
 import {
 	Dropdown,
 	DropdownItemProps,
-	DropdownOnSearchChangeData,
 	DropdownProps,
 	Label,
 	StrictDropdownProps,
@@ -30,6 +29,9 @@ import InputWrapper from 'Views/Components/Inputs/InputWrapper';
 import classNames from 'classnames';
 import { action, computed, observable } from 'mobx';
 import Spinner from 'Views/Components/Spinner/Spinner';
+
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export interface ComboboxOption<I> {
 	/** The value to display in the combobox item dropdown */
@@ -45,7 +47,7 @@ interface InternalComboboxProps<T, I> {
 	model: T;
 	/** The property on the model to change */
 	modelProperty: string;
-	/** 
+	/**
 	 * Gets an identifying property from the value object. This must be a unique value and not an object.
 	 * By default this will get the value object itself
 	 */
@@ -96,6 +98,8 @@ export interface SyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
 	options: ComboboxOption<I | undefined>[];
 	/** If the combobox is searchable */
 	searchable?: boolean | ((options: DropdownItemProps[], value: string) => DropdownItemProps[]);
+	/** If the combobox is in a loading state */
+	loading?: boolean;
 }
 
 export interface AsyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
@@ -106,7 +110,7 @@ export interface AsyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
 	 *
 	 * The key and value properties can be overriden with the getOptionLabel and getOptionValue props
 	 */
-	options: (input: string | string[]) => Promise<ComboboxOption<I | undefined>[]>;
+	options: (input: string) => Promise<ComboboxOption<I | undefined>[]>;
 	/**
 	 * The initial options that are displayed in the combobox before any search occurs
 	 */
@@ -134,6 +138,14 @@ export class Combobox<T, I> extends React.Component<IComboboxProps<T, I>> {
 		searchable: true
 	};
 
+	private _reFetch?: () => void = undefined;
+	public get reFetch() {
+		if (this._reFetch) {
+			return this._reFetch;
+		}
+		return function() {};
+	}
+
 	private getOptionValue = (option: I | undefined) => this.props.getOptionValue
 		? this.props.getOptionValue(option)
 		: option as string | number | boolean | undefined;
@@ -153,6 +165,7 @@ export class Combobox<T, I> extends React.Component<IComboboxProps<T, I>> {
 					typeof this.props.options === 'function'
 					? <AsyncCombobox
 							{...this.props}
+							ref={ref => this._reFetch = ref?.reFetch}
 							options={this.props.options}
 							getOptionValue={this.getOptionValue}
 						/>
@@ -176,6 +189,7 @@ class SyncCombobox<T, I> extends React.Component<InternalSyncComboboxProps<T, I>
 			getOptionValue={this.props.getOptionValue}
 			optionResults={this.props.options}
 			search={this.props.searchable}
+			loading={this.props.loading}
 			placeholder={this.props.placeholder}
 			clearable={this.props.isClearable}
 			onAfterChange={this.props.onAfterChange}
@@ -193,22 +207,26 @@ type loadingState = 'loading' | 'error' | 'done';
 class AsyncCombobox<T, I> extends React.Component<InternalAsyncComboboxProps<T, I>> {
 	@observable
 	private requestState: loadingState = 'done';
-	
+
 	@observable
 	private initialRequestState: loadingState = 'loading';
-	
+
 	@observable
 	private optionResults: ComboboxOption<I | undefined>[] = [];
-	
+
+	private lastSearchQuery = '';
+
+	public reFetch = () => this.searchOptions(this.lastSearchQuery);
+
 	@action
-	private searchOptions = (event: React.SyntheticEvent<HTMLElement> | undefined, data: DropdownOnSearchChangeData) => {
+	private searchOptions = (data: string): Promise<void> => {
 		this.requestState = 'loading';
-		
-		return this.props.options(data.searchQuery)
+		this.lastSearchQuery = data;
+		return this.props.options(data)
 			.then(this.onSearchSuccess)
 			.catch(this.onSearchFail);
-	};
-	
+	}
+
 	@action
 	private onSearchSuccess = (options: ComboboxOption<I | undefined>[], initial?: boolean) => {
 		this.optionResults.length = 0;
@@ -219,7 +237,7 @@ class AsyncCombobox<T, I> extends React.Component<InternalAsyncComboboxProps<T, 
 			this.requestState = 'done';
 		}
 	};
-	
+
 	@action
 	private onSearchFail = (error: any, initial?: boolean) => {
 		console.error(error);
@@ -229,7 +247,7 @@ class AsyncCombobox<T, I> extends React.Component<InternalAsyncComboboxProps<T, 
 			this.requestState = 'error';
 		}
 	};
-	
+
 	constructor(props: InternalAsyncComboboxProps<T, I>, context: any) {
 		super(props, context);
 		if (this.props.initialOptions) {
@@ -240,6 +258,9 @@ class AsyncCombobox<T, I> extends React.Component<InternalAsyncComboboxProps<T, 
 			this.onSearchSuccess([], true);
 		}
 	}
+
+	// % protected region % [Add any extra Component lifecycle methods here] off begin
+	// % protected region % [Add any extra Component lifecycle methods here] end
 
 	public render() {
 		switch (this.initialRequestState) {
@@ -254,7 +275,7 @@ class AsyncCombobox<T, I> extends React.Component<InternalAsyncComboboxProps<T, 
 					getOptionValue={this.props.getOptionValue}
 					search={options => options}
 					optionResults={this.optionResults}
-					onSearchChange={this.searchOptions}
+					onSearchChange={(e, data) => this.searchOptions(data.searchQuery)}
 					placeholder={this.props.placeholder}
 					loading={this.requestState === 'loading'}
 					disabled={this.props.isDisabled}
@@ -282,12 +303,12 @@ interface InnerComboboxProps<T, I> extends StrictDropdownProps {
 class InnerCombobox<T, I> extends React.Component<InnerComboboxProps<T, I>> {
 	@computed
 	private get options() {
-		return this.props.optionResults.map((option, i) => ({
+		return this.props.optionResults.map((option) => ({
 			text: option.display,
 			value: this.props.getOptionValue(option.value),
 			isFixed: option.isFixed,
 			key: this.props.getOptionValue(option.value),
-			as: (props: any) => <div {..._.omit(props, 'isFixed')} data-id={option.value}>
+			as: (props: any) => <div {..._.omit(props, 'isFixed')} data-id={this.props.getOptionValue(option.value)}>
 				{props.children}
 			</div>
 		}));
@@ -296,8 +317,8 @@ class InnerCombobox<T, I> extends React.Component<InnerComboboxProps<T, I>> {
 	@computed
 	private get selectedItem() {
 		const modelProperty = this.props.model[this.props.modelProperty];
-		
-		if (modelProperty) {
+
+		if (!(modelProperty === null || modelProperty === undefined)) {
 			if (this.props.multiple && Array.isArray(modelProperty)) {
 				return _.chain(this.props.optionResults)
 					.filter(option => {
@@ -321,16 +342,16 @@ class InnerCombobox<T, I> extends React.Component<InnerComboboxProps<T, I>> {
 				}
 			}
 		}
-		
+
 		return undefined;
 	}
-	
+
 	private set selectedItem(value: undefined | boolean | number | string | (boolean | number | string)[]) {
 		if (Array.isArray(value)) {
 			if (!Array.isArray(this.props.model[this.props.modelProperty])) {
 				this.props.model[this.props.modelProperty] = [];
 			}
-			
+
 			this.props.model[this.props.modelProperty].length = 0;
 			const selected = this.props.optionResults
 				.filter(option => {
@@ -342,15 +363,15 @@ class InnerCombobox<T, I> extends React.Component<InnerComboboxProps<T, I>> {
 			const selected = this.props.optionResults.find(option => {
 				return this.optionsEqual(value, option);
 			});
-			
-			if (selected) {
+
+			if (!(selected === null || selected === undefined)) {
 				this.props.model[this.props.modelProperty] = selected.value;
 			} else {
 				this.props.model[this.props.modelProperty] = undefined;
 			}
 		}
 	}
-	
+
 	@action
 	private onChange = (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
 		// If the onChange is overwritten then we should just use that one instead
@@ -361,13 +382,13 @@ class InnerCombobox<T, I> extends React.Component<InnerComboboxProps<T, I>> {
 			this.selectedItem = value;
 			// this.props.model[this.props.modelProperty] = value;
 		}
-		
+
 		// If there is any logic to be done after the change of the combobox, do it here
 		if (this.props.onAfterChange) {
 			this.props.onAfterChange(event, data);
 		}
 	};
-	
+
 	private optionsEqual(modelProp: string | number | boolean | undefined, option: ComboboxOption<I | undefined>) {
 		if (this.props.optionEqualFunc) {
 			return this.props.optionEqualFunc(modelProp, option.value);
@@ -394,13 +415,15 @@ class InnerCombobox<T, I> extends React.Component<InnerComboboxProps<T, I>> {
 						onRemove={item.isFixed ? undefined : defaultLabelProps.onRemove} />
 				</>
 			}}
+			// % protected region % [Add any extra props to Dropdown in InnerCombobox here] off begin
+			// % protected region % [Add any extra props to Dropdown in InnerCombobox here] end
 			{..._.omit(
 				this.props,
-				'model', 
-				'modelProperty', 
-				'optionResults', 
-				'getOptionValue', 
-				'onAfterChange', 
+				'model',
+				'modelProperty',
+				'optionResults',
+				'getOptionValue',
+				'onAfterChange',
 				'optionEqualFunc',
 				'selection',
 				'onChange',

@@ -28,7 +28,11 @@ import { FormEntityTile } from 'Forms/FormEntityTile';
 import Spinner from 'Views/Components/Spinner/Spinner';
 import { Button } from 'Views/Components/Button/Button';
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 function getFormTileQuery(modelName: string) {
+	// % protected region % [Customize form gql here] off begin
 	return gql`query views($args: [WhereExpressionGraph]) {
 		model: ${lowerCaseFirst(modelName)}FormTileEntitys(where: $args) {
 			id
@@ -51,17 +55,21 @@ function getFormTileQuery(modelName: string) {
 			}
 		}
 	}`;
+	// % protected region % [Customize form gql here] end
 }
 
 export interface FormSubmissionTileProps {
+	// % protected region % [Customize form submission tile props here] off begin
 	modelType: IModelType;
 	tileId: string;
 	beforeContent?: (title: string, nextFn: () => void) => React.ReactNode;
 	afterContent?: () => React.ReactNode;
+	// % protected region % [Customize form submission tile props here] end
 }
 
 @observer
 export class FormSubmissionTile extends React.Component<FormSubmissionTileProps> {
+	// % protected region % [Customize default props here] off begin
 	static defaultProps: Partial<FormSubmissionTileProps> = {
 		beforeContent: (title, nextFn) => {
 			return (
@@ -73,8 +81,11 @@ export class FormSubmissionTile extends React.Component<FormSubmissionTileProps>
 				</>
 			)
 		},
-		afterContent: () => <div>Thank you form submitting this form</div>,
+		afterContent: () => {
+			return (<div>Thank you form submitting this form</div>);
+		},
 	};
+	// % protected region % [Customize default props here] end
 
 	@observable
 	private requestState: 'pending' | 'error' | 'success' = 'pending';
@@ -145,6 +156,7 @@ export class FormSubmissionTile extends React.Component<FormSubmissionTileProps>
 	}
 
 	private renderSuccess = () => {
+		// % protected region % [Customize render success here] off begin
 		if (this.entity) {
 			switch (this.formState) {
 				case 'before': return this.props.beforeContent
@@ -159,6 +171,7 @@ export class FormSubmissionTile extends React.Component<FormSubmissionTileProps>
 				There is no entity associated with this form tile
 			</div>
 		);
+		// % protected region % [Customize render success here] end
 	}
 
 	public render() {

@@ -38,7 +38,8 @@ namespace SeleniumTests.PageObjects
 		protected enum SelectorType
 		{
 			CSS,
-			XPath
+			XPath,
+			ID
 		}
 
 		protected IDictionary<string, (string selector, SelectorType type)> selectorDict = new Dictionary<string, (string, SelectorType)>();
@@ -65,11 +66,23 @@ namespace SeleniumTests.PageObjects
 			return baseElement.FindElement(elementSelector);
 		}
 
-		public IWebElement FindElementExt(string elementName)
+		protected IWebElement FindElementExt(string elementName)
 		{
 			var selector = selectorDict[elementName];
-			var elementSelector = (selector.type == SelectorType.CSS) ?
-				By.CssSelector(selector.selector) : By.XPath(selector.selector);
+			By elementSelector = null;
+
+			switch (selector.type)
+			{
+				case SelectorType.CSS:
+					elementSelector = By.CssSelector(selector.selector);
+					break;
+				case SelectorType.ID:
+					elementSelector = By.Id(selector.selector);
+					break;
+				case SelectorType.XPath:
+					elementSelector = By.XPath(selector.selector);
+					break;
+			}
 			return driver.FindElementExt(elementSelector);
 		}
 

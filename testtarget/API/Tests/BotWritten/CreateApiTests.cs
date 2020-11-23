@@ -43,6 +43,7 @@ namespace APITests.Tests.BotWritten
 			_output = output;
 		}
 
+		// % protected region % [Customize Create Entity tests here] off begin
 		[Theory]
 		[Trait("Category", "BotWritten")]
 		[Trait("Category", "Integration")]
@@ -53,40 +54,17 @@ namespace APITests.Tests.BotWritten
 			// get the list of entities we will be creating
 			var entityList = CreateReferencedEntities(entityFactory, numEntities);
 
-			//setup the rest client
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/graphql")
-			};
-
-			//setup the request
-			var request = new RestRequest
-			{
-				Method = Method.POST,
-				RequestFormat = DataFormat.Json
-			};
-
-			//get the authorization token and adds the token to the request
-			var loginToken = new LoginToken(_configure.BaseUrl, _configure.SuperUsername, _configure.SuperPassword);
-			var authorizationToken = $"{loginToken.TokenType} {loginToken.AccessToken}";
-			request.AddHeader("Authorization", authorizationToken);
-
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "*\\*");
+			var api = new WebApi(_configure, _output);
 
 			/*
 			 * get the first entity out of the list, we will be iterating over this one and creating the references needed
 			 * for it. This means that all the created entities share the same references
 			 */
-
 			var query = QueryBuilder.CreateEntityQueryBuilder(entityList);
+			api.ConfigureAuthenticationHeaders();
 
-			request.AddParameter("text/json", query, ParameterType.RequestBody);
-
-			// execute the request
-			var response = client.Execute(request);
-
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
+			var response = api.Post($"/api/graphql", query);
+			
 
 			//valid ids returned and a valid response
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -94,8 +72,11 @@ namespace APITests.Tests.BotWritten
 			//return the object at the end, this can be reused.
 			return entityList;
 		}
+		// % protected region % [Customize Create Entity tests here] end
 
-		private List<BaseEntity> CreateReferencedEntities (EntityFactory entityFactory, int numEntities)
+
+		// % protected region % [Customize Create Referenced Entity tests here] off begin
+		private List<BaseEntity> CreateReferencedEntities(EntityFactory entityFactory, int numEntities)
 		{
 			// get the list of entities we will be creating
 			var entityList = entityFactory.Construct(numEntities);
@@ -145,5 +126,6 @@ namespace APITests.Tests.BotWritten
 			}
 			return entityList;
 		}
+		// % protected region % [Customize Create Referenced Entity tests here] end
 	}
 }

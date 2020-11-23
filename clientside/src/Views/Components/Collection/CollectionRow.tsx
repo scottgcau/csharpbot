@@ -16,7 +16,7 @@
  */
 import { observer } from "mobx-react";
 import * as React from 'react';
-import { ICollectionItemActionProps, expandFn, actionFilterFn } from './Collection';
+import { ICollectionItemActionProps, expandFn, showExpandFn, actionFilterFn } from './Collection';
 import { observable, computed, runInAction } from 'mobx';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Button } from '../Button/Button';
@@ -27,6 +27,9 @@ import * as moment from 'moment';
 import If from '../If/If';
 import { EntityContextMenu, IEntityContextMenuActions } from '../EntityContextMenu/EntityContextMenu';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 export interface ICollectionRowProps<T> {
 	item: T;
 	headers: Array<ICollectionHeaderPropsPrivate<T>>;
@@ -34,11 +37,14 @@ export interface ICollectionRowProps<T> {
 	actionsMore?: IEntityContextMenuActions<T>;
 	selectableItems?: boolean;
 	expandAction?: expandFn<T>;
+	showExpandButton?: showExpandFn<T>;
 	checked?: boolean;
 	onChecked?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean, checkedItem: T) => void;
 	idColumn?: string;
 	keyValue: string;
 	dataFields?: (row: T) => { [key: string]: string };
+	// % protected region % [Add extra collection row props here] off begin
+	// % protected region % [Add extra collection row props here] end
 }
 
 /**
@@ -54,11 +60,15 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 
 	private moreMenuRef : EntityContextMenu<T> | null;
 
+	// % protected region % [Add extra attributes here] off begin
+	// % protected region % [Add extra attributes here] end
+
 	/**
 	 * The dom for the expanded row
 	 */
 	@computed
 	private get expandDom() {
+		// % protected region % [Customize expandDom computed field here] off begin
 		if (this.props.expandAction) {
 			// The magic number is since we have an extra column for the checkbox and another for the actions
 			const colSpanOffset = this.props.selectableItems ? 2 : 1;
@@ -77,21 +87,25 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 		} else {
 			return null;
 		}
+		// % protected region % [Customize expandDom computed field here] end
 	}
 
 	constructor(props: ICollectionRowProps<T>, context: any) {
 		super(props, context);
 		this.checked.checked = this.props.checked;
+		// % protected region % [Add extra constructor logic here] off begin
+		// % protected region % [Add extra constructor logic here] end
 	}
 
 	public render() {
+		// % protected region % [Customize render logic here] off begin
 		const columns = [];
 
 		// The checkbox at the start of the row
 		if (!!this.props.selectableItems) {
 			columns.push(
 				<td key="0" className="select-box">
-					<Checkbox 
+					<Checkbox
 						model={{}}
 						modelProperty=""
 						name="select"
@@ -149,8 +163,8 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 							{action.label}
 						</Button>;
 					}
-					
-					return <React.Fragment key={actIdx}>{action.customButton}</React.Fragment>
+
+					return <React.Fragment key={actIdx}>{action.customButton(this.props.item)}</React.Fragment>
 				});
 		} else if (Array.isArray(this.props.actions)) {
 			actionButtons = this.props.actions
@@ -165,14 +179,14 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 							{action.label}
 						</Button>;
 					}
-					
-					return <React.Fragment key={actIdx}>{action.customButton}</React.Fragment>
+
+					return <React.Fragment key={actIdx}>{action.customButton(this.props.item)}</React.Fragment>
 				});
 		}
 
 		// The expand button if needed
 		let expandButton = null;
-		if (this.props.expandAction) {
+		if (this.props.expandAction && (!this.props.showExpandButton || this.props.showExpandButton(this.props.item))) {
 			expandButton = (
 				<Button icon={this.expanded ? { icon: 'chevron-up', iconPos: 'icon-top' } : { icon: 'chevron-down', iconPos: 'icon-top' }}
 					buttonProps={ {onClick: () => {
@@ -236,6 +250,7 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 				{this.expandDom}
 			</>
 		);
+		// % protected region % [Customize render logic here] end
 	}
 }
 

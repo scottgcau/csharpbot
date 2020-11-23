@@ -16,7 +16,6 @@
  */
 
 using System.Linq;
-using APITests.EntityObjects.Models;
 using RestSharp;
 using Xunit.Abstractions;
 

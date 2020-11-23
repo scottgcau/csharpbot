@@ -25,6 +25,8 @@ using Sportstats.Models;
 using Sportstats.Services;
 using GraphQL;
 using GraphQL.Types;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Graphql.Fields
 {
@@ -39,6 +41,7 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateDeleteMutation<TModel>(string name)
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateDeleteMutation here] off begin
 			return async context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
@@ -62,6 +65,7 @@ namespace Sportstats.Graphql.Fields
 					return new List<TModel>();
 				}
 			};
+			// % protected region % [Override CreateDeleteMutation here] end
 		}
 
 		/// <summary>
@@ -73,12 +77,13 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateConditionalDeleteMutation<TModel>(string name)
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateConditionalDeleteMutation here] off begin
 			return async context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext)context.UserContext;
 				var crudService = graphQlContext.CrudService;
 				var user = graphQlContext.User;
-				var dbSet = graphQlContext.DbContext.GetDbSet<TModel>(typeof(TModel).Name).AsQueryable();
+				var dbSet = graphQlContext.DbContext.Set<TModel>().AsQueryable();
 
 				var models = QueryHelpers.CreateConditionalWhere(context, dbSet);
 				models = QueryHelpers.CreateIdsCondition(context, models);
@@ -95,6 +100,7 @@ namespace Sportstats.Graphql.Fields
 					return false;
 				}
 			};
+			// % protected region % [Override CreateConditionalDeleteMutation here] end
 		}
 	}
 }

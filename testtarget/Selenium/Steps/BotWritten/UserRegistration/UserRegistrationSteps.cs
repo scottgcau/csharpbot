@@ -30,7 +30,7 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.UserRegistration
 {
 	[Binding]
-	public class UserRegistrationFeatureSteps
+	public class UserRegistrationFeatureSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private readonly LoginPage _loginPage;
@@ -39,7 +39,7 @@ namespace SeleniumTests.Steps.BotWritten.UserRegistration
 		private UserBaseEntity UserEntity;
 		private Email RegistrationEmail;
 
-		public UserRegistrationFeatureSteps(ContextConfiguration contextConfiguration)
+		public UserRegistrationFeatureSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			_loginPage = new LoginPage(contextConfiguration);
@@ -50,7 +50,7 @@ namespace SeleniumTests.Steps.BotWritten.UserRegistration
 		public void GivenINavigateToTheRegistrationPage()
 		{
 			_loginPage.Navigate();
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
+			WaitUtils.waitForPage(_driverWait);
 			_loginPage.RegisterButton.Click();
 		}
 
@@ -58,7 +58,7 @@ namespace SeleniumTests.Steps.BotWritten.UserRegistration
 		public void GivenIChooseUserAsMyUserType(UserType userType)
 		{
 			RegisterUserPage = _registerUserSelectionPage.Select(userType);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
+			WaitUtils.waitForPage(_driverWait);
 		}
 
 		[Given(@"I complete the (.*) user registration form")]
@@ -69,25 +69,13 @@ namespace SeleniumTests.Steps.BotWritten.UserRegistration
 			RegisterUserPage.Register(UserEntity);
 		}
 
-		[Then(@"I expect to recieve an email asking to confirm my registration")]
-		public void ThenIExpectToRecieveAnEmailAskingToConfirmMyRegistration()
+		[Then(@"I will see a registration success message")]
+		public void ThenIRegistrationSuccessMessage()
 		{
-			RegistrationEmail = FileReadingUtilities.ReadRegistrationEmail(UserEntity.EmailAddress);
-			Assert.NotNull(RegistrationEmail.Link);
-		}
-
-		[Then(@"I expect to be able to login after confirming my account")]
-		public void ThenIExpectToBeAbleToLoginAfterConfirmingMyAccount()
-		{
-			_contextConfiguration.WebDriver.Navigate().GoToUrl(RegistrationEmail.Link);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
-			new ConfirmRegistrationPage(_contextConfiguration).ConfirmButton.Click();
-			_loginPage.Navigate();
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
-			_loginPage.Login(UserEntity.EmailAddress, UserEntity.Password);
-			WaitUtils.waitForPage(_contextConfiguration.WebDriverWait);
-			var cookies = _contextConfiguration.WebDriver.Manage().Cookies;
-			Assert.NotNull(cookies.AllCookies.FirstOrDefault(x => x.Name == "XSRF-TOKEN"));
+			var registrationSuccessPage = new RegistrationSuccessPage(_contextConfiguration);
+			_driverWait.Until(x => registrationSuccessPage.registrationEmail.Displayed);
+			Assert.True(registrationSuccessPage.successHeader.Displayed);
+			Assert.Equal(UserEntity.EmailAddress, registrationSuccessPage.registrationEmail.Text);
 		}
 
 		[StepArgumentTransformation]

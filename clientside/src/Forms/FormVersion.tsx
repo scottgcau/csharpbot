@@ -15,6 +15,8 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import { Form } from './Schema/Question';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 export interface FormVersion {
 	id: string;
@@ -23,4 +25,6 @@ export interface FormVersion {
 	formData: Form;
 	version: number;
 	formSubmissions?: [];
+	// % protected region % [Add any extra FormVersion interface props here] off begin
+	// % protected region % [Add any extra FormVersion interface props here] end
 }

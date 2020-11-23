@@ -14,9 +14,10 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-
 using APITests.Factories;
 using Xunit;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace APITests.TheoryData.BotWritten
 {
@@ -32,6 +33,9 @@ namespace APITests.TheoryData.BotWritten
 			// % protected region % [Add any further password error here] off begin
 			// % protected region % [Add any further password error here] end
 
+			// % protected region % [Modify PasswordInvalidTheoryData entities here] off begin
+			// % protected region % [Modify PasswordInvalidTheoryData entities here] end
+
 			// % protected region % [Add any further test cases here] off begin
 			// % protected region % [Add any further test cases here] end
 		}
@@ -41,8 +45,10 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public UsernameInvalidTheoryData()
 		{
+			// % protected region % [Modify UsernameInvalidTheoryData entities here] off begin
 			var InvalidEmailError = "Email is not a valid email";
 
+			// % protected region % [Modify UsernameInvalidTheoryData entities here] end
 		}
 	}
 }

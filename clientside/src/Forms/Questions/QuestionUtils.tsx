@@ -14,33 +14,51 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 import { QuestionType } from '../Schema/Question';
-import { IQuestionTileProps } from './QuestionTile';
-import { TextQuestionTile } from './TextQuestionTile';
-import { NumberQuestionTile } from './NumberQuestionTile';
-import { CheckboxQuestionTile } from 'Forms/Questions/CheckboxQuestionTile';
-import { FormStatementTile } from "Forms/Questions/FormStatementTile";
+import { CheckboxQuestionTile } from './Tiles/CheckboxQuestionTile';
+import { FormStatementTile } from './Tiles/FormStatementTile';
+import { IQuestionTileProps, QuestionTile } from './QuestionTile';
+import { TextQuestionTile } from './Tiles/TextQuestionTile';
+import { NumberQuestionTile } from './Tiles/NumberQuestionTile';
+import { DateTimeQuestionTile } from './Tiles/DateTimeQuestionTile';
+import { RadioQuestionTile } from './Tiles/RadioQuestionTile';
+import { ListStatementTile } from './Tiles/ListStatementTile';
+import { DateQuestionTile } from './Tiles/DateQuestionTile';
+import { QuestionComponent } from 'Forms/Questions/QuestionComponent';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export const questions = [
+export const questions: Array<typeof QuestionComponent> = [
 	TextQuestionTile,
 	NumberQuestionTile,
 	CheckboxQuestionTile,
 	FormStatementTile,
+	DateTimeQuestionTile,
+	RadioQuestionTile,
+	ListStatementTile,
+	DateQuestionTile,
 	// % protected region % [Add any extra question types here] off begin
 	// % protected region % [Add any extra question types here] end
 ];
 
-export function getQuestion<T, P extends IQuestionTileProps<T>>(questionProps: P) {
-	const SelectedQuestion = getQuestionType(questionProps.questionType);
-	if (SelectedQuestion !== undefined) {
-		return <SelectedQuestion {...questionProps} />;
-	}
-	return <React.Fragment />;
+export function getQuestionType(questionType: QuestionType) {
+	// % protected region % [Customize getQuestionType here] off begin
+	return questions.find(q => q.questionType === questionType);
+	// % protected region % [Customize getQuestionType here] end
 }
 
-export function getQuestionType(questionType: QuestionType) {
-	return questions.find(q => q.questionType === questionType);
+// % protected region % [Customize GetQuestion logic here] off begin
+export function getQuestion<T, P extends IQuestionTileProps<T>>(questionProps: P): ReactNode {
+	const SelectedQuestion = getQuestionType(questionProps.questionType);
+
+	if (SelectedQuestion !== undefined) {
+		return <QuestionTile {...questionProps} selectedQuestion={SelectedQuestion} />;
+	}
+
+	return <></>;
 }
+// % protected region % [Customize GetQuestion logic here] end
+
+// % protected region % [Add any sub question logic here] off begin
+// % protected region % [Add any sub question logic here] end

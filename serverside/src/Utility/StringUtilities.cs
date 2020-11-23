@@ -36,5 +36,8 @@ namespace Sportstats.Utility
 		/// <param name="field"></param>
 		/// <returns></returns>
 		public static string ConvertToPascalCase(this string field) => char.ToUpperInvariant(field[0]) + field.Substring(1);
+
+		// % protected region % [Add extra StringUtilities methods here] off begin
+		// % protected region % [Add extra StringUtilities methods here] end
 	}
 }

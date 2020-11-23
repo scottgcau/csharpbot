@@ -14,19 +14,28 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+import * as uuid from 'uuid';
+import _ from 'lodash';
+import axios from 'axios';
+import gql from 'graphql-tag';
 import { IConditionalFetchArgs, Model } from 'Models/Model';
 import { AttributeCRUDOptions, ICRUDOptions } from 'Models/CRUDOptions';
-import { crudOptions, attributes, modelName as modelNameSymbol, displayName as displayNameSymbol, crudId } from 'Symbols';
-import gql from 'graphql-tag';
+import {
+	crudOptions,
+	attributes,
+	modelName as modelNameSymbol,
+	displayName as displayNameSymbol,
+	crudId,
+	fileAttributes,
+} from 'Symbols';
 import { lowerCaseFirst } from './StringUtils';
-import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { SERVER_URL } from 'Constants';
-import { store } from '../Models/Store';
-import _ from 'lodash';
+import { store } from 'Models/Store';
 import { Symbols } from 'Symbols';
-import { IWhereConditionApi } from '../Views/Components/ModelCollection/ModelQuery';
-import uuid from 'uuid';
+import { IOrderByCondition, IWhereCondition, IWhereConditionApi } from 'Views/Components/ModelCollection/ModelQuery';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 /**
  * Helper method to get model name based on the modelType - must be a Model or subclass
@@ -63,6 +72,10 @@ export function getAttributes(modelType: { new(): Model }) {
 	return [...modelType.prototype[attributes]];
 }
 
+export function getFiles(modelType: { new(): Model }) {
+	return [...modelType.prototype[fileAttributes]].map(f => f.name);
+}
+
 export async function exportAll(modelType: { new(): Model }, conditions: IWhereConditionApi<{}>[][] = []): Promise<void> {
 	const result = await axios.post(
 		`${SERVER_URL}/api/entity/${getModelName(modelType)}/export`,
@@ -76,50 +89,75 @@ export async function exportAll(modelType: { new(): Model }, conditions: IWhereC
 	saveAs(blob, `export-${getModelName(modelType)}.csv`);
 }
 
+// % protected region % [Customize getFetchAllQuery method here] off begin
 /*
  * Gets all models
  */
-export function getFetchAllQuery(modelType: { new(): Model }) {
+export function getFetchAllQuery(modelType: { new(): Model }, expandString?: string, useListExpands?: boolean) {
 	const model = new modelType();
-	return model.fetchAllQuery;
-}
+	const modelsName = lowerCaseFirst(model.getModelName());
 
-/*
+	return gql`
+		query ${modelsName}($args: [WhereExpressionGraph], $skip:Int, $take:Int, $orderBy: [OrderByGraph], $ids: [ID] ) {
+			${modelsName}s(where: $args, skip:$skip, take:$take, orderBy: $orderBy, ids: $ids) {
+				${expandString ? expandString : ""}
+				${model.attributes.join('\n')}
+				${model.files.map(f => f.name).join('\n')}
+				${useListExpands ? new modelType().listExpands : new modelType().defaultExpands}
+			}
+			count${model.getModelName()}s(where: $args) {
+				number
+			}
+		}`;
+}
+// % protected region % [Customize getFetchAllQuery method here] end
+
+
+// % protected region % [Customize FetchSingleQuery method here] off begin
+/**
  * Gets all models
  */
-export function getFetchSingleQuery(modelType: { new(): Model }) {
+export function getFetchSingleQuery(modelType: { new(): Model }, expandString?: string, useListExpands?: boolean) {
 	const modelsName = lowerCaseFirst(getModelName(modelType));
-	const model = new modelType();
 
 	return gql`
 		query ${modelsName} ($args:[WhereExpressionGraph]) {
 			${modelsName} (where: $args) {
+				${expandString ? expandString : ""}
 				${getAttributes(modelType).join('\n')}
-				${model.defaultExpands}
+				${getFiles(modelType).join('\n')}
+				${useListExpands ? new modelType().listExpands : new modelType().defaultExpands}
 			}
 		}`;
 }
+// % protected region % [Customize FetchSingleQuery method here] end
 
+
+// % protected region % [Customize fetchAllConditional method here] off begin
 /**
  * Creates a conditional query to send over graphql
  * @param modelType The model type to create the query for
+ * @param expandString Custom string to be inserted into the graphql query
+ * @param useListExpands Should the query only use the list query expands
  */
-export function getFetchAllConditional(modelType: {new() : Model}, expandString?: string) {
+export function getFetchAllConditional(modelType: {new() : Model}, expandString?: string, useListExpands?: boolean) {
 	const modelName: string = modelType[modelNameSymbol];
 	const lowerModelName = lowerCaseFirst(modelName);
 
 	return gql`
 		query ${lowerModelName}($args: [[WhereExpressionGraph]], $skip:Int, $take:Int, $orderBy: [OrderByGraph], $ids: [ID] ) {
 			${lowerModelName}s : ${lowerModelName}sConditional(conditions: $args, skip:$skip, take:$take, orderBy: $orderBy, ids: $ids) {
-				${getAttributes(modelType).join('\n')}
-				${new modelType().defaultExpands}
 				${expandString ? expandString : ""}
+				${getAttributes(modelType).join('\n')}
+				${getFiles(modelType).join('\n')}
+				${useListExpands ? new modelType().listExpands : new modelType().defaultExpands}
 			}
 			count${modelName}s : count${modelName}sConditional(conditions: $args) {
 				number
 			}
 		}`;
 }
+// % protected region % [Customize fetchAllConditional method here] end
 
 /**
  * Creates a function that checks if a field in the first argument equals the second argument
@@ -127,7 +165,7 @@ export function getFetchAllConditional(modelType: {new() : Model}, expandString?
  * @returns A function that compares equality of the field to an option
  */
 export function makeJoinEqualsFunc<T>(field: string) {
-	return (modelProp: T, option: string) => modelProp[field] == option;
+	return (modelProp: T, option: string) => modelProp[field] === option;
 }
 
 export type manyToManyOptions = {
@@ -135,11 +173,21 @@ export type manyToManyOptions = {
 	oppositeEntityName: string,
 	relationName: string,
 	relationOppositeName: string,
-	entity: () => { new(attrs?: any): Model, getAttributes(): string[] },
-	joinEntity: () => { new(attrs?: any): Model, getAttributes(): string[] },
-	oppositeEntity: () => { new(attrs?: any): Model, getAttributes(): string[] },
+	entity: () => { new(attrs?: any): Model, getAttributes(): string[], getFiles(): {name: string, blob: string}[] },
+	joinEntity: () => { new(attrs?: any): Model, getAttributes(): string[], getFiles(): {name: string, blob: string}[] },
+	oppositeEntity: () => { new(attrs?: any): Model, getAttributes(): string[], getFiles(): {name: string, blob: string}[] },
+	args?: (query: string, existingArgs: Array<Array<IWhereCondition<any>>>) => Array<Array<IWhereCondition<any>>>,
+	orderBy?: Array<IOrderByCondition<any>>;
+	take?: number,
+	skip?: number,
+	case?: string,
+	id?: string;
+	ids?: Array<String>
+	// % protected region % [Add additional manyToManyOptions attributes here] off begin
+	// % protected region % [Add additional manyToManyOptions attributes here] end
 };
 
+// % protected region % [Customize makeFetchManyToManyFunc method here] off begin
 /**
  * Makes a function that fetches the entities needed for many to many queries
  * @param options options for the fetch function
@@ -150,25 +198,37 @@ export function makeFetchManyToManyFunc(options: manyToManyOptions) {
 		const joinEntity = options.joinEntity();
 		const oppositeEntity = options.oppositeEntity();
 
+		const queryString = typeof query === 'string'
+			? query
+			: '';
+		const args = new oppositeEntity().getSearchConditions(queryString) ?? []
+
 		return store.apolloClient
 			.query({
 				query: gql`
-					query ${options.oppositeEntityName}($take:Int, $args: [[WhereExpressionGraph]]) {
-						${options.oppositeEntityName}s: ${options.oppositeEntityName}sConditional(conditions: $args, take: $take) {
+					query ${options.oppositeEntityName}($args: [[WhereExpressionGraph]], $skip:Int, $take:Int, $orderBy: [OrderByGraph], $ids: [ID], $id: ID) {
+						${options.oppositeEntityName}s: ${options.oppositeEntityName}sConditional(conditions: $args, skip: $skip, take: $take, orderBy: $orderBy, ids: $ids, id: $id) {
 							${oppositeEntity.getAttributes().join('\n')}
+							${oppositeEntity.getFiles().map(f => f.name).join('\n')}
 							${options.relationName}s {
 								${joinEntity.getAttributes().join('\n')}
+								${joinEntity.getFiles().map(f => f.name).join('\n')}
 								${options.relationName} {
 									${entity.getAttributes().join('\n')}
+									${entity.getFiles().map(f => f.name).join('\n')}
 								}
 							}
 						}
 					}`,
 				fetchPolicy: 'network-only',
 				variables: {
-					take: 10,
-					args: typeof query === 'string' ? new oppositeEntity().getSearchConditions(query) : null,
-					case: 'INVARIANT_CULTURE_IGNORE_CASE',
+					id: options.id,
+					ids: options.ids,
+					args: options.args?.(queryString, args) ?? args,
+					skip: options.skip,
+					take: options.take ?? 10,
+					orderBy: options.orderBy,
+					case: options.case ?? 'INVARIANT_CULTURE_IGNORE_CASE',
 				}
 			})
 			.then(result => {
@@ -198,6 +258,7 @@ export function makeFetchManyToManyFunc(options: manyToManyOptions) {
 			});
 	}
 }
+// % protected region % [Customize makeFetchManyToManyFunc method here] end
 
 export type oneToManyOptions<T extends Model> = {
 	relationName: string,
@@ -236,3 +297,6 @@ export function isRequired(model: Model, attributeName: string) {
 	}
 	return required;
 }
+
+// % protected region % [Export additional EntityUtil functions here] off begin
+// % protected region % [Export additional EntityUtil functions here] end

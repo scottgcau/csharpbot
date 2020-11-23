@@ -22,6 +22,9 @@ using OpenQA.Selenium.Interactions;
 using SeleniumTests.Setup;
 using SeleniumTests.Utils;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace SeleniumTests.PageObjects.Components
 {
 	internal interface IDatePickerComponent

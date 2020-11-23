@@ -16,7 +16,7 @@
  */
 
 export interface IAcl {
-	group: string;
+	group?: string;
 	isVisitorAcl: boolean;
 	canRead: () => boolean;
 	canCreate: () => boolean;

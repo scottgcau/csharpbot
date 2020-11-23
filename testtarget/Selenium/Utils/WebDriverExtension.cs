@@ -32,7 +32,7 @@ namespace SeleniumTests.Utils
 			if (timeoutInSeconds > 0)
 			{
 				var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
-				return wait.Until(drv => drv.FindElement(by));
+				return wait.Until(drv => drv.FindElements(by).FirstOrDefault());
 			}
 		}
 

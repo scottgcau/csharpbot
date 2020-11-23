@@ -20,19 +20,28 @@ import { computed } from 'mobx';
 import { observer } from 'mobx-react';
 import { IAttributeProps } from './IAttributeProps';
 import { Model } from 'Models/Model';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export interface IAttributeEnumComboboxProps<T extends Model> extends IAttributeProps<T> {
-
+	// % protected region % [Add IAttributeEnumCombobox props here] off begin
+	// % protected region % [Add IAttributeEnumCombobox props here] end
 }
 
 @observer
 export default class AttributeEnumCombobox<T extends Model> extends React.Component<IAttributeEnumComboboxProps<T>> {
+	// % protected region % [Add extra options class properties here] off begin
+	// % protected region % [Add extra options class properties here] end
+
 	@computed
 	private get options() {
+		// % protected region % [Customize get options here] off begin
 		return this.props.options.enumResolveFunction || [];
+		// % protected region % [Customize get options here] end
 	}
 
 	public render() {
+		// % protected region % [Customize options render here] off begin
 		return <Combobox
 			model={this.props.model}
 			label={this.props.options.name}
@@ -43,5 +52,6 @@ export default class AttributeEnumCombobox<T extends Model> extends React.Compon
 			isRequired={this.props.isRequired}
 			errors={this.props.errors}
 		/>;
+		// % protected region % [Customize options render here] end
 	}
 }

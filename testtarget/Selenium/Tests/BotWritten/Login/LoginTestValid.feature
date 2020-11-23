@@ -20,3 +20,6 @@ Feature: Login Valid
 @success
 Scenario: Login Valid
 Given I login to the site as a user
+
+# % protected region % [Add any additional tests here] off begin
+# % protected region % [Add any additional tests here] end

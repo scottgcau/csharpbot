@@ -15,6 +15,9 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 export function lowerCaseFirst(str: string) {
 	return str[0].toLowerCase() + str.slice(1);
 }
@@ -41,3 +44,6 @@ export function lowerCaseNoSpaces(str: string) {
 export function noSpaces(str: string) {
 	return str.replace(/ /g, "")
 }
+
+// % protected region % [Add extra StringUtil functions here] off begin
+// % protected region % [Add extra StringUtil functions here] end

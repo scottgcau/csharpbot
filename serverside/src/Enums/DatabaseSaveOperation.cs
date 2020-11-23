@@ -14,13 +14,20 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Enums
 {
 	public enum DatabaseSaveOperation
 	{
+		// % protected region % [Customise existing enum literals here] off begin
 		Create,
 		Update,
 		Delete,
+		// % protected region % [Customise existing enum literals here] end
+
+		// % protected region % [Add custom enum literals here] off begin
+		// % protected region % [Add custom enum literals here] end
 	}
 }

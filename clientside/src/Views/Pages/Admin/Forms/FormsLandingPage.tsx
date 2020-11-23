@@ -26,7 +26,16 @@ import { SecurityService } from "Services/SecurityService";
 export default class FormsLandingPage extends React.Component<RouteComponentProps>{
 	private getAccordionProps = () => {
 		const forms = [
-			{displayName: 'SportEntity', name: 'SportentityEntity', model: Models.SportentityEntity},
+			{displayName: 'RosterAssignment', name: 'RosterassignmentEntity', model: Models.RosterassignmentEntity},
+			{displayName: 'Schedule', name: 'ScheduleEntity', model: Models.ScheduleEntity},
+			{displayName: 'Game', name: 'GameEntity', model: Models.GameEntity},
+			{displayName: 'Sport', name: 'SportEntity', model: Models.SportEntity},
+			{displayName: 'Venue', name: 'VenueEntity', model: Models.VenueEntity},
+			{displayName: 'Team', name: 'TeamEntity', model: Models.TeamEntity},
+			{displayName: 'Roster', name: 'RosterEntity', model: Models.RosterEntity},
+			{displayName: 'Person', name: 'PersonEntity', model: Models.PersonEntity},
+			{displayName: 'League', name: 'LeagueEntity', model: Models.LeagueEntity},
+			{displayName: 'Season', name: 'SeasonEntity', model: Models.SeasonEntity},
 		];
 
 		return forms

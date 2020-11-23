@@ -19,6 +19,7 @@
  * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
  * and run json-schema-to-typescript to regenerate this file.
  */
+
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
@@ -33,13 +34,17 @@ export type Id = string;
 /**
  * The type of the question.
  */
-export type QuestionType = "text"
-	| "number" 
-	| "checkbox"
-	| "statement"
-	// % protected region % [Add extra question types here] off begin
-	// % protected region % [Add extra question types here] end
-	;
+export type QuestionType = 'text'
+| 'number'
+| 'checkbox'
+| 'statement'
+| 'date'
+| 'datetime'
+| 'list'
+| 'radiobutton'
+// % protected region % [Add extra question types here] off begin
+// % protected region % [Add extra question types here] end
+;
 /**
  * The label that is displayed with the question.
  */
@@ -55,16 +60,16 @@ export type Path = string;
 /**
  * The comparison to apply for the condition.
  */
-export type Comparison = "equal" 
-	| "notEqual" 
-	| "greaterThan" 
-	| "lessThan" 
-	| "greaterThanOrEqual" 
-	| "lessThanOrEqual" 
-	| "contains"
-	// % protected region % [Add extra comparisons here] off begin
-	// % protected region % [Add extra comparisons here] end
-	;
+export type Comparison = 'equal'
+| 'notEqual'
+| 'greaterThan'
+| 'lessThan'
+| 'greaterThanOrEqual'
+| 'lessThanOrEqual'
+| 'contains'
+// % protected region % [Add extra comparisons here] off begin
+// % protected region % [Add extra comparisons here] end
+;
 /**
  * The value to use for the condition.
  */
@@ -88,7 +93,7 @@ export type Form = Slide[];
 export interface Slide {
 	name: Name;
 	contents: Contents;
-	[k: string]: any;
+	[k: string];
 }
 /**
  * A question is an atomic element of a form to retrieve data from a user.
@@ -97,9 +102,14 @@ export interface Question {
 	id: Id;
 	questionType: QuestionType;
 	title: Title;
+	options?: { [key: string]};
 	property?: Property;
 	showConditions?: ShowConditions;
-	[k: string]: any;
+	content?: string;
+	className?: string;
+	validators?: Validators;
+	toolTip?: string;
+	[k: string];
 }
 /**
  * A condition is an operation on a submission to make a choice.
@@ -108,8 +118,36 @@ export interface Condition {
 	path: Path;
 	condition: Comparison;
 	value: Value;
-	[k: string]: any;
+	[k: string];
 }
+
+export interface Validator {
+	path: Path;
+	validator: ValidatorType;
+	additionalData: string;
+	[k: string];
+}
+
+export type Validators = Validator[];
+
+export type ValidatorType = 'required'
+| 'email'
+| 'phone'
+| 'past'
+| 'future'
+| 'after'
+| 'before'
+| 'custom'
+| 'length'
+| 'equalNumber'
+| 'notEqualNumber'
+| 'greaterThan'
+| 'greaterThanOrEqual'
+| 'lessThan'
+| 'lessThanOrEqual'
+// % protected region % [Add extra validators here] off begin
+// % protected region % [Add extra validators here] end
+;
 
 // % protected region % [Add any extra interfaces here] off begin
 // % protected region % [Add any extra interfaces here] end

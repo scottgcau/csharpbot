@@ -14,7 +14,6 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +26,8 @@ using EntityObject.Enums;
 using RestSharp;
 using Xunit;
 using Xunit.Abstractions;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace APITests.Tests.BotWritten
 {
@@ -46,10 +47,17 @@ namespace APITests.Tests.BotWritten
 		{
 			return new TheoryData<EntityFactory>
 			{
-				{ new EntityFactory("SportentityEntity")},
+				new EntityFactory("ScheduleEntity"),
+				new EntityFactory("SeasonEntity"),
+				new EntityFactory("VenueEntity"),
+				new EntityFactory("GameEntity"),
+				new EntityFactory("LeagueEntity"),
+				new EntityFactory("TeamEntity"),
+				new EntityFactory("PersonEntity"),
+				new EntityFactory("RosterassignmentEntity"),
+				new EntityFactory("RosterTimelineEventsEntity"),
 			};
 		}
-
 		[Theory]
 		[Trait("Category", "BotWritten")]
 		[Trait("Category", "Integration")]
@@ -67,8 +75,8 @@ namespace APITests.Tests.BotWritten
 			// get references to other entities
 			foreach (var reference in entityObject.References)
 			{
-				var referenceIdName =  reference.Type == ReferenceType.MANY 
-					? reference.OppositeName + "s" 
+				var referenceIdName =  reference.Type == ReferenceType.MANY
+					? reference.OppositeName + "s"
 					: reference.OppositeName + "Id" ;
 
 				//if we have a self reference, set it to null and continue
@@ -105,14 +113,15 @@ namespace APITests.Tests.BotWritten
 			}
 		}
 
+		// % protected region % [Customize CheckInvalidJsonsForInvalidResponse method here] off begin
 		private void CheckInvalidJsonsForInvalidResponse(BaseEntity entityObject, List<(List<string> expectedErrors,
-			JsonObject jsonObject)> invalidEntities, RestClient client)
+			RestSharp.JsonObject jsonObject)> invalidEntities, RestClient client)
 		{
 			// Looping through to test one by one because invalid enum error is thrown by
 			// GraphQl Deserializing and it only returns the first error it comes with in one request
 			invalidEntities.ForEach(invalidEntity =>
 			{
-				var invalidJsons = new List<JsonObject>() { invalidEntity.jsonObject };
+				var invalidJsons = new List<RestSharp.JsonObject>() { invalidEntity.jsonObject };
 
 				//setup the request
 				var request = RequestHelpers.BasicPostRequest();
@@ -136,5 +145,6 @@ namespace APITests.Tests.BotWritten
 				Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 			});
 		}
+		// % protected region % [Customize CheckInvalidJsonsForInvalidResponse method here] end
 	}
 }

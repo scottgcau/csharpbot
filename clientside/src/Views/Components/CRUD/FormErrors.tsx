@@ -20,6 +20,9 @@ import { observer } from 'mobx-react';
 import If from '../If/If';
 import { action, observable } from 'mobx';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 interface IFormErrorsProps {
 	error: React.ReactNode;
 	detailedErrors?: React.ReactNode;
@@ -32,6 +35,11 @@ class FormErrors extends React.Component<IFormErrorsProps> {
 	
 	public render() {
 		const { error } = this.props;
+		
+		// % protected region % [Add form error logic here] off begin
+		// % protected region % [Add form error logic here] end
+
+		// % protected region % [Customize form error dom here] off begin
 		return (
 			<div className="form-errors">
 				{error}
@@ -48,6 +56,7 @@ class FormErrors extends React.Component<IFormErrorsProps> {
 					)
 					: null}
 			</div>
+		// % protected region % [Customize form error dom here] end
 		);
 	}
 	

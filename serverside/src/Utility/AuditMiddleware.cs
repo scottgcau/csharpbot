@@ -21,8 +21,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sportstats.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 // % protected region % [Add any extra audit middleware imports here] off begin
 // % protected region % [Add any extra audit middleware imports here] end
@@ -32,22 +30,22 @@ namespace Sportstats.Utility
 	public class AuditMiddleware
 	{
 		private readonly RequestDelegate _next;
-		private readonly IConfiguration _configuration;
 		private readonly ILogger<AuditMiddleware> _logger;
+		private readonly ILogger<AuditLog> _auditLogger;
 		// % protected region % [Add any extra audit middleware variables here] off begin
 		// % protected region % [Add any extra audit middleware variables here] end
 
 		public AuditMiddleware(
 			RequestDelegate next,
-			IConfiguration configuration,
-			ILogger<AuditMiddleware> logger
+			ILogger<AuditMiddleware> logger,
+			ILogger<AuditLog> auditLogger
 			// % protected region % [Add any extra audit middleware constructor args here] off begin
 			// % protected region % [Add any extra audit middleware constructor args here] end
 			)
 		{
 			_next = next;
-			_configuration = configuration;
 			_logger = logger;
+			_auditLogger = auditLogger;
 			// % protected region % [Add any extra audit middleware constructor calls here] off begin
 			// % protected region % [Add any extra audit middleware constructor calls here] end
 		}
@@ -60,19 +58,11 @@ namespace Sportstats.Utility
 			await _next.Invoke(context);
 
 			// % protected region % [Perform outgoing actions here] off begin
-			// Construct a new DbContext separate from the one in DI
-			var connectionString = _configuration.GetConnectionString("DbConnectionString");
-			var options = new DbContextOptionsBuilder<SportstatsDBContext>()
-				.UseNpgsql(connectionString);
-			using var dbContext = new SportstatsDBContext(options.Options, null, null);
-
 			try
 			{
-				var logs = GetLogs(context);
-				if (logs.Count > 0)
+				foreach (var log in GetLogs(context))
 				{
-					logs.ForEach(l => dbContext.AuditLog.Add(l));
-					await dbContext.SaveChangesAsync();
+					log.LogAudit(_auditLogger);
 				}
 			}
 			catch (Exception e)

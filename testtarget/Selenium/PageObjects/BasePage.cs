@@ -15,13 +15,11 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumTests.Setup;
-using SeleniumTests.Utils;
 using Xunit;
 
 namespace SeleniumTests.PageObjects
@@ -40,16 +38,14 @@ namespace SeleniumTests.PageObjects
 	///<summary>
 	///The Base page object, every page is extended from this page, contains information shared across every page
 	///</summary>
-	public class BasePage : IBasePage
+	public class BasePage : BaseSection, IBasePage
 	{
 		protected readonly string baseUrl;
-		protected IDictionary<string, (string selector, SelectorType type)> selectorDict = new Dictionary<string, (string, SelectorType)>();
-		protected IWebDriver driver;
 		protected IWait<IWebDriver> driverWait;
 		public virtual string Url { get; set; }
 		protected ContextConfiguration contextConfiguration;
 
-		public BasePage(ContextConfiguration currentContext)
+		public BasePage(ContextConfiguration currentContext) : base (currentContext)
 		{
 			contextConfiguration = currentContext;
 			baseUrl = contextConfiguration.BaseUrl;
@@ -76,69 +72,12 @@ namespace SeleniumTests.PageObjects
 			return this;
 		}
 
-		// check that the entity appears on the page
-		public bool ElementExists(string element)
-		{
-			try
-			{
-				FindElementExt(element);
-				return true;
-			}
- 			catch
-			{
-				return false;
-			}
-		}
-
-		/*
-		 * The web element selector type enum,
-		 * used for selecting and interacting with web elements
-		 */
-		protected enum SelectorType
-		{
-			CSS,
-			XPath,
-			ID
-		}
-
-		protected IWebElement FindElementExt(string elementName)
-		{
-			var selector = selectorDict[elementName];
-			By elementSelector = null;
-
-			switch (selector.type)
-			{
-				case SelectorType.CSS:
-					elementSelector = By.CssSelector(selector.selector);
-					break;
-				case SelectorType.ID:
-					elementSelector = By.Id(selector.selector);
-					break;
-				case SelectorType.XPath:
-					elementSelector = By.XPath(selector.selector);
-					break;
-			}
-			return driver.FindElementExt(elementSelector);
-		}
-
 		protected IEnumerable<IWebElement> GetAllReadOnlyElements() => selectorDict.Where(e => e.Key != "UserPasswordElement" && e.Key != "UserConfirmPasswordElement").Select(e => FindElementExt(e.Key));
 
 		public List<IWebElement> GetReadonlyInputFieldAttributes()
 		{
 			driverWait.Until(_ => GetAllReadOnlyElements().ToList().Count > 0);
 			return GetAllReadOnlyElements().ToList();
-		}
-
-		public By GetWebElementBy(string elementName)
-		{
-			var selector = selectorDict[elementName];
-
-			return selector.type switch
-			{
-				SelectorType.CSS => By.CssSelector(selector.selector),
-				SelectorType.XPath => By.XPath(selector.selector),
-				_ => null,
-			};
 		}
 	}
 }

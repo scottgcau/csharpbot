@@ -24,6 +24,8 @@ using Sportstats.Models.RegistrationModels;
 using Sportstats.Services;
 using GraphQL;
 using GraphQL.Types;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Graphql.Fields
 {
@@ -38,6 +40,7 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, Task<object>> CreateCreateMutation<TModel>(string name)
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateCreateMutation here] off begin
 			return async context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
@@ -59,7 +62,8 @@ namespace Sportstats.Graphql.Fields
 
 					return await crudService.Create(models, new UpdateOptions
 					{
-						MergeReferences = mergeReferences
+						MergeReferences = mergeReferences,
+						Files = graphQlContext.Files,
 					});
 				}
 				catch (AggregateException exception)
@@ -69,6 +73,7 @@ namespace Sportstats.Graphql.Fields
 					return new List<TModel>();
 				}
 			};
+			// % protected region % [Override CreateCreateMutation here] end
 		}
 
 		/// <summary>
@@ -84,6 +89,7 @@ namespace Sportstats.Graphql.Fields
 			where TRegisterModel : IRegistrationModel<TModel>
 			where TGraphQlRegisterModel : TRegisterModel
 		{
+			// % protected region % [Override CreateUserCreateMutation here] off begin
 			return async context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
@@ -100,7 +106,8 @@ namespace Sportstats.Graphql.Fields
 
 					return await crudService.CreateUser<TModel, TGraphQlRegisterModel>(models,new UpdateOptions
 					{
-						MergeReferences = mergeReferences
+						MergeReferences = mergeReferences,
+						Files = graphQlContext.Files,
 					});
 				}
 				catch (AggregateException exception)
@@ -110,6 +117,7 @@ namespace Sportstats.Graphql.Fields
 					return new List<TModel>();
 				}
 			};
+			// % protected region % [Override CreateUserCreateMutation here] end
 		}
 	}
 }

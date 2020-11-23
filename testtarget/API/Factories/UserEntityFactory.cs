@@ -66,7 +66,7 @@ namespace APITests.Factories
 				var entity = Construct();
 				entity.Configure(options);
 				entity.Save();
-				output.WriteLine($"Database Saved Entity:\n{entity.EntityName}:\n{entity.toJson()}\n");
+				output.WriteLine($"Database Saved Entity:\n{entity.EntityName}:\n{entity.ToJson()}\n");
 				entityList.Add(entity);
 			}
 			return entityList;

@@ -37,6 +37,7 @@ interface ICbCheckboxProps<T> {
 	tooltip?: string;
 	subDescription?: string;
 	onChecked?: ((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void);
+	onAfterChecked?: ((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void);
 	inputProps?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 	errors?: string | string[];
 }
@@ -64,8 +65,7 @@ export class Checkbox<T> extends React.Component<ICbCheckboxProps<T>, any> {
 					name={name}
 					onChange={this.onChecked}
 					checked={this.props.model[this.props.modelProperty] || false}
-					disabled={isDisabled}
-					readOnly={isReadOnly}
+					disabled={isDisabled || isReadOnly}
 					aria-label={ariaLabel}
 					aria-describedby={ariaDescribedby}
 					{...this.props.inputProps}
@@ -76,9 +76,12 @@ export class Checkbox<T> extends React.Component<ICbCheckboxProps<T>, any> {
 
 	@action
 	public onChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-		this.props.model[this.props.modelProperty] = event.target.checked;
 		if (this.props.onChecked) {
-			this.props.onChecked(event, event.target.checked);
+			return this.props.onChecked(event, event.target.checked);
 		}
+
+		this.props.model[this.props.modelProperty] = event.target.checked;
+
+		return this.props.onAfterChecked?.(event, event.target.checked);
 	}
 }

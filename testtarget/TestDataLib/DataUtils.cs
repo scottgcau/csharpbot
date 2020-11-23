@@ -34,6 +34,7 @@ namespace TestDataLib
 
 	public static class DataUtils
 	{
+		private static readonly byte[] _redCircleImage = File.ReadAllBytes("Resources/RedCircle.svg");
 		private readonly static string[] _specialChars = LoadTextFile("Resources/specialChars.txt");
 		private readonly static string[] _words = LoadTextFile("Resources/words.txt");
 
@@ -52,6 +53,15 @@ namespace TestDataLib
 				.Where(FilterPlainTextFile)
 				.ToArray();
 		}
+
+		/// <summary>
+		/// Returns an SVG image to be used for testing file and image uploading.
+		/// </summary>
+		/// <returns>A byte array read from the SVG test file</returns>
+		public static byte[] GetSVGTestFile()
+		{
+			return _redCircleImage;
+		} 
 
 		/// <summary>
 		/// Create a random string in the desired range and options
@@ -88,8 +98,6 @@ namespace TestDataLib
 						specialString.Append(_specialChars[RandInt(0, _specialChars.Length - 1)]);
 					}
 					return specialString.ToString(0, length);
-				case CharType.WORDY_ONLY:
-					return RandWordyString(length);
 				case CharType.MIXED:
 					var result = new StringBuilder();
 					for (var i = 0; i < length; i++)
@@ -105,6 +113,7 @@ namespace TestDataLib
 						}
 					}
 					return result.ToString(0, length);
+				case CharType.WORDY_ONLY:
 				default:
 					return RandWordyString(length);
 			}
@@ -236,7 +245,7 @@ namespace TestDataLib
 				// append the words and spacing between words
 				wordyWords.Append(_words[RandInt(0,_words.Length - 1)]);
 
-				if (wordyWords.Length < length)
+				if (wordyWords.Length < length - 1)
 				{
 					wordyWords.Append(" ");
 				}

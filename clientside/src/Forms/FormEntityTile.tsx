@@ -16,15 +16,20 @@
  */
 import * as React from 'react';
 import _ from 'lodash';
-import { observer } from 'mobx-react';
 import { action, computed, observable } from 'mobx';
+import { observer } from 'mobx-react';
+
 import { jsonReplacerFn, Model } from 'Models/Model';
 import { FormTile, IFormProps } from './FormTile';
 import { FormEntityData, SubmissionEntityData } from 'Forms/FormEntityData';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 export interface IFormEntityTileProps<T extends FormEntityData> extends IFormProps<T> {
 	model: T;
 	onAfterSubmit?: (entity: Model & SubmissionEntityData) => void;
+	// % protected region % [Add extra form entity tile props here] off begin
+	// % protected region % [Add extra form entity tile props here] end
 }
 
 /**
@@ -35,15 +40,21 @@ export class FormEntityTile<T extends FormEntityData> extends React.Component<IF
 	@observable
 	private submissionEntity: Model & SubmissionEntityData = new (this.props.model.getSubmissionEntity())();
 
+	// % protected region % [Add extra class fields here] off begin
+	// % protected region % [Add extra class fields here] end
+
 	private submissionTransform: jsonReplacerFn = (input) => {
+		// % protected region % [Override submissionTransform here] off begin
 		const submissionData = input['submissionData'];
 		if (submissionData) {
 			input['submissionData'] = JSON.stringify(submissionData);
 		}
 		return input;
+		// % protected region % [Override submissionTransform here] end
 	}
 
 	@action
+	// % protected region % [Modify the onSubmit behaviour of forms here] off begin
 	private onSubmit = () => {
 		if (this.formVersion) {
 			this.submissionEntity.formVersionId = this.formVersion.id;
@@ -60,7 +71,7 @@ export class FormEntityTile<T extends FormEntityData> extends React.Component<IF
 				}
 			}
 		}
-
+	
 		return this.submissionEntity.save({submissionData: {}}, {jsonTransformFn: this.submissionTransform})
 			.then(() => {
 				if (this.props.onAfterSubmit) {
@@ -68,13 +79,17 @@ export class FormEntityTile<T extends FormEntityData> extends React.Component<IF
 				}
 			});
 	}
+	// % protected region % [Modify the onSubmit behaviour of forms here] end
 
 	@computed
 	public get formVersion() {
+		// % protected region % [Override formVersion here] off begin
 		return this.props.model.publishedVersion;
+		// % protected region % [Override formVersion here] end
 	}
 
 	public render() {
+		// % protected region % [Override render here] off begin
 		if (this.formVersion) {
 			return <FormTile
 				{...this.props}
@@ -83,5 +98,6 @@ export class FormEntityTile<T extends FormEntityData> extends React.Component<IF
 				onSubmit={this.onSubmit} />;
 		}
 		return <div>There is no published version for this form</div>;
+		// % protected region % [Override render here] end
 	}
 }

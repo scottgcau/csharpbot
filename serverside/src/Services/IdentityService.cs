@@ -15,11 +15,16 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Sportstats.Helpers;
 using Sportstats.Models;
 using Sportstats.Services.Interfaces;
+using Sportstats.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Services
 {
@@ -37,7 +42,12 @@ namespace Sportstats.Services
 		/// <inheritdoc />
 		public IList<string> Groups { get; set; }
 
+		// % protected region % [Add any extra class variables here] off begin
+		// % protected region % [Add any extra class variables here] end
+
 		public IdentityService(
+			// % protected region % [Add any extra constructor arguments here] off begin
+			// % protected region % [Add any extra constructor arguments here] end
 			IHttpContextAccessor httpContextAccessor,
 			IUserService userService,
 			UserManager<User> userManager)
@@ -45,17 +55,28 @@ namespace Sportstats.Services
 			_httpContextAccessor = httpContextAccessor;
 			_userService = userService;
 			_userManager = userManager;
+			// % protected region % [Add any extra constructor logic here] off begin
+			// % protected region % [Add any extra constructor logic here] end
 		}
 
 		/// <inheritdoc />
 		public async Task RetrieveUserAsync()
 		{
+			// % protected region % [Change RetrieveUserAsync here] off begin
 			if (Fetched != true)
 			{
 				User = await _userService.GetUserFromClaim(_httpContextAccessor.HttpContext.User);
-				Groups = User == null? new List<string>() : await _userManager.GetRolesAsync(User);
+				Groups = User == null ? new List<string>() : await _userManager.GetRolesAsync(User);
+				Groups.AddRange(SecurityUtilities.GetAllAcls()
+					.Where(x => x.IsVisitorAcl && x.Group != null)
+					.Select(x => x.Group)
+					.ToHashSet());
 				Fetched = true;
 			}
+			// % protected region % [Change RetrieveUserAsync here] end
 		}
+
+		// % protected region % [Add any further methods here] off begin
+		// % protected region % [Add any further methods here] end
 	}
 }

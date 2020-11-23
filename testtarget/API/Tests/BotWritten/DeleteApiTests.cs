@@ -27,8 +27,13 @@ using RestSharp;
 using Xunit;
 using Xunit.Abstractions;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace APITests.Tests.BotWritten
 {
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Integration")]
 	public class DeleteApiTests : IClassFixture<StartupTestFixture>
 	{
 		private readonly StartupTestFixture _configure;
@@ -44,8 +49,6 @@ namespace APITests.Tests.BotWritten
 
 		#region GraphQl delete
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityFactorySingleTheoryData))]
 		[ClassData(typeof(EntityFactoryMultipleTheoryData))]
 		public void GraphqlDeleteEntities(EntityFactory entityFactory, int numEntities)
@@ -55,6 +58,7 @@ namespace APITests.Tests.BotWritten
 		}
 
 
+		// % protected region % [Customize Graphql Delete tests here] off begin
 		/// <summary>
 		/// This function is called recursively to delete
 		/// entities, it is abstracted away from the creation tests
@@ -66,30 +70,13 @@ namespace APITests.Tests.BotWritten
 		/// </param>
 		internal void GraphQlDelete(List<BaseEntity> entityList)
 		{
-			// instantiate a new rest client, and configure the Uri
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/graphql")
-			};
-
-			// instantiate a new request
-			var request = new RestRequest();
-			// get a valid authorization token to process the request
-			var loginToken = new LoginToken(_configure.BaseUrl, _configure.SuperUsername, _configure.SuperPassword);
-			var authorizationToken = $"{loginToken.TokenType} {loginToken.AccessToken}";
-
-			// setup request format and headers including authorization token
-			request.RequestFormat = DataFormat.Json;
-			request.AddHeader("Authorization", authorizationToken);
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "application/json, text/html, */*");
+			var api = new WebApi(_configure, _output);
 
 			// form the query to delete the entity
-			var deleteQuery = QueryBuilder.DeleteEntityQueryBuilder(entityList);
-			request.AddParameter("text/json", deleteQuery, ParameterType.RequestBody);
-
 			// mass delete all entities in the list in a single request and check status code is ok
-			ValidateResponse(client, Method.POST, request, HttpStatusCode.OK);
+			var deleteQuery = QueryBuilder.DeleteEntityQueryBuilder(entityList);
+			api.ConfigureAuthenticationHeaders();
+			api.Post($"/api/graphql", deleteQuery);
 
 			/*
 			 * Run recursively for parent entities,
@@ -98,16 +85,15 @@ namespace APITests.Tests.BotWritten
 			 */
 			foreach (var parentEntity in entityList[0].ParentEntities)
 			{
-				GraphQlDelete(new List<BaseEntity>() {parentEntity});
+				GraphQlDelete(new List<BaseEntity>() { parentEntity });
 			}
 		}
+		// % protected region % [Customize Graphql Delete tests here] end
 		#endregion
 
 		#region Rest Endpoint Delete
-
+		// % protected region % [Customize Api Delete Entity tests here] off begin
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityFactoryTheoryData))]
 		public void ApiDeleteEntities(EntityFactory entityFactory)
 		{
@@ -123,38 +109,22 @@ namespace APITests.Tests.BotWritten
 				// populate the list using information returned from create entities.
 				GetParentKeysGuids(entityObject).ForEach(x => entityKeysGuids.Add(x));
 
-				foreach(var entityKeyGuid in entityKeysGuids)
+				foreach (var entityKeyGuid in entityKeysGuids)
 				{
 					// instantiate a new rest client, and configure the Uri
-					var client = new RestClient
-					{
-						BaseUrl = new Uri($"{_configure.BaseUrl}/api/entity/{entityKeyGuid.Key}/{entityKeyGuid.Value}")
-					};
 
-					// instantiate a new request
-					var request = new RestRequest();
+					var endPoint = $"/api/entity/{entityKeyGuid.Key}/{entityKeyGuid.Value}";
+					var api = new WebApi(_configure, _output);
+					api.ConfigureAuthenticationHeaders();
 
-					// get a valid authorization token to process the request
-					var loginToken = new LoginToken(_configure.BaseUrl, _configure.SuperUsername, _configure.SuperPassword);
-					var authorizationToken = $"{loginToken.TokenType} {loginToken.AccessToken}";
-
-					// setup request format and headers including authorization token
-					request.RequestFormat = DataFormat.Json;
-					request.AddHeader("Authorization", authorizationToken);
-					request.AddHeader("Content-Type", "application/json");
-					request.AddHeader("Accept", "*\\*");
-
-					// use GET to verify that the entity currently exists
-					ValidateResponse(client, Method.GET, request, HttpStatusCode.OK);
-					// use DELETE to delete entity and check good status code is returned
-					ValidateResponse(client, Method.DELETE, request, HttpStatusCode.OK);
-					// verify API will no longer return a valid status when trying to GET deleted entity.
-					ValidateResponse(client, Method.GET, request, HttpStatusCode.NoContent);
-					// verify API will no longer return a valid status when trying to DELETE deleted entity.
-					ValidateResponse(client, Method.DELETE, request, HttpStatusCode.OK);
+					Assert.Equal(HttpStatusCode.OK, api.Get(endPoint).StatusCode);
+					Assert.Equal(HttpStatusCode.OK, api.Delete(endPoint).StatusCode);
+					Assert.Equal(HttpStatusCode.NoContent, api.Get(endPoint).StatusCode);
+					Assert.Equal(HttpStatusCode.OK, api.Delete(endPoint).StatusCode);
 				}
 			}
 		}
+		// % protected region % [Customize Api Delete Entity tests here] end
 		#endregion
 
 		internal List<KeyValuePair<string, Guid>> GetParentKeysGuids(BaseEntity entityObject)
@@ -163,7 +133,7 @@ namespace APITests.Tests.BotWritten
 
 			foreach (var parentEntity in entityObject.ParentEntities)
 			{
-				if ((parentEntity.EntityName != entityObject.EntityName))
+				if (parentEntity.EntityName != entityObject.EntityName)
 				{
 					entityKeysGuids.Add(new KeyValuePair<string, Guid>(parentEntity.EntityName, parentEntity.Id));
 					GetParentKeysGuids(parentEntity).ForEach(x => entityKeysGuids.Add(x));
@@ -172,12 +142,7 @@ namespace APITests.Tests.BotWritten
 			return entityKeysGuids;
 		}
 
-		private void ValidateResponse(RestClient client, Method method, RestRequest request, HttpStatusCode expectedResponse)
-		{
-			request.Method = method;
-			var response = client.Execute(request);
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
-			Assert.Equal(expectedResponse, response.StatusCode);
-		}
+		// % protected region % [Add any further methods here] off begin
+		// % protected region % [Add any further methods here] end
 	}
 }

@@ -29,14 +29,14 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.Forms
 {
 	[Binding]
-	public sealed class FormsSteps
+	public sealed class FormsSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private readonly FormsLandingPage _formsLandingPage;
 		private readonly FormsBuildPage _formsBuildPage;
 		private readonly EntityDetailFactory _entityDetailFactory;
 
-		public FormsSteps(ContextConfiguration contextConfiguration)
+		public FormsSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			_formsLandingPage = new FormsLandingPage(contextConfiguration);
@@ -76,7 +76,7 @@ namespace SeleniumTests.Steps.BotWritten.Forms
 
 			// Assert that the slide and question have been saved
 			_formsLandingPage.ToggleAccordionWithWait(formDisplayName);
-			_formsLandingPage.ClickFormItemWithWait(formEntity.toDictionary()["name"]);
+			_formsLandingPage.ClickFormItemWithWait(formEntity.ToDictionary()["name"]);
 			var slideNames = _formsBuildPage.GetSlideNamesWithWait();
 			var questionNames = _formsBuildPage.GetQuestionNamesWithWait();
 			Assert.Contains(slideName, slideNames);

@@ -16,6 +16,9 @@
  */
 using System.ComponentModel.DataAnnotations;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace APITests.Settings
 {
 	public class UserSettings
@@ -25,5 +28,8 @@ namespace APITests.Settings
 
 		[Required(ErrorMessage = "Password is required")]
 		public string Password { get; set; }
+
+		// % protected region % [Add any further fields here] off begin
+		// % protected region % [Add any further fields here] end
 	}
 }

@@ -24,11 +24,11 @@ using TechTalk.SpecFlow;
 namespace SeleniumTests.Steps.BotWritten.Utility
 {
 	[Binding]
-	public sealed class KeyboardSteps
+	public sealed class KeyboardSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public KeyboardSteps(ContextConfiguration contextConfiguration)
+		public KeyboardSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 		}
@@ -38,7 +38,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void PresssKeyOnElementWith(KeyboardActionType keyName, SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			var element = _contextConfiguration.WebDriver.FindElement(elementBy);
+			var element = _driver.FindElement(elementBy);
 			KeyboardUtils.EnterKeyToWebElement(element, keyName);
 		}
 
@@ -47,7 +47,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void CopyFromElement(SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			var element = _contextConfiguration.WebDriver.FindElement(elementBy);
+			var element = _driver.FindElement(elementBy);
 			KeyboardUtils.CopyFromWebElement(element);
 		}
 
@@ -56,7 +56,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void PasteToElement(SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			var element = _contextConfiguration.WebDriver.FindElement(elementBy);
+			var element = _driver.FindElement(elementBy);
 			KeyboardUtils.PasteToWebElement(element);
 		}
 
@@ -65,7 +65,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void SelectAllInElement(SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			var element = _contextConfiguration.WebDriver.FindElement(elementBy);
+			var element = _driver.FindElement(elementBy);
 			KeyboardUtils.SelectAllFromWebElement(element);
 		}
 

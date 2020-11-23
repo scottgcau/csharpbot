@@ -31,7 +31,7 @@ interface IFilterEnumComboBoxProps<T, I> extends Partial<SyncComboboxProps<T, I>
 class FilterEnumComboBox<T, I> extends React.Component<IFilterEnumComboBoxProps<T, I>> {
 	@computed
 	private get options() {
-		return this.props.filter.referenceResolveFunction || [];
+		return this.props.filter.enumResolveFunction || [];
 	}
 
 	public render() {

@@ -22,6 +22,7 @@ import { Button, Display, Colors, Sizes } from '../Components/Button/Button';
 import { action, observable, runInAction } from 'mobx';
 import { TextField } from '../Components/TextBox/TextBox';
 import { IUserResult, store } from 'Models/Store';
+import { SERVER_URL } from 'Constants';
 import axios from 'axios';
 import * as queryString from 'querystring';
 import { ButtonGroup, Alignment } from 'Views/Components/Button/ButtonGroup';
@@ -33,37 +34,43 @@ import { getErrorMessages } from 'Util/GraphQLUtils';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+// % protected region % [Customise ILoginState here] off begin
 interface ILoginState {
 	username: string;
 	password: string;
 	errors: { [attr: string]: string };
-	// % protected region % [Add extra login state properties here] off begin
-	// % protected region % [Add extra login state properties here] end
 }
+// % protected region % [Customise ILoginState here] end
 
+// % protected region % [Customise defaultLoginState here] off begin
 const defaultLoginState: ILoginState = {
 	username: '',
 	password: '',
 	errors: {},
-	// % protected region % [Instantiate extra login state properties here] off begin
-	// % protected region % [Instantiate extra login state properties here] end
 };
+// % protected region % [Customise defaultLoginState here] end
+
+// % protected region % [Add any extra constants here] off begin
+// % protected region % [Add any extra constants here] end
 
 @observer
+// % protected region % [Override class signature here] off begin
 export default class LoginPage extends React.Component<RouteComponentProps> {
+// % protected region % [Override class signature here] end
 	@observable
 	private loginState: ILoginState = defaultLoginState;
 
+	// % protected region % [Add any extra fields here] off begin
+	// % protected region % [Add any extra fields here] end
+
+	// % protected region % [Override render here] off begin
 	public render() {
 		let contents = null;
 
 		if (store.loggedIn) {
-			// % protected region % [Override redirect here] off begin
 			return <Redirect to="/" />;
-			// % protected region % [Override redirect here] end
 		}
 
-		// % protected region % [Override contents here] off begin
 		contents = (
 			<div className="body-content">
 				<form className="login" onSubmit={this.onLoginClicked}>
@@ -95,13 +102,13 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 				</form>
 			</div>
 		);
-		// % protected region % [Override contents here] end
 		return contents;
 	}
+	// % protected region % [Override render here] end
 
+	// % protected region % [Override onLoginClicked here] off begin
 	@action
 	private onLoginClicked = (event: React.FormEvent<HTMLFormElement>) => {
-		// % protected region % [Override onLoginClicked here] off begin
 		event.preventDefault();
 
 		this.loginState.errors = {};
@@ -113,15 +120,13 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 		}
 		if (!this.loginState.password) {
 			this.loginState.errors['password'] = "Password is required";
-		} else if (this.loginState.password.length < 6) {
-			this.loginState.errors['password'] = "The minimum length of password is 6";
 		}
 
 		if (Object.keys(this.loginState.errors).length > 0) {
 			return;
 		} else {
 			axios.post(
-				'/api/authorization/login',
+				`${SERVER_URL}/api/authorization/login`,
 				{
 					username: this.loginState.username,
 					password: this.loginState.password,
@@ -130,7 +135,12 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 					this.onLoginSuccess(data);
 				})
 				.catch(response => {
-					const errorMessages = getErrorMessages(response).map((error: any) => (<p>{error.message}</p>));
+					const errorMessages = getErrorMessages(response).map((error: any) => {
+						const message = typeof error.message === 'object' 
+							? JSON.stringify(error.message)
+							: error.message;
+						return (<p>{message}</p>);
+					});
 					alert(
 						<div>
 							<h6>Login failed</h6>
@@ -140,20 +150,20 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 					);
 				});
 		}
-		// % protected region % [Override onLoginClicked here] end
 	};
+	// % protected region % [Override onLoginClicked here] end
 
+	// % protected region % [Override onStartRegisterClicked here] off begin
 	@action
 	private onStartRegisterClicked = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		// % protected region % [Override onStartRegisterClicked here] off begin
 		const { redirect } = queryString.parse(this.props.location.search.substring(1));
 		store.routerHistory.push(`/register?${!!redirect ? `redirect=${redirect}` : ''}`);
-		// % protected region % [Override onStartRegisterClicked here] end
 	};
+	// % protected region % [Override onStartRegisterClicked here] end
 
+	// % protected region % [Override login success logic here] off begin
 	@action
 	private onLoginSuccess = (userResult: IUserResult) => {
-		// % protected region % [Override login success logic here] off begin
 		store.setLoggedInUser(userResult);
 
 		const { redirect } = queryString.parse(this.props.location.search.substring(1));
@@ -163,16 +173,19 @@ export default class LoginPage extends React.Component<RouteComponentProps> {
 		} else {
 			store.routerHistory.push('/');
 		}
-		// % protected region % [Override login success logic here] end
 	};
+	// % protected region % [Override login success logic here] end
 
+	// % protected region % [Override onForgottenPasswordClick here] off begin
 	@action
 	private onForgottenPasswordClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-		// % protected region % [Override onForgottenPasswordClick here] off begin
 		store.routerHistory.push(`/reset-password-request`);
-		// % protected region % [Override onForgottenPasswordClick here] end
 	};
+	// % protected region % [Override onForgottenPasswordClick here] end
 
 	// % protected region % [Add class methods here] off begin
 	// % protected region % [Add class methods here] end
 }
+
+// % protected region % [Add additional exports here] off begin
+// % protected region % [Add additional exports here] end

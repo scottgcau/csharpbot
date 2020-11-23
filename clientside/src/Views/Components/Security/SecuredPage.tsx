@@ -18,6 +18,8 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import { Redirect } from 'react-router';
 import { store } from 'Models/Store';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 export interface ISecuredPageProps {
 	/**
@@ -25,6 +27,8 @@ export interface ISecuredPageProps {
 	 * If this is undefined then the page will be available to all
 	 */
 	groups?: string[];
+	// % protected region % [Add any extra props here] off begin
+	// % protected region % [Add any extra props here] end
 }
 
 /**
@@ -32,7 +36,10 @@ export interface ISecuredPageProps {
  */
 @observer
 export default class SecuredPage extends React.Component<ISecuredPageProps, any> {
+	// % protected region % [Add any extra fields here] off begin
+	// % protected region % [Add any extra fields here] end
 	public render() {
+		// % protected region % [Override contents here] off begin
 		if (this.props.groups) {
 			const { groups } = this.props;
 			if (!groups || !groups.length) {
@@ -45,5 +52,9 @@ export default class SecuredPage extends React.Component<ISecuredPageProps, any>
 		}
 
 		return this.props.children;
+		// % protected region % [Override contents here] end
 	}
+
+	// % protected region % [Add any extra functions here] off begin
+	// % protected region % [Add any extra functions here] end
 }

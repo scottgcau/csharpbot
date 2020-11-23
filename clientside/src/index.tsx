@@ -34,4 +34,6 @@ window['Models'] = Models;
 // % protected region % [Add any extra index fields here] off begin
 // % protected region % [Add any extra index fields here] end
 
+// % protected region % [Override render here] off begin
 ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
+// % protected region % [Override render here] end

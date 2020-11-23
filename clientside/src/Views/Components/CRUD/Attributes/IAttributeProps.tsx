@@ -16,6 +16,7 @@
  */
 import { Model } from 'Models/Model';
 import { AttributeCRUDOptions } from 'Models/CRUDOptions';
+import { EntityFormMode } from 'Views/Components/Helpers/Common';
 
 export interface IAttributeProps<T extends Model> {
 	/** The model to bind the component to */
@@ -32,4 +33,6 @@ export interface IAttributeProps<T extends Model> {
 	errors?: string[];
 	/** The call back function to trigger after the model got changed */
 	onAfterChange?: (event: any) => void;
+	/** The mode the CRUD form is in */
+	formMode: EntityFormMode;
 }

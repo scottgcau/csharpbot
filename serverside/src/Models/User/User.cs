@@ -17,6 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 using Sportstats.Enums;
 using Sportstats.Security;
 using Sportstats.Validators;
@@ -35,29 +37,45 @@ namespace Sportstats.Models {
 		public virtual DateTime Modified { get; set; }
 		public virtual Guid Owner { get; set; }
 
-		public virtual void BeforeSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider)
+		// % protected region % [Add extra fields here] off begin
+		// % protected region % [Add extra fields here] end
+
+		public virtual async Task BeforeSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
 		{
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
 
-		public virtual void AfterSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider)
+		public virtual async Task AfterSave(EntityState operation, SportstatsDBContext dbContext, IServiceProvider serviceProvider, ICollection<ChangeState> changes, CancellationToken cancellationToken = default)
 		{
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}
 
-		public virtual IEnumerable<IAcl> Acls => new List<IAcl>();
-
-		public virtual int CleanReference<T>(string reference, IEnumerable<T> models, SportstatsDBContext dbContext) where T : IOwnerAbstractModel
+		public virtual IEnumerable<IAcl> Acls => new List<IAcl>
 		{
+			// % protected region % [Add any further ACL entries here] off begin
+			// % protected region % [Add any further ACL entries here] end
+		};
+
+		public async virtual Task<int> CleanReference<T>(
+			string reference,
+			IEnumerable<T> models,
+			SportstatsDBContext dbContext,
+			CancellationToken cancellation = default)
+			where T : IOwnerAbstractModel
+		{
+			// % protected region % [Customise clean reference logic here] off begin
 			return 0;
+			// % protected region % [Customise clean reference logic here] end
 		}
 
 		[Required]
+		[EntityAttribute]
 		public override string UserName { get; set; }
 
 		[Email]
+		[EntityAttribute]
 		public override string Email { get; set; }
 
 		public string Discriminator { get; set; }
@@ -84,11 +102,14 @@ namespace Sportstats.Models {
 	{
 		public void Configure(EntityTypeBuilder<User> builder)
 		{
+			// % protected region % [Alter base user database configurations here] off begin
 			builder
 				.Property(e => e.Id)
 				.HasDefaultValueSql("uuid_generate_v4()");
+
 			builder.HasDiscriminator(u => u.Discriminator);
 			builder.HasIndex(e => e.Discriminator);
+			// % protected region % [Alter base user database configurations here] end
 
 			// % protected region % [Add any user configuration options here] off begin
 			// % protected region % [Add any user configuration options here] end
@@ -99,9 +120,11 @@ namespace Sportstats.Models {
 	{
 		public void Configure(EntityTypeBuilder<Group> builder)
 		{
+			// % protected region % [Alter base group database configurations here] off begin
 			builder
 				.Property(e => e.Id)
 				.HasDefaultValueSql("uuid_generate_v4()");
+			// % protected region % [Alter base group database configurations here] end
 
 			// % protected region % [Add any group configuration options here] off begin
 			// % protected region % [Add any group configuration options here] end

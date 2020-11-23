@@ -17,6 +17,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sportstats.Models;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Services.Interfaces
 {
@@ -44,5 +46,8 @@ namespace Sportstats.Services.Interfaces
 		/// </summary>
 		/// <returns>A task that resolves when the user and groups are fetched</returns>
 		Task RetrieveUserAsync();
+
+		// % protected region % [Add any further interface members here] off begin
+		// % protected region % [Add any further interface members here] end
 	}
 }

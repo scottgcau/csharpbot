@@ -15,23 +15,29 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
-import {Route, RouteComponentProps, Switch} from "react-router";
+import { Route, RouteComponentProps, Switch } from "react-router";
 import FormsBuildPage from "Views/Pages/Admin/Forms/FormsBuildPage";
 import FormsLandingPage from "Views/Pages/Admin/Forms/FormsLandingPage";
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
-export default class FormsPage extends React.Component<RouteComponentProps>{
-	public render(){
+export default class FormsPage extends React.Component<RouteComponentProps> {
+	// % protected region % [Add extra class fields here] off begin
+	// % protected region % [Add extra class fields here] end
+
+	// % protected region % [Customise the render function here] off begin
+	public render() {
 		const { match } = this.props;
 
 		const formsBuildPage = (pageProps: RouteComponentProps) => {
 			return (
-					<FormsBuildPage {...pageProps}/>
+					<FormsBuildPage {...pageProps} />
 			);
 		};
 
 		const formsLandingPage = (pageProps: RouteComponentProps) => {
 			return (
-				<FormsLandingPage {...pageProps}/>
+				<FormsLandingPage {...pageProps} />
 			);
 		};
 
@@ -45,4 +51,5 @@ export default class FormsPage extends React.Component<RouteComponentProps>{
 			</div>
 		);
 	}
+	// % protected region % [Customise the render function here] end
 }

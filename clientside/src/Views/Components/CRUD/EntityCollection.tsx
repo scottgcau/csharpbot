@@ -15,7 +15,14 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
-import Collection, { ICollectionItemActionProps, expandFn, ICollectionBulkActionProps } from '../Collection/Collection';
+import Collection, {
+	ICollectionItemActionProps,
+	expandFn,
+	showExpandFn,
+	ICollectionBulkActionProps,
+	ICollectionActionProps,
+	ICollectionProps,
+} from '../Collection/Collection';
 import { Button, Display } from '../Button/Button';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
@@ -26,7 +33,7 @@ import Spinner from '../Spinner/Spinner';
 import { ICollectionHeaderProps } from '../Collection/CollectionHeaders';
 import ModelQuery, { IWhereCondition, IOrderByCondition, IWhereConditionApi } from '../ModelCollection/ModelQuery';
 import { IFilter } from '../Collection/CollectionFilterPanel';
-import PaginationData, { PaginationQueryOptions } from 'Models/PaginationData';
+import { PaginationQueryOptions } from 'Models/PaginationData';
 import { QueryResult } from 'react-apollo';
 import { lowerCaseFirst } from 'Util/StringUtils';
 import { SecurityService } from 'Services/SecurityService';
@@ -34,120 +41,208 @@ import { OperationVariables } from 'apollo-boost';
 import * as _ from 'lodash';
 import classNames from 'classnames';
 import { confirmModal } from '../Modal/ModalUtils';
-import alert from '../../../Util/ToastifyUtils';
+import alert from 'Util/ToastifyUtils';
 import { IEntityContextMenuActions } from '../EntityContextMenu/EntityContextMenu';
 import { convertCaseComparisonToPascalCase } from 'Util/GraphQLUtils';
 import { ICollectionFilterPanelProps } from '../Collection/CollectionFilterPanel';
 import moment from 'moment';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
-interface IEntityCollectionProps<T extends Model> extends RouteComponentProps {
+export type refetchFn = (variables?: any) => Promise<any>;
+export type actionOverrideFn<T extends Model> = (refetchFn: viewActionOptions<T>) => ICollectionItemActionProps<T> | undefined;
+export type viewActionOptions<T extends Model> = {
+	refetch: refetchFn,
+	self: EntityCollection<T>,
+}
+
+export interface AdditionalBulkActions<T> extends ICollectionActionProps<T> {
+	bulkAction: (mode: 'includedIds' | 'excludedIds', models: T[], event: React.MouseEvent<Element, MouseEvent>) => void;
+	// % protected region % [Add any extra AdditionalBulkActions fields here] off begin
+	// % protected region % [Add any extra AdditionalBulkActions fields here] end
+}
+
+export interface IEntityCollectionProps<T extends Model> extends RouteComponentProps {
 	modelType: IModelType;
 	expandList?: expandFn<T>;
-	additionalBulkActions?: Array<ICollectionBulkActionProps<T>>;
-	filters?: Array<IFilter<T>>;
+	showExpandButton?: showExpandFn<T>;
+	additionalBulkActions?: AdditionalBulkActions<T>[];
+	additionalFilters?: Array<IFilter<T>>;
 	perPage?: number;
 	orderBy?: IOrderByCondition<T>;
 	actionsMore?: IEntityContextMenuActions<T>;
+	url?: string;
+	additionalTableActions?: Array<ICollectionItemActionProps<T>>;
+	conditions?: Array<Array<IWhereCondition<T>>>;
+	removeCreatedFilter?: boolean;
+	removeModifiedFilter?: boolean;
+	filterOrientationRow?: boolean;
+	createAction?: (refetchFn: viewActionOptions<T>) => React.ReactNode;
+	viewAction?: actionOverrideFn<T>;
+	deleteAction?: actionOverrideFn<T>;
+	updateAction?: actionOverrideFn<T>;
+	disableBulkExport?: boolean;
+	disableBulkDelete?: boolean;
+	collectionProps?: ICollectionProps<T>;
+	disableCreateButtonSecurity?: boolean;
+	disableReadButtonSecurity?: boolean;
+	disableUpdateButtonSecurity?: boolean;
+	disableDeleteButtonSecurity?: boolean;
+	// % protected region % [Add any extra props here] off begin
+	// % protected region % [Add any extra props here] end
 }
 
-interface ISearch {
+export interface ISearch {
 	searchTerm: string;
+	// % protected region % [Add any extra ISearch fields here] off begin
+	// % protected region % [Add any extra ISearch fields here] end
 }
+
+
 @observer
 class EntityCollection<T extends Model> extends React.Component<IEntityCollectionProps<T>, any> {
 
 	@observable
-	private search: ISearch = { searchTerm: "" };
+	public search: ISearch = { searchTerm: '' };
 
 	@observable
-	private filterConfig: ICollectionFilterPanelProps<T>;
+	public filterConfig: ICollectionFilterPanelProps<T>;
 
 	@observable
-	private filterApplied: boolean = false;
+	public filterApplied: boolean = false;
 
 	@observable
-	private orderBy: IOrderByCondition<T> | undefined;
+	public orderBy: IOrderByCondition<T> | undefined;
 
+	// % protected region % [Customize _orderBy method here] off begin
 	@computed
-	private get _orderBy() {
+	public get _orderBy() {
 		if (this.orderBy === undefined) {
-			//set the default order by to display the options in reverse creation order
-			return { path: "Created", descending: true };
+			// set the default order by to display the options in reverse creation order
+			return { path: 'Created', descending: true };
 		}
 		return this.orderBy;
 	}
+	// % protected region % [Customize _orderBy method here] end
 
 	@observable
-	private paginationQueryOptions: PaginationQueryOptions = new PaginationQueryOptions();
+	public paginationQueryOptions: PaginationQueryOptions = new PaginationQueryOptions();
 
 	@observable
-	private allSelectedItemIds: string[] = new Array<string>();
+	public allSelectedItemIds: string[] = new Array<string>();
 
 	@observable
-	private allExcludedItemIds: string[] = new Array<string>();
+	public allExcludedItemIds: string[] = new Array<string>();
 
 	@observable
-	private allPagesSelected: boolean = false;
+	public allPagesSelected: boolean = false;
 
 	@computed
-	private get collectionFilters() {
+	public get security() {
+		const {
+			modelType,
+			disableCreateButtonSecurity,
+			disableReadButtonSecurity,
+			disableUpdateButtonSecurity,
+			disableDeleteButtonSecurity
+		} = this.props;
+		return {
+			create: disableCreateButtonSecurity ? true : SecurityService.canCreate(modelType),
+			read: disableReadButtonSecurity ? true : SecurityService.canRead(modelType),
+			update: disableUpdateButtonSecurity ? true : SecurityService.canUpdate(modelType),
+			delete: disableDeleteButtonSecurity ? true : SecurityService.canDelete(modelType),
+		}
+	}
+
+	// % protected region % [Customize collectionFilters method here] off begin
+	@computed
+	public get collectionFilters() {
 		let conditions = this.getSearchConditions();
 		let filterConditions: IWhereCondition<Model>[][] | undefined;
 
-		if(this.filterApplied){
+		if (this.filterApplied) {
 			filterConditions = new this.props.modelType().getFilterConditions(this.filterConfig);
+		}
+
+		if (!!this.props.conditions && !!this.props.conditions.length) {
+			conditions = [...conditions, ...this.props.conditions]
+			.map(andCondition => andCondition.map(orCondition => ({
+				...orCondition,
+				value: Array.isArray(orCondition.value) ? orCondition.value : [orCondition.value],
+			})));
 		}
 
 		if (filterConditions && !!filterConditions.length) {
 			conditions = [...conditions, ...filterConditions]
 				.map(andCondition => andCondition.map(orCondition => ({
 					...orCondition,
-					value: [orCondition.value]
+					value: _.isArray(orCondition.value) ? orCondition.value : [orCondition.value],
 				})));
 		}
 
 		return conditions;
 	}
+	// % protected region % [Customize collectionFilters method here] end
+
+	// % protected region % [Customize url method here] off begin
+	public get url() {
+		const { url, match } = this.props;
+		return url ?? match.url;
+	}
+	// % protected region % [Customize url method here] end
 
 	private models: T[] = [];
 
+	// % protected region % [Customize constructor method here] off begin
 	constructor(props: IEntityCollectionProps<T>, context: any) {
 		super(props, context);
+		const { modelType } = this.props;
+
 		this.filterConfig = {
 			filters: this.getFilters(),
 			onClearFilter: this.onClearFilter,
 			onApplyFilter: this.onApplyFilter,
-			onFilterChanged: this.onFilterChanged
-		}
-		const defaultOrderBy = props.modelType.getOrderByField ? props.modelType.getOrderByField() : undefined;
+			onFilterChanged: this.onFilterChanged,
+		};
+		const defaultOrderBy = modelType.getOrderByField ? modelType.getOrderByField() : undefined;
 		this.orderBy = defaultOrderBy ? defaultOrderBy : props.orderBy;
 	}
+	// % protected region % [Customize constructor method here] end
 
+	// % protected region % [Customize componentDidUpdate method here] off begin
 	componentDidUpdate() {
 		runInAction(() => {
 			this.paginationQueryOptions.page = 0;
 		});
 	}
+	// % protected region % [Customize componentDidUpdate method here] end
 
+	// % protected region % [Customize render method here] off begin
 	public render() {
-		runInAction(() => this.paginationQueryOptions.perPage = this.props.perPage || 10);
+		const { perPage, modelType } = this.props;
+		runInAction(() => this.paginationQueryOptions.perPage = perPage || 10);
 		return (
 			<>
 				<ModelQuery
-					model={this.props.modelType}
+					model={modelType}
 					pagination={this.paginationQueryOptions}
 					orderBy={this._orderBy}
-					conditions={this.collectionFilters}>
+					conditions={this.collectionFilters}
+					useListExpands
+				>
 					{this.renderCollection}
 				</ModelQuery>
 			</>
 		);
 	}
+	// % protected region % [Customize render method here] end
 
+	// % protected region % [Customize renderCollection method here] off begin
 	protected renderCollection = (result: QueryResult<any, OperationVariables>) : JSX.Element => {
+
 		const { loading, error, data, refetch } = result;
 		if (error) {
-			return(
+			return (
 				<div>
 					<h2>An unexpected error occurred:</h2>
 					{JSON.stringify(error.message)}
@@ -174,8 +269,8 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 		}
 
 		let additionalActions: React.ReactNode[] = [];
-		if(SecurityService.canCreate(this.props.modelType)){
-			additionalActions.push (this.renderCreateButton());
+		if(this.security.create) {
+			additionalActions.push(this.renderCreateButton(refetch));
 		}
 
 		let menuCountFunction = () => {
@@ -187,7 +282,7 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 		};
 
 		const selectedBulkActions :Array<ICollectionBulkActionProps<T>> = [];
-		if(SecurityService.canRead(this.props.modelType)){
+		if (SecurityService.canRead(this.props.modelType) && this.props.disableBulkExport !== true){
 			selectedBulkActions.push({
 				bulkAction: this.exportItems,
 				label: "Export",
@@ -196,11 +291,11 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 				iconPos: 'icon-left',
 			});
 		}
-		if (SecurityService.canDelete(this.props.modelType)) {
+		if (SecurityService.canDelete(this.props.modelType) && this.props.disableBulkDelete !== true) {
 			selectedBulkActions.push({
 				bulkAction: () => {
 					confirmModal('Please confirm', "Are you sure you want to delete all the selected items?").then(()=>{
-						let idsToDelete: Array<string> | undefined = [];
+						let idsToDelete: Array<string> | undefined;
 						let conditions: Array<Array<IWhereCondition<Model>>> | undefined;
 						if (this.allPagesSelected) {
 							conditions = this.getSearchConditions() as Array<Array<IWhereCondition<Model>>>;
@@ -249,7 +344,9 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 					headers={tableHeaders}
 					actions={tableActions}
 					actionsMore={this.props.actionsMore}
-					selectedBulkActions={selectedBulkActions.concat(this.props.additionalBulkActions || [])}
+					selectedBulkActions={selectedBulkActions.concat(this.props.additionalBulkActions
+						? this.props.additionalBulkActions.map(ba => this.mapBulkAction(ba))
+						: [])}
 					onSearchTriggered={this.onSearchTriggered}
 					menuFilterConfig={this.filterConfig}
 					collection={this.models}
@@ -258,6 +355,7 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 					cancelAllSelection={this.cancelAllSelection}
 					menuCountFunction={menuCountFunction}
 					expandList={this.props.expandList}
+					showExpandButton={this.props.showExpandButton}
 					getSelectedItems={this.getSelectedItems}
 					onCheckedAllPages={this.onCheckedAllPages}
 					idColumn="id"
@@ -266,12 +364,16 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 						modified: moment(row.modified).format('YYYY-MM-DD'),
 					})}
 					orderBy={this.orderBy}
+					filterOrientationRow={this.props.filterOrientationRow}
+					{...this.props.collectionProps}
 				/>
 			</>
 		);
 	}
+	// % protected region % [Customize renderCollection method here] end
 
-	private getSelectedItems = () => {
+	// % protected region % [Customize getSelectedItems method here] off begin
+	public getSelectedItems = () => {
 		return this.models.filter(model => {
 			if (this.allPagesSelected) {
 				return !this.allExcludedItemIds.some(id => {
@@ -284,9 +386,11 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 			}
 		});
 	};
+	// % protected region % [Customize getSelectedItems method here] end
 
+	// % protected region % [Customize onCheckedAllPages method here] off begin
 	@action
-	private onCheckedAllPages = (checked: boolean) => {
+	public onCheckedAllPages = (checked: boolean) => {
 		this.allPagesSelected = checked;
 		if(checked){
 			this.allExcludedItemIds = [];
@@ -310,9 +414,11 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 			return [];
 		}
 	}
+	// % protected region % [Customize onCheckedAllPages method here] end
 
+	// % protected region % [Customize itemSelectionChanged method here] off begin
 	@action
-	private itemSelectionChanged = (checked: boolean, changedItems: Model[]) => {
+	public itemSelectionChanged = (checked: boolean, changedItems: Model[]) => {
 		let changedIds = changedItems.map(item => item.id);
 		if (this.allPagesSelected) {
 			if (!checked) {
@@ -339,22 +445,30 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 			}
 		});
 	}
+	// % protected region % [Customize itemSelectionChanged method here] end
 
-	protected renderCreateButton(): React.ReactNode {
-		const { modelType } = this.props;
-		const modelDisplayName = getModelDisplayName(modelType);
-		return (
-			<Button
-				key="create"
-				className={classNames(Display.Solid)}
-				icon={{icon: 'create', iconPos: 'icon-right'}}
-				buttonProps={{ onClick: () => { this.props.history.push(`${this.props.match.url}/create`); } }}>
-				Create {modelDisplayName}
-			</Button>
-		);
+	// % protected region % [Customize renderCreateButton method here] off begin
+	public renderCreateButton(refetch: refetchFn): React.ReactNode {
+		const { modelType, createAction } = this.props;
+		if (createAction) {
+			return createAction({refetch: refetch, self: this});
+		} else {
+			const modelDisplayName = getModelDisplayName(modelType);
+			return (
+				<Button
+					key="create"
+					className={classNames(Display.Solid)}
+					icon={{icon: 'create', iconPos: 'icon-right'}}
+					buttonProps={{ onClick: () => { this.props.history.push(`${this.url}/create`); } }}>
+					Create {modelDisplayName}
+				</Button>
+			);
+		}
 	}
+	// % protected region % [Customize renderCreateButton method here] end
 
-	protected getHeaders = (): Array<ICollectionHeaderProps<T>> => {
+	// % protected region % [Customize GetHeaders method here] off begin
+	public getHeaders = (): Array<ICollectionHeaderProps<T>> => {
 		const attributeOptions = getAttributeCRUDOptions(this.props.modelType);
 		return attributeOptions.filter(attributeOption => attributeOption.headerColumn)
 			.map(attributeOption => {
@@ -380,7 +494,7 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 					if (attributeOption.displayFunction) {
 						headers.transformItem = (item: any) => {
 							if (attributeOption.displayFunction) {
-								return attributeOption.displayFunction(item[attributeOption.attributeName])
+								return attributeOption.displayFunction(item[attributeOption.attributeName], item);
 							}
 							return item[attributeOption.name];
 						};
@@ -389,39 +503,48 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 				}
 			);
 	}
+	// % protected region % [Customize GetHeaders method here] end
 
-	protected getFilters = (): Array<IFilter<T>> => {
+	// % protected region % [Customize getFilters method here] off begin
+	public getFilters = (): Array<IFilter<T>> => {
+		const { additionalFilters, removeCreatedFilter, removeModifiedFilter } = this.props;
 		let filters = new Array<IFilter<T>>();
 
-		filters.push({
-			path: "created",
-			comparison: "range",
-			value1: undefined,
-			value2: undefined,
-			active: false,
-			displayType: "datepicker",
-			displayName: "Range of Date Created"
-		} as IFilter<T>);
+		if (!removeCreatedFilter) {
+			filters.push({
+				path: "created",
+				comparison: "range",
+				value1: undefined,
+				value2: undefined,
+				active: false,
+				displayType: "datepicker",
+				displayName: "Range of Date Created"
+			} as IFilter<T>);
+		}
 
-		filters.push({
-			path: "modified",
-			comparison: "range",
-			value1: undefined,
-			value2: undefined,
-			displayType: "datepicker",
-			displayName: "Range of Date Last Modified",
-		} as IFilter<T>);
+		if (!removeModifiedFilter) {
+			filters.push({
+				path: "modified",
+				comparison: "range",
+				value1: undefined,
+				value2: undefined,
+				displayType: "datepicker",
+				displayName: "Range of Date Last Modified",
+			} as IFilter<T>);
+		}
 
-		filters = [...filters ,..._.cloneDeep(this.props.filters) || []];
+		filters = [...filters ,..._.cloneDeep(additionalFilters) || []];
 
 		const enumFilters = this.getEnumFilters();
 
 		filters = [...filters, ...enumFilters];
 
 		return filters;
-	}
+	};
+	// % protected region % [Customize getFilters method here] end
 
-	protected getEnumFilters = () => {
+	// % protected region % [Customise retrieving enum filters logic] off begin
+	public getEnumFilters = () => {
 		const attributeOptions = getAttributeCRUDOptions(this.props.modelType);
 		return attributeOptions
 			.filter(attributeOption => attributeOption.displayType === 'enum-combobox')
@@ -432,28 +555,50 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 					value1: [] as string[],
 					displayName: attributeOption.displayName,
 					displayType: 'enum-combobox',
-					referenceResolveFunction: attributeOption.enumResolveFunction
+					enumResolveFunction: attributeOption.enumResolveFunction
 				} as IFilter<T>;
 			});
 	}
+	// % protected region % [Customise retrieving enum filters logic] end
 
+	// % protected region % [Customize onClearFilter method here] off begin
 	@action
-	protected onClearFilter = () => {
+	public onClearFilter = () => {
 		this.filterConfig.filters = this.getFilters();
 		this.filterApplied = false;
 	};
+	// % protected region % [Customize onClearFilter method here] end
 
+	// % protected region % [Customize onApplyFilter method here] off begin
 	@action
-	protected onApplyFilter = () => {
+	public onApplyFilter = () => {
 		this.filterApplied = true;
 	};
+	// % protected region % [Customize onApplyFilter method here] end
 
+	// % protected region % [Customize onFilterChanged method here] off begin
 	@action
-	protected onFilterChanged = () => {
+	public onFilterChanged = () => {
 		this.filterApplied = false;
 	}
+	// % protected region % [Customize onFilterChanged method here] end
 
-	private exportItems = () => {
+	// % protected region % [Customize mapBulkAction method here] off begin
+	public mapBulkAction = (bulkAction: AdditionalBulkActions<T>): ICollectionBulkActionProps<T> => {
+		const rootFn = bulkAction.bulkAction;
+
+		return {
+			...bulkAction,
+			bulkAction: (models, event) => {
+				const mode = this.allPagesSelected ? 'includedIds' : 'excludedIds';
+				return rootFn(mode, models, event);
+			}
+		};
+	};
+	// % protected region % [Customize mapBulkAction method here] end
+
+	// % protected region % [Customize exportItems method here] off begin
+	public exportItems = () => {
 		let conditions: IWhereConditionApi<Model>[][];
 		if (this.allPagesSelected && this.collectionFilters) {
 			conditions = [
@@ -461,7 +606,8 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 					if (orCondition.case) {
 						return {
 							...orCondition,
-							case: convertCaseComparisonToPascalCase(orCondition.case)
+							case: convertCaseComparisonToPascalCase(orCondition.case),
+							value: [orCondition.value],
 						}
 					}
 					return orCondition as IWhereConditionApi<Model>;
@@ -483,13 +629,28 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 		}
 		return exportAll(this.props.modelType, conditions);
 	}
+	// % protected region % [Customize exportItems method here] end
 
-	protected getTableActions = (refetch: () => void) => {
+	public getTableActions = (refetch: refetchFn) => {
 		const tableActions: Array<ICollectionItemActionProps<T>> = [];
-		if(SecurityService.canRead(this.props.modelType)){
-			tableActions.push({
+		// % protected region % [Customise custom table actions here] off begin
+		const { viewAction, updateAction, deleteAction, additionalTableActions } = this.props;
+
+		const updateTableActions = (override: actionOverrideFn<T> | undefined, defaultAction: ICollectionItemActionProps<T>) => {
+			if (override) {
+				const action = override({refetch: refetch, self: this});
+				if (action) {
+					tableActions.push(action);
+				}
+			} else {
+				tableActions.push(defaultAction);
+			}
+		};
+
+		if (this.security.read) {
+			updateTableActions(viewAction, {
 				action: (item) => {
-					this.props.history.push({ pathname: `${this.props.match.url}/view/${item['id']}` });
+					this.props.history.push({ pathname: `${this.url}/view/${item['id']}` });
 				},
 				label: "View",
 				showIcon: true,
@@ -497,10 +658,10 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 				iconPos: 'icon-top',
 			});
 		}
-		if(SecurityService.canUpdate(this.props.modelType)){
-			tableActions.push({
+		if (this.security.update) {
+			updateTableActions(updateAction, {
 				action: (item) => {
-					this.props.history.push({ pathname: `${this.props.match.url}/edit/${item['id']}` });
+					this.props.history.push({ pathname: `${this.url}/edit/${item['id']}` });
 				},
 				label: "Edit",
 				showIcon: true,
@@ -508,8 +669,8 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 				iconPos: 'icon-top',
 			});
 		}
-		if (SecurityService.canDelete(this.props.modelType)) {
-			tableActions.push({
+		if (this.security.delete) {
+			updateTableActions(deleteAction, {
 				action: (item) => {
 					confirmModal('Please confirm', "Are you sure you want to delete this item?").then(() => {
 						new this.props.modelType(item).delete().then(() => {
@@ -533,25 +694,37 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 				iconPos: 'icon-top',
 			});
 		}
+		if (additionalTableActions) {
+			tableActions.push(...additionalTableActions);
+		}
+		// % protected region % [Customise custom table actions here] end
 		return tableActions;
 	}
 
-
+	// % protected region % [Customize onSearchTriggered method here] off begin
 	@action
-	protected onSearchTriggered = (searchTerm: string) => {
+	public onSearchTriggered = (searchTerm: string) => {
 		this.search.searchTerm = searchTerm;
 	}
+	// % protected region % [Customize onSearchTriggered method here] end
 
+	// % protected region % [Customize cancelAllSelection method here] off begin
 	@action
-	protected cancelAllSelection = () => {
+	public cancelAllSelection = () => {
 		this.allPagesSelected = false;
 		this.allSelectedItemIds = [];
 		this.allExcludedItemIds = [];
 	}
+	// % protected region % [Customize cancelAllSelection method here] end
 
-	private getSearchConditions() {
+	// % protected region % [Customize getSearchConditions method here] off begin
+	public getSearchConditions() {
 		return new this.props.modelType().getSearchConditions(this.search.searchTerm);
 	}
+	// % protected region % [Customize getSearchConditions method here] end
+
+	// % protected region % [Add any extra EntityCollection fields here] off begin
+	// % protected region % [Add any extra EntityCollection fields here] end
 }
 
 export default EntityCollection;

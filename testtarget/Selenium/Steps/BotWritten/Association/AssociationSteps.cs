@@ -21,8 +21,6 @@ using Xunit;
 using TechTalk.SpecFlow;
 using APITests.EntityObjects.Models;
 using APITests.Factories;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 using SeleniumTests.PageObjects.CRUDPageObject;
 using SeleniumTests.Setup;
 using SeleniumTests.Utils;
@@ -30,18 +28,16 @@ using SeleniumTests.Utils;
 namespace SeleniumTests.Steps.BotWritten.Association
 {
 	[Binding]
-	public sealed class AssociationSteps
+	public sealed class AssociationSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
-		private readonly IWait<IWebDriver> _wait;
 		private readonly List<BaseEntity> _targetEntities;
 		private readonly List<BaseEntity> _sourceEntities;
 		private string _initialAssociation;
 
-		public AssociationSteps(ContextConfiguration contextConfiguration)
+		public AssociationSteps(ContextConfiguration contextConfiguration)  : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
-			_wait = contextConfiguration.WebDriverWait;
 			_targetEntities = new List<BaseEntity>();
 			_sourceEntities = new List<BaseEntity>();
 		}
@@ -104,10 +100,10 @@ namespace SeleniumTests.Steps.BotWritten.Association
 			foreach (var searchGuid in searchGuids)
 			{
 				// Search for entity using GUID
-				page.SearchInput.ClickWithWait(_contextConfiguration.WebDriverWait);
+				page.SearchInput.ClickWithWait(_driverWait);
 				page.SearchInput.SendKeys(searchGuid.ToString());
 				page.SearchButton.Click();
-				_wait.Until(_ => page.TotalEntities() == 1);
+				_driverWait.Until(_ => page.TotalEntities() == 1);
 				page.GetAllEntites().FirstOrDefault()?.EditItem();
 
 				// Get the guids from the page

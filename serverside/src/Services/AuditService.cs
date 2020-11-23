@@ -21,6 +21,9 @@ using Sportstats.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 
+// % protected region % [Add any additional imports here] off begin
+// % protected region % [Add any additional imports here] end
+
 namespace Sportstats.Services
 {
 	public class AuditService : IAuditService
@@ -37,10 +40,11 @@ namespace Sportstats.Services
 		}
 
 		/// <inheritdoc />
-		public void CreateReadAudit(string userId, string modelName, object data = null)
+		public void CreateReadAudit(string userId, string userName, string modelName, object data = null)
 		{
 			var audit = new AuditLog
 			{
+				UserName = userName,
 				UserId = userId,
 				Id = Guid.NewGuid(),
 				Action = "Read",
@@ -53,5 +57,7 @@ namespace Sportstats.Services
 
 			Logs.Add(audit);
 		}
+		// % protected region % [Add any additional methods here] off begin
+		// % protected region % [Add any additional methods here] end
 	}
 }

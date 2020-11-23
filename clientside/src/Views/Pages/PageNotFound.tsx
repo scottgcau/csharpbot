@@ -21,10 +21,14 @@ import { Link } from 'react-router-dom';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+// % protected region % [Customise class signature and class properties] off begin
 @observer
 export default class PageNotFound extends React.Component<RouteComponentProps> {
+// % protected region % [Customise class signature and class properties] end
+
 	// % protected region % [Add class properties here] off begin
 	// % protected region % [Add class properties here] end
+
 	public render() {
 		let contents = null;
 

@@ -25,6 +25,8 @@ using APITests.Utils;
 using RestSharp;
 using TestDataLib;
 using Xunit;
+// % protected region % [Custom imports] off begin
+// % protected region % [Custom imports] end
 
 namespace APITests.EntityObjects.Models
 {
@@ -35,6 +37,7 @@ namespace APITests.EntityObjects.Models
 		public string EndpointName;
 		private readonly StartupTestFixture _configure = new StartupTestFixture();
 
+		// % protected region % [Customize CreateUser method here] off begin
 		public Guid CreateUser(bool isRegistered = true)
 		{
 			//setup the rest client
@@ -69,11 +72,12 @@ namespace APITests.EntityObjects.Models
 				var configure = new StartupTestFixture();
 				using (var context = new SportstatsDBContext(configure.DbContextOptions, null, null))
 				{
-					context.Users.FirstOrDefault(x => x.UserName == this.EmailAddress).EmailConfirmed = true;
+					context.Users.FirstOrDefault(x => x.UserName == EmailAddress).EmailConfirmed = true;
 					context.SaveChanges();
 				}
 			}
-			return this.Id;
+			return Id;
 		}
+		// % protected region % [Customize CreateUser method here] end
 	}
 }

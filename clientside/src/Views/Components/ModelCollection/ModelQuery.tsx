@@ -18,55 +18,84 @@ import * as React from 'react';
 import { QueryResult, Query, OperationVariables } from 'react-apollo';
 import { DocumentNode } from 'graphql';
 import { Model } from 'Models/Model';
-import PaginationData, { PaginationQueryOptions } from 'Models/PaginationData';
-import {getModelName, getFetchAllQuery, getFetchAllConditional} from 'Util/EntityUtils';
+import { PaginationQueryOptions } from 'Models/PaginationData';
+import { getFetchAllQuery, getFetchAllConditional } from 'Util/EntityUtils';
 import { observer } from 'mobx-react';
-import { isOrCondition } from "../../../Util/GraphQLUtils";
-import { AttributeCRUDOptions } from 'Models/CRUDOptions';
+import { isOrCondition } from 'Util/GraphQLUtils';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
-export type Comparators = 'contains' | 'endsWith' | 'equal' | 'greaterThan' | 'greaterThanOrEqual' | 'in' | 'notIn' | 'lessThan' | 'lessThanOrEqual' | 'like' | 'notEqual' | 'startsWith';
+export type Comparators = 'contains'
+	| 'endsWith'
+	| 'equal'
+	| 'greaterThan'
+	| 'greaterThanOrEqual'
+	| 'in'
+	| 'notIn'
+	| 'lessThan'
+	| 'lessThanOrEqual'
+	| 'like'
+	| 'notEqual'
+	| 'startsWith'
+	// % protected region % [Add extra comparators here] off begin
+	// % protected region % [Add extra comparators here] end
+	;
 
 export interface IOrderByCondition<T> {
 	path: string;
 	descending?: boolean;
+	// % protected region % [Add any extra order by condition fields here] off begin
+	// % protected region % [Add any extra order by condition fields here] end
 }
 
-export type CaseComparison =
-	'CURRENT_CULTURE' |
-	'CURRENT_CULTURE_IGNORE_CASE' |
-	'INVARIANT_CULTURE' |
-	'INVARIANT_CULTURE_IGNORE_CASE' |
-	'ORDINAL' |
-	'ORDINAL_IGNORE_CASE';
+export type CaseComparison = 'CURRENT_CULTURE'
+	| 'CURRENT_CULTURE_IGNORE_CASE'
+	| 'INVARIANT_CULTURE'
+	| 'INVARIANT_CULTURE_IGNORE_CASE'
+	| 'ORDINAL'
+	| 'ORDINAL_IGNORE_CASE'
+	// % protected region % [Add extra case comparisons here] off begin
+	// % protected region % [Add extra case comparisons here] end
+	;
 
-export type CaseComparisonPascalCase =
-	'CurrentCulture' |
-	'CurrentCultureIgnoreCase' |
-	'InvariantCulture' |
-	'InvariantCultureIgnoreCase' |
-	'Ordinal' |
-	'OrdinalIgnoreCase';
+export type CaseComparisonPascalCase = 'CurrentCulture'
+	| 'CurrentCultureIgnoreCase'
+	| 'InvariantCulture'
+	| 'InvariantCultureIgnoreCase'
+	| 'Ordinal'
+	| 'OrdinalIgnoreCase'
+	// % protected region % [Add extra pascal case comparators here] off begin
+	// % protected region % [Add extra pascal case comparators here] end
+	;
 
 interface BaseWhereCondition<T> {
 	path: string;
 	comparison: Comparators;
 	value: any;
+	// % protected region % [Add any extra base where condition fields here] off begin
+	// % protected region % [Add any extra base where condition fields here] end
 }
 
 export interface IWhereCondition<T> extends BaseWhereCondition<T> {
 	case?: CaseComparison;
+	// % protected region % [Add any extra where condition fields here] off begin
+	// % protected region % [Add any extra where condition fields here] end
 }
 
 export interface IWhereConditionApi<T> extends BaseWhereCondition<T> {
 	case?: CaseComparisonPascalCase;
+	// % protected region % [Add any extra api where condition fields here] off begin
+	// % protected region % [Add any extra api where condition fields here] end
 }
 
 export interface IModelQueryVariables<T> {
-	skip?: number; 
-	take?: number; 
+	skip?: number;
+	take?: number;
 	args?: Array<IWhereCondition<T>>;
 	orderBy: Array<IOrderByCondition<T>>;
 	ids?: string[];
+	// % protected region % [Add any extra model query variables fields here] off begin
+	// % protected region % [Add any extra model query variables fields here] end
 }
 
 export interface IModelQueryProps<T extends Model, TData = any> {
@@ -77,32 +106,41 @@ export interface IModelQueryProps<T extends Model, TData = any> {
 	orderBy?: IOrderByCondition<T>;
 	customQuery?: DocumentNode;
 	pagination: PaginationQueryOptions;
+	useListExpands?: boolean;
+	expandString?: string;
+	// % protected region % [Add any extra model query props here] off begin
+	// % protected region % [Add any extra model query props here] end
 }
 
 @observer
 class ModelQuery<T extends Model,TData = any> extends React.Component<IModelQueryProps<T, TData>> {
+	// % protected region % [Add any extra class methods here] off begin
+	// % protected region % [Add any extra class methods here] end
+
 	public render() {
-		const modelName = getModelName(this.props.model);
+		// % protected region % [Customize render here] off begin
 		let fetchAllQuery;
-		
+
 		if (isOrCondition(this.props.conditions)) {
-			fetchAllQuery = getFetchAllConditional(this.props.model);
+			fetchAllQuery = getFetchAllConditional(this.props.model, this.props.expandString, this.props.useListExpands);
 		} else {
-			fetchAllQuery = getFetchAllQuery(this.props.model);
+			fetchAllQuery = getFetchAllQuery(this.props.model, this.props.expandString, this.props.useListExpands);
 		}
 
 		return (
-			<Query 
+			<Query
 				fetchPolicy="network-only"
 				notifyOnNetworkStatusChange={true}
-				query={this.props.customQuery || fetchAllQuery} 
-				variables={this.constructVariables()} >
+				query={this.props.customQuery || fetchAllQuery}
+				variables={this.constructVariables()}>
 				{this.props.children}
 			</Query>
 		);
+		// % protected region % [Customize render here] end
 	}
 
 	private constructVariables() {
+		// % protected region % [Customize construct variables method here] off begin
 		const { conditions, ids, orderBy : orderByProp, pagination } = this.props;
 		const { page, perPage } = pagination;
 
@@ -116,13 +154,16 @@ class ModelQuery<T extends Model,TData = any> extends React.Component<IModelQuer
 		}
 
 		return {
-			skip: page * perPage, 
-			take: perPage, 
+			skip: page * perPage,
+			take: perPage,
 			args: conditions,
 			orderBy: [orderBy],
 			ids,
 		};
+		// % protected region % [Customize construct variables method here] end
 	}
 }
 
+// % protected region % [Customize default export here] off begin
 export default ModelQuery;
+// % protected region % [Customize default export here] end

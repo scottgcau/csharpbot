@@ -16,6 +16,8 @@
  */
 using System;
 using Audit.EntityFramework;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Sportstats.Models
@@ -35,6 +37,11 @@ namespace Sportstats.Models
 		/// The user that performed the operation
 		/// </summary>
 		public string UserId { get; set; }
+
+		/// <summary>
+		/// The username of the the user that performed the operation
+		/// </summary>
+		public string UserName { get; set; }
 
 		/// <summary>
 		/// The type of entity that the operation has occured on
@@ -65,5 +72,32 @@ namespace Sportstats.Models
 		/// The trace identifier of the http context if the log occured in a http request
 		/// </summary>
 		public string HttpContextId { get; set; }
+
+		/// <summary>
+		/// Logs the audit to the logger
+		/// </summary>
+		/// <param name="logger">The logger to log to</param>
+		/// <param name="logLevel">The level to log as, defaults to information</param>
+		public void LogAudit(ILogger<AuditLog> logger, LogLevel logLevel = LogLevel.Information)
+		{
+			logger.Log(
+				logLevel,
+				"Id: {Id} UserId: {UserId} UserName: {UserName} EntityType: {EntityType} Action: {Action} " +
+				"TablePk: {TablePk} AuditDate: {AuditDate} AuditData: {AuditData} HttpContextId: {HttpContextId}",
+				Id,
+				UserId,
+				UserName,
+				EntityType,
+				Action,
+				TablePk,
+				AuditDate,
+				AuditData?.ToString(),
+				HttpContextId);
+		}
+
+		public override string ToString()
+		{
+			return JsonConvert.SerializeObject(this);
+		}
 	}
 }

@@ -25,11 +25,11 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.Sorting
 {
 	[Binding]
-	public sealed class SortingSteps
+	public sealed class SortingSteps : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		 public SortingSteps(ContextConfiguration contextConfiguration)
+		 public SortingSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			// % protected region % [Add any additional setup options here] off begin
@@ -43,7 +43,7 @@ namespace SeleniumTests.Steps.BotWritten.Sorting
 			var columnHeader = page.ColumnHeader(columnName);
 			var initialHeaderState = columnHeader.GetAttribute("class");
 			columnHeader.Click();
-			_contextConfiguration.WebDriverWait.Until(_ => columnHeader.GetAttribute("class") != initialHeaderState);
+			_driverWait.Until(_ => columnHeader.GetAttribute("class") != initialHeaderState);
 		}
 
 		[Then("I assert that (.*) in (.*) of type (.*) is properly sorted in (.*)")]

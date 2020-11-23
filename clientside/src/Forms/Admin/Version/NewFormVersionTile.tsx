@@ -17,14 +17,23 @@
 import * as React from "react";
 import {Link} from "react-router-dom";
 import {lowerCaseNoSpaces} from "Util/StringUtils";
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 export interface INewFormVersionTileProps {
 	formName: string;
 	formDisplayName: string;
+	// % protected region % [Add any extra props here] off begin
+	// % protected region % [Add any extra props here] end
 }
 
 export class NewFormVersionTile extends React.Component<INewFormVersionTileProps>{
+
+	// % protected region % [Add class properties here] off begin
+	// % protected region % [Add class properties here] end
+
 	public render(){
+		// % protected region % [Modify render function here] off begin
 		return(
 			<Link to= {`/admin/${lowerCaseNoSpaces(this.props.formName)}/create?redirect=/admin/forms/build/${lowerCaseNoSpaces(this.props.formName)}/{id}`} >
 				<div className='form-item__new icon-plus icon-bottom'>
@@ -32,5 +41,6 @@ export class NewFormVersionTile extends React.Component<INewFormVersionTileProps
 				</div>
 			</Link>
 		)
+		// % protected region % [Modify render function here] end
 	}
 }

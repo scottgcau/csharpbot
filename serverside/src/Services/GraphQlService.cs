@@ -14,6 +14,7 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,8 +22,8 @@ using Sportstats.Models;
 using Sportstats.Services.Interfaces;
 using GraphQL;
 using GraphQL.Types;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json.Linq;
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -38,7 +39,9 @@ namespace Sportstats.Services
 		public IUserService UserService { get; set; }
 		public ICrudService CrudService { get; set; }
 		public IIdentityService IdentityService { get; set; }
+		public IServiceProvider ServiceProvider { get; set; }
 		public IAuditService AuditService { get; set; }
+		public IFormFileCollection Files { get; set; }
 	}
 
 	public class GraphQlService : IGraphQlService
@@ -51,6 +54,7 @@ namespace Sportstats.Services
 		private readonly IUserService _userService;
 		private readonly ICrudService _crudService;
 		private readonly IIdentityService _identityService;
+		private readonly IServiceProvider _serviceProvider;
 		private readonly IAuditService _auditService;
 
 		public GraphQlService(
@@ -61,6 +65,7 @@ namespace Sportstats.Services
 			UserManager<User> userManager,
 			IUserService userService,
 			ICrudService crudService,
+			IServiceProvider serviceProvider,
 			IIdentityService identityService,
 			IAuditService auditService)
 		{
@@ -72,6 +77,7 @@ namespace Sportstats.Services
 			_userService = userService;
 			_crudService = crudService;
 			_identityService = identityService;
+			_serviceProvider = serviceProvider;
 			_auditService = auditService;
 		}
 
@@ -79,27 +85,32 @@ namespace Sportstats.Services
 		public async Task<ExecutionResult> Execute(
 			string query,
 			string operationName,
-			JObject variables,
+			Inputs variables,
+			IFormFileCollection attachments,
 			User user,
 			CancellationToken cancellation)
 		{
+			await _identityService.RetrieveUserAsync();
+
 			var executionOptions = new ExecutionOptions
 			{
 				Schema = _schema,
 				Query = query,
 				OperationName = operationName,
-				Inputs = variables?.ToInputs(),
+				Inputs = variables,
 				UserContext = new SportstatsGraphQlContext
 				{
 					DbContext = _dataContext,
 					User = user,
-					UserGroups = user == null ? null : await _userManager.GetRolesAsync(user),
+					UserGroups = _identityService.Groups,
 					SecurityService = _securityService,
 					CrudService = _crudService,
 					IdentityService = _identityService,
 					UserManager = _userManager,
 					UserService = _userService,
+					ServiceProvider = _serviceProvider,
 					AuditService = _auditService,
+					Files = attachments,
 				},
 				CancellationToken = cancellation,
 #if (DEBUG)

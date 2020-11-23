@@ -31,8 +31,8 @@ namespace SeleniumTests.PageObjects.BotWritten.CRUDPageObject.Modals
 		}
 
 		public IWebElement ModalElement => _driver.FindElementExt(By.XPath("//*[contains(@class,'ReactModal__Content ReactModal__Content--after-open modal-content confirm-modal')]"));
-		public IWebElement CloseModalButtton => _driver.FindElementExt(By.XPath("//button[@class='btn btn--icon icon-square-x icon-left btn--text' and @aria-label='Cancel']"));
-		public IWebElement ConfirmDeleteButton => _driver.FindElementExt(By.XPath("//button[@class='btn btn--solid' and text()='Confirm']"));
-		public IWebElement CancelDeleteButton => _driver.FindElementExt(By.XPath("//button[@class='btn btn--outline' and text()='Cancel']"));
+		public IWebElement CloseModalButtton => _driver.FindElementExt(By.ClassName("modal--close"));
+		public IWebElement ConfirmDeleteButton => _driver.FindElementExt(By.ClassName("modal--confirm"));
+		public IWebElement CancelDeleteButton => _driver.FindElementExt(By.ClassName("modal--cancel"));
 	}
 }

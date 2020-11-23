@@ -64,7 +64,7 @@ namespace SeleniumTests.PageObjects.BotWritten.Forms
 			=> driver.FindElements(By.CssSelector("div.slide-builder__list > section > button.icon-right"))
 				.Select(x => x.Text)
 				.ToList();
-		
+
 		public List<string> GetQuestionNamesWithWait()
 		{
 			var success = driverWait.Until(x => GetQuestionNames().Count > 0);
@@ -75,8 +75,8 @@ namespace SeleniumTests.PageObjects.BotWritten.Forms
 		}
 
 		public List<string> GetQuestionNames()
-			=> driver.FindElements(By.CssSelector("p.question__content"))
-				.Select(x => x.Text)
+			=> driver.FindElements(By.CssSelector(".form__question-container"))
+				.Select(x => x.GetAttribute("data-name"))
 				.ToList();
 
 		private IEnumerable<IWebElement> ContextMenuOptions()

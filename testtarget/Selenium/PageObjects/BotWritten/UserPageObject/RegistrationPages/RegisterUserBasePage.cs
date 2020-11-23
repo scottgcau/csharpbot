@@ -19,6 +19,9 @@ using APITests.EntityObjects.Models;
 using OpenQA.Selenium;
 using SeleniumTests.Setup;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace SeleniumTests.PageObjects.BotWritten.UserPageObjects
 {
 	public abstract class RegisterUserBasePage : BasePage

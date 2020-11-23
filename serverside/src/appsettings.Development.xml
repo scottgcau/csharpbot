@@ -16,17 +16,15 @@ This file is bot-written.
 Any changes out side of "protected regions" will be lost next time the bot makes any changes.
 -->
 <configuration>
-	<logging>
-		<LogLevel>
+	<Serilog>
+		<MinimumLevel>
 			<!-- % protected region % [Configure log levels] off begin -->
 			<Default>Information</Default>
-			<System>Information</System>
-			<Microsoft>Information</Microsoft>
 			<!-- % protected region % [Configure log levels] end -->
-		</LogLevel>
+		</MinimumLevel>
 		<!-- % protected region % [Configure extra logging here] off begin -->
 		<!-- % protected region % [Configure extra logging here] end -->
-	</logging>
+	</Serilog>
 	<ServerSettings>
 		<!-- % protected region % [Configure server settings here] off begin -->
 		<!--

@@ -41,8 +41,27 @@ namespace APITests.Factories
 		{
 			return _type switch
 			{
-				"SportentityEntity" => SportentityEntity.GetEntity(isValid, _fixedStrValues),
-				"SportentitySubmissionEntity" => SportentitySubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"ScheduleEntity" => ScheduleEntity.GetEntity(isValid, _fixedStrValues),
+				"SeasonEntity" => SeasonEntity.GetEntity(isValid, _fixedStrValues),
+				"VenueEntity" => VenueEntity.GetEntity(isValid, _fixedStrValues),
+				"GameEntity" => GameEntity.GetEntity(isValid, _fixedStrValues),
+				"SportEntity" => SportEntity.GetEntity(isValid, _fixedStrValues),
+				"LeagueEntity" => LeagueEntity.GetEntity(isValid, _fixedStrValues),
+				"TeamEntity" => TeamEntity.GetEntity(isValid, _fixedStrValues),
+				"PersonEntity" => PersonEntity.GetEntity(isValid, _fixedStrValues),
+				"RosterEntity" => RosterEntity.GetEntity(isValid, _fixedStrValues),
+				"RosterassignmentEntity" => RosterassignmentEntity.GetEntity(isValid, _fixedStrValues),
+				"ScheduleSubmissionEntity" => ScheduleSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"SeasonSubmissionEntity" => SeasonSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"VenueSubmissionEntity" => VenueSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"GameSubmissionEntity" => GameSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"SportSubmissionEntity" => SportSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"LeagueSubmissionEntity" => LeagueSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"TeamSubmissionEntity" => TeamSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"PersonSubmissionEntity" => PersonSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"RosterSubmissionEntity" => RosterSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"RosterassignmentSubmissionEntity" => RosterassignmentSubmissionEntity.GetEntity(isValid, _fixedStrValues),
+				"RosterTimelineEventsEntity" => RosterTimelineEventsEntity.GetEntity(isValid, _fixedStrValues),
 				_ => throw new Exception($"Cannot find entity type {_type}"),
 			};
 		}
@@ -67,7 +86,7 @@ namespace APITests.Factories
 				var entity = Construct();
 				entity.Configure(options);
 				entity.Save();
-				output.WriteLine($"Database Saved Entity:\n{entity.EntityName}:\n{entity.toJson()}\n");
+				output.WriteLine($"Database Saved Entity:\n{entity.EntityName}:\n{entity.ToJson()}\n");
 				entityList.Add(entity);
 			}
 			return entityList;
@@ -87,6 +106,22 @@ namespace APITests.Factories
 		{
 			switch (_type)
 			{
+				case "ScheduleEntity":
+					switch (enumColumnName)
+					{
+						case "ScheduleType":
+							return ((ScheduleEntity)entity).Scheduletype.ToString();
+						default:
+							return null;
+					}
+				case "RosterassignmentEntity":
+					switch (enumColumnName)
+					{
+						case "RoleType":
+							return ((RosterassignmentEntity)entity).Roletype.ToString();
+						default:
+							return null;
+					}
 				default:
 					return null;
 			}

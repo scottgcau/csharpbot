@@ -46,7 +46,7 @@ class EntityEdit<T extends Model> extends React.Component<IEntityEditProps<T>, a
 		const sectionClassName = 'crud__' + this.props.formMode;
 		const options = { title, sectionClassName };
 
-		if (this.props.match.params.id == null) {
+		if (this.props.match.params.id === null) {
 			throw new Error('Expected id of model to fetch for edit');
 		}
 
@@ -61,7 +61,7 @@ class EntityEdit<T extends Model> extends React.Component<IEntityEditProps<T>, a
 						return <div>Error Loading {modelName}</div>;
 					}
 					return (<EntityAttributeList
-						{...this.props} 
+						{...this.props}
 						model={new modelType(data[dataReturnName])}
 						{...options}
 						formMode={this.props.formMode}

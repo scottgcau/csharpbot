@@ -17,7 +17,12 @@
 
 using System;
 using OpenQA.Selenium;
+using SeleniumTests.Enums;
 using SeleniumTests.Setup;
+using SeleniumTests.Utils;
+
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace SeleniumTests.PageObjects.Components
 {
@@ -40,6 +45,7 @@ namespace SeleniumTests.PageObjects.Components
 
 		public DateTimePickerComponent(ContextConfiguration contextConfiguration, string className)
 		{
+			WaitUtils.elementState(contextConfiguration.WebDriverWait, By.CssSelector($".{className}"), ElementState.EXISTS);
 			DateTimePickerElement = contextConfiguration.WebDriver.FindElement(By.CssSelector($".{className}"));
 			datePickerComponent = new DatePickerComponent(contextConfiguration, className);
 			timePickerComponent = new TimePickerComponent(contextConfiguration, className);

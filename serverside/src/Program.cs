@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
@@ -31,12 +32,36 @@ namespace Sportstats
 	{
 		public static void Main(string[] args)
 		{
+			Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+
+			// % protected region % [Customise swagger cli generation here] off begin
 			if (args.Length > 0 && args[0] == "swagger")
 			{
 				Console.WriteLine(GenerateSwagger(args));
 				return;
 			}
-			CreateWebHostBuilder(args).Build().Run();
+			// % protected region % [Customise swagger cli generation here] end
+
+			try
+			{
+				// % protected region % [Customise web host creation here] off begin
+				Log.Information("Starting web host");
+				CreateWebHostBuilder(args).Build().Run();
+				// % protected region % [Customise web host creation here] end
+			}
+			catch (Exception ex)
+			{
+				// % protected region % [Customise program catch logging here] off begin
+				Log.Fatal(ex, "Host terminated unexpectedly");
+				throw;
+				// % protected region % [Customise program catch logging here] end
+			}
+			finally
+			{
+				// % protected region % [Customise program cleanup here] off begin
+				Log.CloseAndFlush();
+				// % protected region % [Customise program cleanup here] end
+			}
 		}
 
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
@@ -48,19 +73,23 @@ namespace Sportstats
 
 					config.SetBasePath(env.ContentRootPath);
 					config.AddXmlFile("appsettings.xml", optional: false, reloadOnChange: true);
-					config.AddXmlFile($"appsettings.{env.EnvironmentName}.xml", optional: true);
+					config.AddXmlFile($"appsettings.{env.EnvironmentName}.xml", optional: true, reloadOnChange: true);
 					config.AddEnvironmentVariables();
 					config.AddEnvironmentVariables("Sportstats_");
 					config.AddEnvironmentVariables($"Sportstats_{env.EnvironmentName}_");
 					config.AddCommandLine(args);
 					// % protected region % [Configure environment settings here] end
 				})
+				.UseSerilog()
 				// % protected region % [Add any further web host configuration here] off begin
 				// % protected region % [Add any further web host configuration here] end
+				// % protected region % [Change Startup to custom Startup class here] off begin
 				.UseStartup<Startup>();
+				// % protected region % [Change Startup to custom Startup class here] end
 
 		private static string GenerateSwagger(string[] args)
 		{
+			// % protected region % [Customise GenerateSwagger here] off begin
 			var host = CreateWebHostBuilder(args.Skip(1).ToArray()).Build();
 			var sw = (ISwaggerProvider)host.Services.GetService(typeof(ISwaggerProvider));
 			var doc = sw.GetSwagger("json", null, "/");
@@ -73,6 +102,10 @@ namespace Sportstats
 					ContractResolver = new DefaultContractResolver()
 				}
 			);
+			// % protected region % [Customise GenerateSwagger here] end
 		}
+
+		// % protected region % [Add any extra methods here] off begin
+		// % protected region % [Add any extra methods here] end
 	}
 }

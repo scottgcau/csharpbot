@@ -24,11 +24,11 @@ using TechTalk.SpecFlow;
 namespace SeleniumTests.Steps.BotWritten.Utility
 {
 	[Binding]
-	public sealed class ClickingSteps
+	public sealed class ClickingSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public ClickingSteps (ContextConfiguration contextConfiguration)
+		public ClickingSteps (ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 		}
@@ -38,7 +38,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void ClickOnElementBy (SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			MouseClickUtils.ClickOnElement(_contextConfiguration.WebDriver, _contextConfiguration.WebDriverWait, elementBy);
+			MouseClickUtils.ClickOnElement(_driver, _driverWait, elementBy);
 		}
 	}
 }

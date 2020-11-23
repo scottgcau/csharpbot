@@ -17,6 +17,8 @@
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+export const APPLICATION_ID = "40cada9e-3be5-11ea-bb2c-6d6f75736579";
+
 export const validator: unique symbol = Symbol('Validators');
 export const validatorMap: unique symbol = Symbol('Validator Map');
 export const attributes: unique symbol = Symbol('Attributes');
@@ -25,6 +27,7 @@ export const crudOptions: unique symbol = Symbol('CRUDOptions');
 export const modelName: unique symbol = Symbol('Model Name');
 export const displayName: unique symbol = Symbol('Display Name');
 export const crudId: unique symbol = Symbol('Crud Unique Id');
+export const fileAttributes: unique symbol = Symbol('File Attributes');
 // % protected region % [Add any extra symbols here] off begin
 // % protected region % [Add any extra symbols here] end
 
@@ -37,6 +40,7 @@ export const Symbols = {
 	'modelName': modelName,
 	'displayName': displayName,
 	'crudId': crudId,
+	'fileAttributes': fileAttributes,
 	// % protected region % [Add extra symbols to the symbol map here] off begin
 	// % protected region % [Add extra symbols to the symbol map here] end
 };

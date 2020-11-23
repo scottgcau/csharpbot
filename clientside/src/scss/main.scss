@@ -14,19 +14,13 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-@import '~harmony/shared/harmony.scss';
+@import 'shared/harmony.scss';
 // % protected region % [Add additional imports here] off begin
 // % protected region % [Add additional imports here] end
 
 .admin {
-	@import '~harmony/admin/harmony.scss';
-	@import '_admin/import-admin-custom.scss';
-	html &, body & {
-		font-family: $admin-body-font-family;
-		font-size: $admin-base-font-size;
-		line-height: $admin-body-line-height;
-		transition: 0.5 all;
-	}
+	@import 'admin/harmony.scss';
+	@import 'admin/import-custom.scss';
 
 	.graphiql-content-container {
 		padding: 0;
@@ -39,36 +33,19 @@
 
 .frontend {
 	// % protected region % [If you do not want to include any harmony in the front-end, you can remove the imports below and the scss files] off begin
-	@import 'harmony.scss';
+	@import 'frontend/harmony.scss';
 	//styles specific to bot only and not related to harmony
-	@import 'custom-bot-imports.scss';
+	@import 'frontend/custom-bot-imports.scss';
 	// % protected region % [If you do not want to include any harmony in the front-end, you can remove the imports below and the scss files] end
-	html &, body & {
-		font-family: $body-font-family;
-		font-size: $base-font-size;
-		line-height: $body-line-height;
-		transition: 0.5 all;
-	}
-
 	// % protected region % [Add additional front-end style content here] off begin
 	// % protected region % [Add additional front-end style content here] end
 }
+
+// % protected region % [Customise react-contextify here] off begin
 /* -------- CONTEXT MENU -------- */
 //currently sitting outside of all body-content - style is super generic
-.react-contexify {
-	padding: 0;
-	.react-contexify__item__content {
-		padding: 0;
-		.btn {
-			padding: $admin-space-xs;
-			width: 100%;
-			justify-content: flex-start;
-			&:hover, &:active {
-				background-color: $admin-color-primary;
-				color: $admin-white;
-			}
-		}
-	}
-}
+@import 'admin/react-contextify.scss';
+// % protected region % [Customise react-contextify here] end
+
 /* % protected region % [Add extra scss here] off begin */
 /* % protected region % [Add extra scss here] end */

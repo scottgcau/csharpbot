@@ -17,20 +17,25 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
-import EntityCRUD from 'Views/Components/CRUD/EntityCRUD';
 import * as Models from 'Models/Entities';
+import { FormSubmissionTile } from 'Forms/FormSubmissionTile';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+// % protected region % [Add any custom interface here] off begin
+// % protected region % [Add any custom interface here] end
+
 @observer
+// % protected region % [Add any customisations to default class definition here] off begin
 export default class HomeWrappingTileTile extends React.Component<RouteComponentProps> {
+// % protected region % [Add any customisations to default class definition here] end
 	// % protected region % [Add class properties here] off begin
 	// % protected region % [Add class properties here] end
 
 	public render() {
 		let contents = (
 			<>
-				<EntityCRUD {...this.props} modelType={Models.SportentityEntity} />
+				<FormSubmissionTile modelType={Models.SportEntity} tileId="a10301b5-3e21-424a-9e30-7856f7b193d1" />
 			</>
 		);
 

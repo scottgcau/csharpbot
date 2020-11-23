@@ -34,11 +34,19 @@ import { IAcl } from 'Models/Security/IAcl';
 import * as AttrUtils from 'Util/AttributeUtils';
 import { isRequired } from 'Util/EntityUtils';
 import { Form } from '../Form/Form';
-import { EntityFormMode } from '../Helpers/Common';
+import {AttributeFormMode, EntityFormMode} from '../Helpers/Common';
 import { EntityFormLayout } from '../EntityFormLayout/EntityFormLayout';
 import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 
+// % protected region % [Add extra page imports here] off begin
+// % protected region % [Add extra page imports here] end
+
 const VALIDATION_ERROR = "Some of the fields are missing or invalid, please check your form.";
+
+export interface IEntityAttributeBehaviour {
+	name: string;
+	behaviour: AttributeFormMode
+}
 
 interface IEntityCreateProps<T extends Model> extends RouteComponentProps {
 	model: T;
@@ -47,8 +55,12 @@ interface IEntityCreateProps<T extends Model> extends RouteComponentProps {
 	title: string;
 	sectionClassName: string;
 	customFields?: React.ReactNode;
-	customRelationPath?: any
+	customRelationPath?: any;
+	attributeBehaviours?: Array<IEntityAttributeBehaviour>;
 }
+
+// % protected region % [Add extra implementation here] off begin
+// % protected region % [Add extra implementation here] end
 
 @observer
 class EntityAttributeList<T extends Model> extends React.Component<IEntityCreateProps<T>, any> {
@@ -76,39 +88,53 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 	private fieldErrors?: IEntityValidationErrors = {};
 
 	public render() {
-		const { title, sectionClassName } = this.props;
+		// % protected region % [Modify Entity attribute render] off begin
+		const { title, modelType, formMode, customFields, sectionClassName } = this.props;
 		return (
 			<div className="crud-component">
 				<section className={sectionClassName}>
 					<FormErrors error={this.generalFormError} detailedErrors={this.detailedFormError} />
-						{SecurityService.canUpdate(this.props.modelType) && this.props.formMode === EntityFormMode.VIEW
-							? (
-								<div className="crud__header">
-									<h2>{title}</h2>
-									<Button display={Display.Outline} onClick={this.onEdit}>Edit</Button>
-								</div>
-							)
-						: <h2>{title}</h2>}
+					{SecurityService.canUpdate(modelType) && formMode === EntityFormMode.VIEW
+						? (
+							<div className="crud__header">
+								<h2>{title}</h2>
+								<Button display={Display.Outline} onClick={this.onEdit}>Edit</Button>
+							</div>
+						)
+					: <h2>{title}</h2>}
 					<Form
-						submitButton={SecurityService.canUpdate(this.props.modelType) && this.props.formMode !== EntityFormMode.VIEW}
+						submitButton={SecurityService.canUpdate(modelType) && formMode !== EntityFormMode.VIEW}
 						cancelButton={true}
 						onSubmit={this.onSubmit}
 						onCancel={this.onCancel}
 					>
-						<EntityFormLayout
-							model={this.props.model}
-							displayCreatedModifed={true}
-							getErrorsForAttribute={this.props.model.getErrorsForAttribute}
-							formMode={this.props.formMode}
-							onAttributeAfterChange={this.onAttributeAfterChange}
-							onAttributeChangeAndBlur={this.onAttributeChangeAndBlur}
-						/>
-						{this.props.customFields}
+
+						{this.renderEntityFormLayout()}
+						{customFields}
+
 					</Form>
 				</section>
 			</div>
 		);
+		// % protected region % [Modify Entity attribute render] end
 	}
+
+	// % protected region % [Customize EntityFormLayout here] off begin
+	protected renderEntityFormLayout = (): React.ReactNode => {
+		const { model, formMode, attributeBehaviours } = this.props;
+		return (
+			<EntityFormLayout
+				model={model}
+				displayCreatedModifed={true}
+				getErrorsForAttribute={model.getErrorsForAttribute}
+				formMode={formMode}
+				onAttributeAfterChange={this.onAttributeAfterChange}
+				onAttributeChangeAndBlur={this.onAttributeChangeAndBlur}
+				attributeBehaviours={attributeBehaviours}
+			/>
+		);
+	};
+	// % protected region % [Customize EntityFormLayout here] end
 
 	protected onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -122,10 +148,10 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 				this.hasSubmittedOnce = true;
 				return;
 			}
-		
+
 			return model.saveFromCrud(this.props.formMode)
 				.then((result) => {
-					const actionDone = this.props.formMode === 'create' 
+					const actionDone = this.props.formMode === 'create'
 						? 'added'
 						: (this.props.formMode === 'edit' ? 'edited' : '');
 
@@ -142,11 +168,11 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 				})
 				.catch((error) => {
 					console.error(`Failed adding ${modelName}`, error);
-				
-					if (typeof error == 'string') {
+
+					if (typeof error === 'string') {
 						alert(error, 'error');
 					}
-				
+
 					const errors: Array<{code: string, message: string}> | undefined = safeLookup(
 						error,
 						'networkError',
@@ -159,22 +185,22 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 							};
 						}}
 					);
-					
+
 					if (errors && errors.length) {
 						const errorCodes = errors.map(x => x.code);
 						let detailedError = 'Could not save entity.';
-					
+
 						if (errorCodes.indexOf("23505") >= 0) {
 							detailedError += ' A duplicate reference was found.';
 						}
-					
+
 						this.setErrors(
 							detailedError,
 							{},
 							errors.map(x => x.message).join(' '));
 						return;
 					}
-				
+
 					this.setErrors(error.message, {});
 				});
 			}
@@ -224,6 +250,9 @@ class EntityAttributeList<T extends Model> extends React.Component<IEntityCreate
 			}
 		});
 	}
+
+	// % protected region % [Add extra methods here] off begin
+	// % protected region % [Add extra methods here] end
 }
 
 export default EntityAttributeList;

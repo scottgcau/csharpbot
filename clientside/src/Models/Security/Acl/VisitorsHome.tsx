@@ -17,7 +17,7 @@
 import { IAcl } from '../IAcl';
 
 export class VisitorsHome implements IAcl {
-	public group: string;
+	public group?: string;
 	public isVisitorAcl = true;
 	public constructor() {
 		this.group = 'Visitors';

@@ -57,6 +57,7 @@ export function confirmModal(title: string, message: React.ReactNode, options: I
 					<h2 key="header-item" className="modal__title">{title}</h2>
 					<Button
 						key="header-cancel"
+						className="modal--close"
 						icon={{icon: 'square-x', iconPos: 'icon-left'}}
 						display={Display.Text}
 						onClick={onCancel}
@@ -68,8 +69,8 @@ export function confirmModal(title: string, message: React.ReactNode, options: I
 					{message}
 				</div>
 				<div key="actions" className="modal__actions">
-					<Button key={"confirm"} onClick={onConfirm} display={Display.Solid}>{confirmText}</Button>
-					<Button key={"cancel"} onClick={onCancel} display={Display.Outline}>{cancelText}</Button>
+					<Button className="modal--confirm" key={"confirm"} onClick={onConfirm} display={Display.Solid}>{confirmText}</Button>
+					<Button className="modal--cancel" key={"cancel"} onClick={onCancel} display={Display.Outline}>{cancelText}</Button>
 				</div>
 			</>
 		);

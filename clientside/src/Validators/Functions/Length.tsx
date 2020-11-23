@@ -14,9 +14,9 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import { Symbols } from 'Symbols';
-import { initValidators, IModelAttributeValidationError, ErrorType } from '../Util';
 import { Model } from 'Models/Model';
+import { Symbols } from 'Symbols';
+import { ErrorType, IModelAttributeValidationError, initValidators } from '../Util';
 
 export default function validate(min?: number, max?: number) {
 	return (target: object, key: string) => {
@@ -24,17 +24,19 @@ export default function validate(min?: number, max?: number) {
 		target[Symbols.validatorMap][key].push('Length');
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => new Promise((resolve) => {
-				if (!model[key] || (!min && !max)) {
+				if (model[key] === null || model[key] === undefined || (!min && !max)) {
 					resolve(null);
 					return;
 				}
 
-				if (min && model[key].length >= min) {
-					resolve(null);
-					return;
+				let isValid = true;
+				if (min && (model[key].length < min)) {
+					isValid = false;
 				}
-
-				if (max && model[key].length <= max) {
+				if (max && model[key].length > max) {
+					isValid = false;
+				}
+				if (isValid) {
 					resolve(null);
 					return;
 				}

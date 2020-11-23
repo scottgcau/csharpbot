@@ -35,13 +35,13 @@ namespace APITests.Utils
 		public Registration(UserBaseEntity userBaseEntity, ITestOutputHelper testOutputHelper)
 		{
 			var endpointName = userBaseEntity.EndpointName;
-			var clientxsrf = ClientXSRF.GetValidClientAndxsrfTokenPair(_configure);
+			var clientxsrf = ClientXsrf.GetValidClientAndxsrfTokenPair(_configure);
 			var client = clientxsrf.client;
 			client.BaseUrl = new Uri(_configure.BaseUrl + $"/api/register/{endpointName}");
 			var request = new RestRequest { Method = Method.POST, RequestFormat = DataFormat.Json };
 			request.AddHeader("X-XSRF-TOKEN", clientxsrf.xsrfToken);
 			request.AddHeader("Content-Type", "application/json");
-			request.AddParameter("query", userBaseEntity.toJson(), ParameterType.RequestBody);
+			request.AddParameter("query", userBaseEntity.ToJson(), ParameterType.RequestBody);
 			var response = client.Execute(request);
 
 			ApiOutputHelper.WriteRequestResponseOutput(request, response, testOutputHelper);

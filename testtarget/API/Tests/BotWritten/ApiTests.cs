@@ -14,6 +14,7 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+
 using System;
 using System.Linq;
 using System.Net;
@@ -27,6 +28,8 @@ using Xunit.Abstractions;
 
 namespace APITests.Tests.BotWritten
 {
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Integration")]
 	public class ApiTests : IClassFixture<StartupTestFixture>
 	{
 		private readonly StartupTestFixture _configure;
@@ -38,42 +41,19 @@ namespace APITests.Tests.BotWritten
 			_output = output;
 		}
 
+		// % protected region % [Customize GraphQl endpoint tests here] off begin
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityNamePluralizedTheoryData))]
 		public void TestGraphqlEndPoints(string entityName)
 		{
-			//setup the rest client
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/graphql")
-			};
 
-			//setup the request
-			var request = new RestRequest
-			{
-				Method = Method.POST,
-				RequestFormat = DataFormat.Json
-			};
+			var api = new WebApi(_configure, _output);
 
-			var query = new JsonObject();
-
-			//get the authorization token and adds the token to the request
-			var loginToken = new LoginToken(_configure.BaseUrl, _configure.SuperUsername, _configure.SuperPassword);
-			var authorizationToken = $"{loginToken.TokenType} {loginToken.AccessToken}";
-			request.AddHeader("Authorization", authorizationToken);
-
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "application/json, text/html, */*");
-
+			var query = new RestSharp.JsonObject();
 			query.Add("query", "{ " + entityName + "{id}}");
-			request.AddParameter("text/json", query, ParameterType.RequestBody);
 
-			// execute the request
-			var response = client.Execute(request);
-
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
+			api.ConfigureAuthenticationHeaders();
+			var response = api.Post($"/api/graphql", query);
 
 			//check the ids are valid
 			var validIds = JObject.Parse(response.Content)["data"][entityName]
@@ -83,41 +63,20 @@ namespace APITests.Tests.BotWritten
 			//valid ids returned and a valid response
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 		}
+		// % protected region % [Customize GraphQl endpoint tests here] end
 
+		// % protected region % [Customize Api endpoint tests here] off begin
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityNameTheoryData))]
 		public void TestApiEndPoints(string entityName)
 		{
-			//setup the rest client
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/entity/{entityName}")
-			};
+			var api = new WebApi(_configure, _output);
+			api.ConfigureAuthenticationHeaders();
+			var response = api.Get($"/api/entity/{entityName}");
 
-			//setup the request
-			var request = new RestRequest
-			{
-				Method = Method.GET,
-				RequestFormat = DataFormat.Json
-			};
-
-			//get the authorization token and adds the token to the request
-			var loginToken = new LoginToken(_configure.BaseUrl, _configure.SuperUsername, _configure.SuperPassword);
-			var authorizationToken = $"{loginToken.TokenType} {loginToken.AccessToken}";
-			request.AddHeader("Authorization", authorizationToken);
-
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "application/json, text/html, */*");
-
-			// execute the request
-			var response = client.Execute(request);
-
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
-
-			//valid ids returned and a valid response
+			// a valid response code
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 		}
+		// % protected region % [Customize Api endpoint tests here] end
 	}
 }

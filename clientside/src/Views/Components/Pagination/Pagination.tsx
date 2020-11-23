@@ -20,11 +20,15 @@ import { TextField } from '../TextBox/TextBox';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import IPaginationData from 'Models/PaginationData';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export interface IPaginationProps {
+	// % protected region % [Customize IPaginationProps here] off begin
 	pagination: IPaginationData;
 	showGoToPageBox?: boolean;
 	onPageChange?: () => void;
+	// % protected region % [Customize IPaginationProps here] end
 }
 
 enum validPageOptions {
@@ -35,10 +39,14 @@ enum validPageOptions {
 
 @observer
 class Pagination extends React.Component<IPaginationProps> {
+	// % protected region % [Add extra options class properties here] off begin
+	// % protected region % [Add extra options class properties here] end
+
 	@observable
 	private pageTextBoxModel = { page: '1' };
 
 	public render() {
+		// % protected region % [Customize options render here] off begin
 		const { queryOptions } = this.props.pagination;
 		const { page } = queryOptions;
 
@@ -55,9 +63,11 @@ class Pagination extends React.Component<IPaginationProps> {
 				</ul>
 			</nav >
 		);
+		// % protected region % [Customize options render here] end
 	}
 
 	public renderFirstButton() {
+		// % protected region % [Customize renderFirstButton here] off begin
 		const { page } = this.props.pagination.queryOptions;
 		let isFirstPage = (page === 0);
 		return (
@@ -71,9 +81,11 @@ class Pagination extends React.Component<IPaginationProps> {
 				First
 			</Button>
 		);
+		// % protected region % [Customize renderFirstButton here] end
 	}
 
 	public renderNextButton() {
+		// % protected region % [Customize renderNextButton here] off begin
 		const { page } = this.props.pagination.queryOptions;
 		const noNextPage = (page >= ((this.totalPages()) - 1));
 		return (
@@ -87,9 +99,11 @@ class Pagination extends React.Component<IPaginationProps> {
 				Next
 			</Button>
 		);
+		// % protected region % [Customize renderNextButton here] end
 	}
 
 	public renderPreviousButton() {
+		// % protected region % [Customize renderPreviousButton here] off begin
 		const { page } = this.props.pagination.queryOptions;
 		const noPreviousPage = (page < 1);
 		return (
@@ -103,9 +117,11 @@ class Pagination extends React.Component<IPaginationProps> {
 				Previous
 			</Button>
 		);
+		// % protected region % [Customize renderPreviousButton here] end
 	}
 
 	public renderLastButton() {
+		// % protected region % [Customize renderLastButton here] off begin
 		const { page } = this.props.pagination.queryOptions;
 		const isLastPage = (page >= ((this.totalPages()) - 1));
 		return (
@@ -119,9 +135,11 @@ class Pagination extends React.Component<IPaginationProps> {
 				Last
 			</Button>
 		);
+		// % protected region % [Customize renderLastButton here] end
 	}
 
 	public renderGoToPageBox() {
+		// % protected region % [Customize renderGoToPageBox here] off begin
 		if (this.props.showGoToPageBox) {
 			return (
 				<form className="paginator__go-to-pg" onSubmit={this.onGoToPageFormSubmit}>
@@ -131,36 +149,48 @@ class Pagination extends React.Component<IPaginationProps> {
 		}
 
 		return null;
+		// % protected region % [Customize renderGoToPageBox here] end
 	}
 
 	private firstPage = () => {
+		// % protected region % [Customize firstPageMethod here] off begin
 		this.gotoPage(0);
+		// % protected region % [Customize firstPageMethod here] end
 	}
 
 	private previousPage = () => {
+		// % protected region % [Customize previousPageMethod here] off begin
 		const { queryOptions } = this.props.pagination;
 		this.gotoPage(queryOptions.page - 1);
+		// % protected region % [Customize previousPageMethod here] end
 	}
 
 	private nextPage = () => {
+		// % protected region % [Customize nextPageMethod here] off begin
 		const { queryOptions } = this.props.pagination;
 		this.gotoPage(queryOptions.page + 1);
+		// % protected region % [Customize nextPageMethod here] end
 	}
 
 	private lastPage = () => {
+		// % protected region % [Customize lastPage method here] off begin
 		this.gotoPage(this.totalPages() - 1);
+		// % protected region % [Customize lastPage method here] end
 	}
 
 	private onGoToPageFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		// % protected region % [Customize onGoToPageFormSubmit here] off begin
 		event.preventDefault();
 
 		const n = Number.parseInt(this.pageTextBoxModel.page, 10);
 		if (!isNaN(n)) {
 			this.gotoPage(n - 1);
 		}
+		// % protected region % [Customize onGoToPageFormSubmit here] end
 	}
 
 	public gotoPage = (pageNo: number) => {
+		// % protected region % [Customize gotoPage method here] off begin
 		const { queryOptions } = this.props.pagination;
 
 		const validPage = this.isValidPage(pageNo);
@@ -176,18 +206,22 @@ class Pagination extends React.Component<IPaginationProps> {
 		if (this.props.onPageChange) {
 			this.props.onPageChange();
 		}
+		// % protected region % [Customize gotoPage method here] end
 	}
 
 	private isValidPage = (pageNo: number): validPageOptions => {
+		// % protected region % [Customize isValidPage method here] off begin
 		if (pageNo >= this.totalPages()) {
 			return validPageOptions.HIGH;
 		} else if (pageNo < 0) {
 			return validPageOptions.LOW;
 		}
 		return validPageOptions.VALID;
+		// % protected region % [Customize isValidPage method here] end
 	}
 
 	private totalPages () {
+		// % protected region % [Customize totalPages method here] off begin
 		const { queryOptions, totalRecords } = this.props.pagination;
 		const { perPage } = queryOptions;
 
@@ -195,6 +229,7 @@ class Pagination extends React.Component<IPaginationProps> {
 			return Math.ceil(totalRecords / perPage);
 		}
 		return 1;
+		// % protected region % [Customize totalPages method here] end
 	}
 }
 

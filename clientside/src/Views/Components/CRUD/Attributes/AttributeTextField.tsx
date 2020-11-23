@@ -19,11 +19,16 @@ import { Model } from 'Models/Model';
 import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 import { TextField } from '../../TextBox/TextBox';
 import { IAttributeProps } from './IAttributeProps';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
+// % protected region % [Modify IAttributeTextFieldProps here] off begin
 interface IAttributeTextFieldProps<T extends Model> extends IAttributeProps<T> {
 	onChangeAndBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+// % protected region % [Modify IAttributeTextFieldProps here] end
 
+// % protected region % [Modify AttributeTextField here] off begin
 class AttributeTextField<T extends Model> extends React.Component<IAttributeTextFieldProps<T>> {
 	public render() {
 		const { model, options, errors, className, isReadonly, isRequired } = this.props;
@@ -40,5 +45,6 @@ class AttributeTextField<T extends Model> extends React.Component<IAttributeText
 		/>;
 	}
 }
+// % protected region % [Modify AttributeTextField here] end
 
 export default AttributeTextField;

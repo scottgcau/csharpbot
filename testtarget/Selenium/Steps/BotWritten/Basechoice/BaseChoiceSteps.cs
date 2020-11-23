@@ -16,7 +16,6 @@
  */
 
 using System;
-using APITests.DataFixtures;
 using OpenQA.Selenium;
 using SeleniumTests.Setup;
 using SeleniumTests.Utils;
@@ -27,11 +26,11 @@ using TestDataLib;
 namespace SeleniumTests.Steps.BotWritten.Basechoice
 {
 	[Binding]
-	public sealed class BaseChoiceSteps
+	public sealed class BaseChoiceSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public BaseChoiceSteps (ContextConfiguration contextConfiguration)
+		public BaseChoiceSteps (ContextConfiguration contextConfiguration)  : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 		}
@@ -41,15 +40,15 @@ namespace SeleniumTests.Steps.BotWritten.Basechoice
 		public void IInsertValidStringBaseChoiceIntoElement(string baseChoiceType, int min, int max, SelectorPathType selector, string path)
 		{
 			var elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy, ElementState.EXISTS);
+			WaitUtils.elementState(_driverWait, elementBy, ElementState.EXISTS);
 
 			switch (baseChoiceType)
 			{
 				case "wordystring":
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandString(min, max));
+					TypingUtils.TypeElement(_driver, elementBy, DataUtils.RandString(min, max));
 					break;
 				case "string":
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandString(min, max));
+					TypingUtils.TypeElement(_driver, elementBy, DataUtils.RandString(min, max));
 					break;
 			}
 		}
@@ -59,21 +58,21 @@ namespace SeleniumTests.Steps.BotWritten.Basechoice
 		public void IInsertValidBaseChoiceIntoElement(BaseChoiceType baseChoiceType, SelectorPathType selector, string path)
 		{
 			By elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			WaitUtils.elementState(_contextConfiguration.WebDriverWait, elementBy, ElementState.EXISTS);
+			WaitUtils.elementState(_driverWait, elementBy, ElementState.EXISTS);
 
 			switch (baseChoiceType)
 			{
 				case BaseChoiceType.INT:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandInt().ToString());
+					TypingUtils.TypeElement(_driver, elementBy, DataUtils.RandInt().ToString());
 					break;
 				case BaseChoiceType.DOUBLE:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandDouble().ToString());
+					TypingUtils.TypeElement(_driver, elementBy, DataUtils.RandDouble().ToString());
 					break;
 				case BaseChoiceType.BOOL:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandBool().ToString());
+					TypingUtils.TypeElement(_driver, elementBy, DataUtils.RandBool().ToString());
 					break;
 				case BaseChoiceType.EMAIL:
-					TypingUtils.TypeElement(_contextConfiguration.WebDriver, elementBy, DataUtils.RandEmail());
+					TypingUtils.TypeElement(_driver, elementBy, DataUtils.RandEmail());
 					break;
 			}
 		}

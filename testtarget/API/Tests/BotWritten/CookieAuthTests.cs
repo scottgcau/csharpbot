@@ -15,17 +15,16 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 using System;
-using System.Linq;
 using System.Net;
 using APITests.Setup;
 using APITests.Utils;
-using Newtonsoft.Json.Linq;
-using RestSharp;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace APITests.Tests.BotWritten
 {
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Integration")]
 	public class CookieAuthTests : IClassFixture<StartupTestFixture>
 	{
 		private readonly StartupTestFixture _configure;
@@ -38,12 +37,10 @@ namespace APITests.Tests.BotWritten
 		}
 
 		[Fact]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		public void ValidCookiesValidXSRFTokenAuth()
 		{
 			// get a paired client and xsrf token
-			var clientxsrf = ClientXSRF.GetValidClientAndxsrfTokenPair(_configure);
+			var clientxsrf = ClientXsrf.GetValidClientAndxsrfTokenPair(_configure);
 
 			// extract the client
 			var client = clientxsrf.client;
@@ -61,19 +58,15 @@ namespace APITests.Tests.BotWritten
 			request.AddHeader("X-XSRF-TOKEN", xsrfToken);
 
 			// we expect out result to be valid since we have valid cookies and a valid xsrfToken as a header
-			var expectValid = true;
-
 			// check response
-			ResponseHelpers.CheckResponse(client, request, expectValid);
+			ResponseHelpers.CheckResponse(client, request, expectValid: true);
 		}
 
 		[Fact]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		public void MissingXSRFTokenValidCookiesUnauthTest()
 		{
 			// get a paired client and xsrf token
-			var clientxsrf = ClientXSRF.GetValidClientAndxsrfTokenPair(_configure);
+			var clientxsrf = ClientXsrf.GetValidClientAndxsrfTokenPair(_configure);
 
 			// extract the client
 			var client = clientxsrf.client;
@@ -89,19 +82,14 @@ namespace APITests.Tests.BotWritten
 
 			// we don't expect out result to be valid since we have not attatched a valid
 			// xsrf token as a header, although we do have valid cookies
-			var expectValid = false;
-
-			// check response
-			ResponseHelpers.CheckResponse(client, request, expectValid);
+			ResponseHelpers.CheckResponse(client, request, expectValid: false);
 		}
 
 		[Fact]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		public void MissingCookiesValidXSRFTokenUnauthTest()
 		{
 			// get a paired client and xsrf token
-			var clientxsrf = ClientXSRF.GetValidClientAndxsrfTokenPair(_configure);
+			var clientxsrf = ClientXsrf.GetValidClientAndxsrfTokenPair(_configure);
 
 			// extract the client
 			var client = clientxsrf.client;
@@ -123,10 +111,8 @@ namespace APITests.Tests.BotWritten
 
 			// we don't expect out result to be valid as we have no valid cookies,
 			// even though we have attatched a valid xsrf token as a header.
-			var expectValid = false;
-
 			// check response
-			ResponseHelpers.CheckResponse(client, request, expectValid);
+			ResponseHelpers.CheckResponse(client, request, expectValid: false);
 		}
 	}
 }

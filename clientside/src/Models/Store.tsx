@@ -21,16 +21,20 @@ import { IGlobalModal } from '../Views/Components/Modal/GlobalModal';
 // % protected region % [Add any extra store imports here] off begin
 // % protected region % [Add any extra store imports here] end
 
+// % protected region % [Change the group return result as needed] off begin
 export interface IGroupResult {
 	name: string;
 	hasBackendAccess: boolean;
 }
+// % protected region % [Change the group return result as needed] end
 
+// % protected region % [Change The user return result as needed] off begin
 export interface IUserResult {
 	id: string;
 	email: string;
 	groups: IGroupResult[];
 }
+// % protected region % [Change The user return result as needed] end
 
 /**
  * A global singleton store that contains a global state of data
@@ -66,7 +70,9 @@ export class Store {
 	 */
 	@computed
 	public get loggedIn() {
-		return this.user !== undefined; 
+		// % protected region % [Customise the loggedIn getter here] off begin
+		return this.user !== undefined;
+		// % protected region % [Customise the loggedIn getter here] end
 	}
 
 	/**
@@ -74,7 +80,9 @@ export class Store {
 	 */
 	@computed
 	public get userId(): string | undefined {
+		// % protected region % [Customise the userId getter here] off begin
 		return this.user ? this.user.id : undefined;
+		// % protected region % [Customise the userId getter here] end
 	};
 	
 	/**
@@ -82,7 +90,9 @@ export class Store {
 	 */
 	@computed
 	public get email(): string | undefined {
+		// % protected region % [Customise the email getter here] off begin
 		return this.user ? this.user.email : undefined;
+		// % protected region % [Customise the email getter here] end
 	}
 
 	/**
@@ -90,10 +100,12 @@ export class Store {
 	 */
 	@computed
 	public get userGroups(): IGroupResult[] {
+		// % protected region % [Customise the userGroups getter here] off begin
 		if (this.user) {
 			return [...this.user.groups];
 		}
 		return [];
+		// % protected region % [Customise the userGroups getter here] end
 	};
 
 	/**
@@ -101,10 +113,12 @@ export class Store {
 	 */
 	@computed
 	public get hasBackendAccess() {
+		// % protected region % [Customise the hasBackendAccess getter here] off begin
 		if (this.user) {
 			return this.user.groups.some(ug => ug.hasBackendAccess);
 		}
 		return false;
+		// % protected region % [Customise the hasBackendAccess getter here] end
 	};
 
 	/**
@@ -112,6 +126,7 @@ export class Store {
 	 */
 	@observable
 	public frontendEditMode = false;
+	
 
 	/**
 	 * Sets the current logged in user in the store
@@ -119,14 +134,18 @@ export class Store {
 	 */
 	@action
 	public setLoggedInUser(userResult: IUserResult) {
+		// % protected region % [Customise the setLoggedInUser here] off begin
 		this.user = userResult;
+		// % protected region % [Customise the setLoggedInUser here] end
 	}
-	
+
 	/**
 	 * Clears the logged in user data from the store
 	 */
 	@action clearLoggedInUser() {
+		// % protected region % [Customise the clearLoggedInUser here] off begin
 		this.user = undefined;
+		// % protected region % [Customise the clearLoggedInUser here] end
 	}
 
 	// % protected region % [Add any extra store methods or properties here] off begin

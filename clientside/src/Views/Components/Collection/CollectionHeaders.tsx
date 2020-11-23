@@ -22,6 +22,8 @@ import { ICollectionItemActionProps, actionFilterFn } from './Collection';
 import { observable, runInAction } from 'mobx';
 import { IOrderByCondition } from '../ModelCollection/ModelQuery';
 import { DisplayType } from '../Models/Enums';
+// % protected region % [Add extra imports and exports here] off begin
+// % protected region % [Add extra imports and exports here] end
 
 type nameFn = (name: string) => (string | React.ReactNode);
 type transformFn<T> = (item: T, name: string) => (string | React.ReactNode);
@@ -33,10 +35,14 @@ export interface ICollectionHeaderProps<T> {
 	transformItem?: transformFn<T>;
 	nullValue?: string;
 	sortClicked?: (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>) => IOrderByCondition<T> | undefined | void;
+	// % protected region % [Add extra header props here] off begin
+	// % protected region % [Add extra header props here] end
 }
 
 export interface ICollectionHeaderPropsPrivate<T> extends ICollectionHeaderProps<T> {
 	headerName?: string | React.ReactNode;
+	// % protected region % [Add extra private header props here] off begin
+	// % protected region % [Add extra private header props here] end
 }
 
 export interface ICollectionHeadersProps<T> {
@@ -47,6 +53,8 @@ export interface ICollectionHeadersProps<T> {
 	onCheckedAll?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void
 	/** The default order by condition */
 	orderBy?: IOrderByCondition<T> | undefined;
+	// % protected region % [Add extra headers props here] off begin
+	// % protected region % [Add extra headers props here] end
 }
 
 @observer
@@ -54,40 +62,33 @@ export default class CollectionHeaders<T> extends React.Component<ICollectionHea
 	@observable
 	private orderBy: IOrderByCondition<T> | undefined | void;
 
+	// % protected region % [Add extra class fields here] off begin
+	// % protected region % [Add extra class fields here] end
+
 	constructor(props: ICollectionHeadersProps<T>, context: any){
+		// % protected region % [Customise constructor here] off begin
 		super(props, context);
-		this.orderBy = this.props.orderBy;
+		const { orderBy } = this.props;
+		this.orderBy = orderBy;
+		// % protected region % [Customise constructor here] end
 	}
 	
 	public render() {
+		// % protected region % [Customise render here] off begin
+		const { selectableItems, headers, actions } = this.props;
+
 		return (
 			<thead>
 				<tr className="list__header">
-					<If condition={this.props.selectableItems}>
+					<If condition={selectableItems}>
 						<th className="select-box">
-							<Checkbox 
-								label="Select All" 
-								modelProperty="checked" 
-								name="selectall"
-								model={{}}
-								displayType={DisplayType.INLINE}
-								inputProps={{
-									checked: this.props.allChecked,
-									onChange: event => {
-										runInAction(() => {
-											if (this.props.onCheckedAll) {
-												this.props.onCheckedAll(event, event.target.checked);
-											}
-										});
-									}
-								}}
-							/>
+							{this.renderSelectAllCheckbox()}
 						</th>
 					</If>
-					{this.props.headers.map((header, idx) => {
+					{headers.map((header, idx) => {
 						return (
 							<th key={idx} scope="col" onClick={
-								(event) => {
+								event => {
 									runInAction(() => {
 										if (header.sortClicked) {
 											this.orderBy = header.sortClicked(event);
@@ -100,11 +101,42 @@ export default class CollectionHeaders<T> extends React.Component<ICollectionHea
 							</th>
 						);
 					})}
-					<If condition={this.props.actions != null}>
-						<th scope="col" className="list__header--actions">Commands</th>
+					<If condition={actions != null}>
+						<th scope="col" className="list__header--actions"></th>
 					</If>
 				</tr>
 			</thead>
 		);
+		// % protected region % [Customise render here] end
+	}
+
+	public renderSelectAllCheckbox() {
+		// % protected region % [Customize initial renderSelectAllCheckbox here] off begin
+		const { allChecked, onCheckedAll } = this.props;
+		const checkboxDisplayType = DisplayType.INLINE;
+		// % protected region % [Customize initial renderSelectAllCheckbox here] end
+
+		return (
+			<Checkbox
+				label="Select All"
+				modelProperty="checked"
+				name="selectall"
+				model={{}}
+				displayType={checkboxDisplayType}
+				inputProps={{
+					checked: allChecked,
+					onChange: event => {
+						runInAction(() => {
+							if (onCheckedAll) {
+								onCheckedAll(event, event.target.checked);
+							}
+						});
+					},
+				}}
+			/>
+		);
 	}
 }
+
+// % protected region % [Add methods here] off begin
+// % protected region % [Add methods here] end

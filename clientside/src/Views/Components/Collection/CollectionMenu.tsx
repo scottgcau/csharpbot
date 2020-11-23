@@ -28,9 +28,13 @@ import PaginationData from "../../../Models/PaginationData";
 import CollectionFilterPanel, { ICollectionFilterPanelProps } from './CollectionFilterPanel';
 import SearchForm from '../SearchForm/SearchForm';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 interface ICollectionMenuProps<T> {
+	selectedItems: T[];
 	search?: boolean;
-	filterConfig?: ICollectionFilterPanelProps<T>,
+	filterConfig?: ICollectionFilterPanelProps<T>;
 	headers?: Array<ICollectionHeaderProps<T>>;
 	onSearchTriggered?: (searchTerm: string) => void;
 	additionalActions?: React.ReactNode[];
@@ -40,6 +44,7 @@ interface ICollectionMenuProps<T> {
 	pagination?: PaginationData;
 	showSelectAll?: boolean;
 	onSelectAll?: () => void;
+	filterOrientationRow?: boolean;
 }
 
 interface ISearch {
@@ -57,6 +62,9 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 	@observable
 	private showFilter: boolean = false;
 
+	// % protected region % [Add extra fields here] off begin
+	// % protected region % [Add extra fields here] end
+
 	public render() {
 		// TODO: handle more buttons and button group rendering properly
 		const { filterConfig, totalSelectedItems, selectedBulkActions, search } = this.props;
@@ -67,14 +75,16 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 		let bulkActionsBtnGroup = undefined;
 		if(totalSelectedItems && selectedBulkActions && selectedBulkActions.length){
 			const bulkActionButtons = selectedBulkActions.map((action, actIdx) => {
-				const icon = action.showIcon && action.icon && action.iconPos ? { icon: action.icon, position: action.iconPos } : undefined;
+				const icon = action.showIcon && action.icon && action.iconPos 
+					? { icon: action.icon, iconPos: action.iconPos } 
+					: undefined;
 				return <Button
 					key={actIdx}
 					className={action.buttonClass}
 					icon={icon}
 					buttonProps={{
 						onClick: event => {
-							action.bulkAction(event);
+							action.bulkAction(this.props.selectedItems, event);
 						}
 					}}>
 					{action.label}
@@ -113,7 +123,7 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 					</If>
 				</section>
 				<If condition={hasFilter && this.showFilter} >
-					<section aria-label="collection filters" className="collection__filters">
+					<section aria-label="collection filters" className={`collection__filters ${this.props.filterOrientationRow ? 'orientation_row' : ''}`}>
 						<CollectionFilterPanel
 							filters = {this.props.filterConfig?this.props.filterConfig.filters:[]}
 							onApplyFilter={this.props.filterConfig ? this.props.filterConfig.onApplyFilter : () => { }}
@@ -121,14 +131,20 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 							onFilterChanged={(this.props.filterConfig && this.props.filterConfig.onFilterChanged) ? this.props.filterConfig.onFilterChanged : () => { }} />
 					</section>
 				</If>
-				<section aria-label="select options" className={classNames('collection__select-options', totalSelectedItems === 0 ? 'hide' : null)}>
-					{bulkActionsBtnGroup}
-					<p className="crud__selection--count"><span className="selection-count">{totalSelectedItems}</span> items are selected</p>
-					<If condition={this.props.showSelectAll && !!this.props.pagination}>
-						<Button className="crud__selection--select-all" onClick={this.props.onSelectAll} display={Display.Text}>Select all {this.props.pagination ? this.props.pagination.totalRecords : null} items</Button>
-					</If>
-					<Button className="crud__selection--cancel" onClick={this.props.cancelAllSelection}>Cancel</Button>
-				</section>
+				<If condition={totalSelectedItems !== 0}>
+					<section aria-label="select options" className={classNames('collection__select-options', totalSelectedItems === 0 ? 'hide' : null)}>
+						{bulkActionsBtnGroup}
+						<p className="crud__selection--count">
+							<span className="selection-count">{totalSelectedItems}</span> items are selected
+						</p>
+						<If condition={this.props.showSelectAll && !!this.props.pagination}>
+							<Button className="crud__selection--select-all" onClick={this.props.onSelectAll} display={Display.Text}>
+								Select all {this.props.pagination ? this.props.pagination.totalRecords : null} items
+							</Button>
+						</If>
+						<Button className="crud__selection--cancel" onClick={this.props.cancelAllSelection}>Cancel</Button>
+					</section>
+				</If>
 			</>
 		);
 	}
@@ -152,6 +168,9 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 			onSearchTriggered(this.search.searchTerm);
 		}
 	}
+
+	// % protected region % [Add extra methods here] off begin
+	// % protected region % [Add extra methods here] end
 }
 
 export default CollectionMenu;

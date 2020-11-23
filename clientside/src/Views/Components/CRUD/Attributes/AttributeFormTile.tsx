@@ -28,7 +28,8 @@ export interface IFormTile {
 	display:string;
 }
 
-export const formTiles = [
+export const formTiles: IFormTile[] = [
+	{formModel: "SportEntity", value: "a10301b5-3e21-424a-9e30-7856f7b193d1", display: "SportForm"},
 	// % protected region % [Add any extra form tiles here] off begin
 	// % protected region % [Add any extra form tiles here] end
 ];

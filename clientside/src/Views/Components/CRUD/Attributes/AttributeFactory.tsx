@@ -17,7 +17,6 @@
 import * as React from 'react';
 import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 import { Model } from 'Models/Model';
-import { Symbols } from '../../../../Symbols';
 import AttributeTextField from './AttributeTextField';
 import AttributeTextArea from './AttributeTextArea';
 import AttributeReferenceCombobox from './AttributeReferenceCombobox';
@@ -32,7 +31,9 @@ import AttributeEnumCombobox from './AttributeEnumCombobox';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
 import AttributeFormData from "./AttributeFormData";
 import AttributeFormTile from 'Views/Components/CRUD/Attributes/AttributeFormTile';
-
+import AttributeFile from 'Views/Components/CRUD/Attributes/AttributeFile';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export function getAttributeComponent (
 	attributeOptions: AttributeCRUDOptions,
@@ -43,6 +44,10 @@ export function getAttributeComponent (
 	onAfterChange?: (attributeName: string) => void,
 	onChangeAndBlur?: (attributeName: string) => void)
 {
+	const className = attributeOptions.className 
+		? `${attributeOptions.attributeName} ${attributeOptions.className}`
+		: attributeOptions.attributeName;
+
 	const isReadonly = formMode === EntityFormMode.VIEW || attributeOptions.isReadonly;
 
 	const displayType = {
@@ -53,14 +58,16 @@ export function getAttributeComponent (
 
 	switch (displayType) {
 		case 'textfield':
+			// % protected region % [Override textfield here] off begin
 			return <AttributeTextField
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
 				errors={errors}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onAfterChange) {
 						onAfterChange(attributeOptions.attributeName);
@@ -76,25 +83,45 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override textfield here] end
 		case 'textarea':
+			// % protected region % [Override textarea here] off begin
 			return <AttributeTextArea
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
 				errors={errors}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
+				onAfterChange={() => {
+					if (!!onAfterChange) {
+						onAfterChange(attributeOptions.attributeName);
+					}
+					if (attributeOptions.onAfterChange) {
+						attributeOptions.onAfterChange(model);
+					}
+				}}
+				onChangeAndBlur={() => {
+					if (!!onChangeAndBlur) {
+						onChangeAndBlur(attributeOptions.attributeName);
+					}
+				}}
+				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override textarea here] end
 		case 'password':
+			// % protected region % [Override password here] off begin
 			return <AttributePassword
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
 				errors={errors}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -105,14 +132,17 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override password here] end
 		case 'datepicker':
+			// % protected region % [Override date picker here] off begin
 			return <AttributeDatePicker
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -123,14 +153,17 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override date picker here] end
 		case 'timepicker':
+			// % protected region % [Override time picker here] off begin
 			return <AttributeTimePicker
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -141,14 +174,17 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override time picker here] end
 		case 'datetimepicker':
+			// % protected region % [Override datetime picker here] off begin
 			return <AttributeDateTimePicker
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -159,14 +195,17 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override datetime picker here] end
 		case 'checkbox':
+			// % protected region % [Override checkbox here] off begin
 			return <AttributeCheckbox
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -177,13 +216,16 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override checkbox here] end
 		case 'displayfield':
+			// % protected region % [Override displayfield here] off begin
 			return <AttributeDisplayField
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
 				errors={errors}
-				className={attributeOptions.attributeName}
+				className={className}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -194,7 +236,9 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override displayfield here] end
 		case 'reference-combobox':
+			// % protected region % [Override reference-combobox here] off begin
 			if (attributeOptions.referenceTypeFunc === undefined) {
 				throw new Error('Must have a defined referenceType for display type' + attributeOptions.displayType);
 			}
@@ -205,10 +249,11 @@ export function getAttributeComponent (
 				referenceType={attributeOptions.referenceTypeFunc()}
 				errors={errors}
 				optionEqualFunc={attributeOptions.optionEqualFunc}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
 				fetchReferenceEntity={attributeOptions.isJoinEntity}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -219,7 +264,9 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override reference-combobox here] end
 		case 'reference-multicombobox':
+			// % protected region % [Override refernce-multicombobox here] off begin
 			if (attributeOptions.referenceTypeFunc === undefined) {
 				throw new Error('Must have a defined referenceType for display type' + attributeOptions.displayType);
 			}
@@ -234,16 +281,19 @@ export function getAttributeComponent (
 				errors={errors}
 				isJoinEntity={attributeOptions.isJoinEntity}
 				disableDefaultOptionRemoval={attributeOptions.disableDefaultOptionRemoval}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (attributeOptions.onAfterChange) {
 						attributeOptions.onAfterChange(model);
 					}
 				}}
 				{...attributeOptions.inputProps} />;
+			// % protected region % [Override refernce-multicombobox here] end
 		case 'enum-combobox':
+			// % protected region % [Override enum-combobox here] off begin
 			if (attributeOptions.enumResolveFunction === undefined) {
 				throw new Error('Must have a defined enumType for display type' + attributeOptions.displayType);
 			}
@@ -251,9 +301,11 @@ export function getAttributeComponent (
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
-				className={attributeOptions.attributeName}
+				errors={errors}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -263,15 +315,40 @@ export function getAttributeComponent (
 					}
 				}}
 				/>;
+			// % protected region % [Override enum-combobox here] end
+		case 'file':
+			// % protected region % [Override file input here] off begin
+			if (attributeOptions.fileAttribute === undefined) {
+				throw new Error(`Must have a defined file attribute for ${attributeOptions.attributeName}`)
+			}
+			return <AttributeFile
+				key={attributeOptions.attributeName}
+				model={model}
+				options={attributeOptions}
+				className={className}
+				isReadonly={isReadonly}
+				errors={errors}
+				isRequired={isRequired}
+				fileAttribute={attributeOptions.fileAttribute}
+				formMode={formMode}
+				onAfterChange={() => {
+					if (attributeOptions.onAfterChange) {
+						attributeOptions.onAfterChange(model);
+					}
+				}}
+				{...attributeOptions.inputProps} />;
+			// % protected region % [Override file input here] end
 		case 'form-data':
+			// % protected region % [Override form-data here] off begin
 			return <AttributeFormData
 				key={attributeOptions.attributeName}
 				model={model}
 				options={attributeOptions}
 				errors={errors}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onAfterChange) {
 						onAfterChange(attributeOptions.attributeName);
@@ -287,7 +364,9 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps}
 				/>;
+			// % protected region % [Override form-data here] end
 		case 'form-tile':
+			// % protected region % [Override form-tile here] off begin
 			if (attributeOptions.formTileFilterFn === undefined) {
 				throw new Error('Must have a defined formTileFilterFn for display type' + attributeOptions.displayType);
 			}
@@ -295,10 +374,11 @@ export function getAttributeComponent (
 				model={model}
 				options={attributeOptions}
 				errors={errors}
-				className={attributeOptions.attributeName}
+				className={className}
 				isReadonly={isReadonly}
 				isRequired={isRequired}
 				key={attributeOptions.attributeName}
+				formMode={formMode}
 				onAfterChange={() => {
 					if (!!onChangeAndBlur) {
 						onChangeAndBlur(attributeOptions.attributeName);
@@ -307,11 +387,14 @@ export function getAttributeComponent (
 						attributeOptions.onAfterChange(model);
 					}
 				}}/>;
+			// % protected region % [Override form-tile here] end
 		case 'hidden':
+			// % protected region % [Override hidden here] off begin
 			return null;
+			// % protected region % [Override hidden here] end
 		// % protected region % [Add more customized cases here] off begin
 		// % protected region % [Add more customized cases here] end
 		default:
-			throw new Error(`No attribute component is defined to handle ${attributeOptions.displayType}`);
+			throw new Error(`No attribute component is defined to handle ${attributeOptions.displayType} for attr ${attributeOptions.attributeName}`);
 	}
 }

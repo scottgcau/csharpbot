@@ -24,7 +24,7 @@ namespace ServersideTests.Helpers.EntityFactory
 	/// </summary>
 	/// <typeparam name="T">The base entity type that is tracked</typeparam>
 	public class EntityEnumerable<T> : List<T>
-		where T : class, IAbstractModel
+		where T : IAbstractModel
 	{
 		/// <summary>
 		/// A set of all tracked entities

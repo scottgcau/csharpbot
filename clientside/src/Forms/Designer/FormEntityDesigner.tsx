@@ -27,6 +27,8 @@ import { action, computed } from 'mobx';
 import { lowerCaseFirst } from 'Util/StringUtils';
 import alert from 'Util/ToastifyUtils';
 import { FetchResult } from 'react-apollo';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 export interface FormEntityDesignerProps extends GenericFormDesignerProps {
 	form: FormEntityData & Model;
@@ -34,21 +36,28 @@ export interface FormEntityDesignerProps extends GenericFormDesignerProps {
 	onCancel?: () => void;
 	onSaveDraft?: (version: FormVersion) => void;
 	onSavePublish?: (version: FormVersion) => void;
+	// % protected region % [Add any additional props here] off begin
+	// % protected region % [Add any additional props here] end
 }
 
 @observer
+// % protected region % [Modify class declaration here] off begin
 export class FormEntityDesigner extends React.Component<FormEntityDesignerProps> {
+// % protected region % [Modify class declaration here] end
 	private designerRef: FormDesigner | null;
 
+	// % protected region % [Override versionName here] off begin
 	@computed
 	private get versionName() {
 		return lowerCaseFirst(this.props.form.getModelName()) + 'FormVersion';
 	}
+	// % protected region % [Override versionName here] end
 
+	// % protected region % [Override assignResults here] off begin
 	@action
-	private assignResults = (shouldPublish: boolean, result: FetchResult<any>) => {
+	private assignResults = (shouldPublish: boolean, result: any) => {
 		if (this.props.form.formVersions) {
-			const newVersion = result.data.create[0];
+			const newVersion = result.create[0];
 
 			const formAttributes: Partial<FormEntityDataAttributes & IModelAttributes> = {formVersions: [newVersion]};
 			if (shouldPublish) {
@@ -61,7 +70,9 @@ export class FormEntityDesigner extends React.Component<FormEntityDesignerProps>
 			}
 		}
 	}
+	// % protected region % [Override assignResults here] end
 
+	// % protected region % [Override save here] off begin
 	private save = (version: FormVersion, shouldPublish: boolean) => {
 		const modelName = this.props.form.getModelName();
 		const modelNameCamelCase = lowerCaseFirst(this.props.form.getModelName());
@@ -88,14 +99,16 @@ export class FormEntityDesigner extends React.Component<FormEntityDesignerProps>
 				},
 			})
 			.then(result => {
-				this.assignResults(shouldPublish, result);
+				this.assignResults(shouldPublish, result.data);
 			})
 			.catch(e => {
 				alert('Could not save form version', 'error');
 				console.error(e);
 			});
 	}
+	// % protected region % [Override save here] end
 
+	// % protected region % [Override onCancel here] off begin
 	private onCancel = () => {
 		if (this.props.onCancel) {
 			return this.props.onCancel();
@@ -106,7 +119,9 @@ export class FormEntityDesigner extends React.Component<FormEntityDesignerProps>
 		}
 		store.routerHistory.goBack();
 	}
+	// % protected region % [Override onCancel here] end
 
+	// % protected region % [Override onSaveDraft here] off begin
 	private onSaveDraft = async (version: FormVersion) => {
 		if (this.props.onSaveDraft) {
 			return this.props.onSaveDraft(version);
@@ -118,7 +133,9 @@ export class FormEntityDesigner extends React.Component<FormEntityDesignerProps>
 		}
 		store.routerHistory.goBack();
 	}
+	// % protected region % [Override onSaveDraft here] end
 
+	// % protected region % [Override onSavePublish here] off begin
 	private onSavePublish = async (version: FormVersion) => {
 		if (this.props.onSavePublish) {
 			return this.props.onSavePublish(version);
@@ -130,7 +147,9 @@ export class FormEntityDesigner extends React.Component<FormEntityDesignerProps>
 		}
 		store.routerHistory.goBack();
 	}
+	// % protected region % [Override onSavePublish here] end
 
+	// % protected region % [Override render here] off begin
 	public render() {
 		return <FormDesigner
 			ref={ref => this.designerRef = ref}
@@ -141,4 +160,5 @@ export class FormEntityDesigner extends React.Component<FormEntityDesignerProps>
 			onSavePublish={this.onSavePublish}
 			initialSelectedVersion={this.props.initialSelectedVersion} />
 	}
+	// % protected region % [Override render here] end
 }

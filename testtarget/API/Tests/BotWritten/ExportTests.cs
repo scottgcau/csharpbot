@@ -17,21 +17,29 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using APITests.Setup;
 using APITests.TheoryData.BotWritten;
 using APITests.Utils;
 using APITests.EntityObjects.Models;
 using APITests.Factories;
+using CsvHelper;
+using FluentAssertions;
 using RestSharp;
 using Xunit;
 using Xunit.Abstractions;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace APITests.Tests.BotWritten
 {
-
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Integration")]
 	public class ExportTests : IClassFixture<StartupTestFixture>
 	{
-
 		private readonly StartupTestFixture _configure;
 		private readonly ITestOutputHelper _output;
 
@@ -41,9 +49,8 @@ namespace APITests.Tests.BotWritten
 			_output = output;
 		}
 
+		// % protected region % [Customize Export Entity tests here] off begin
 		[Theory]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Integration")]
 		[ClassData(typeof(EntityFactorySingleTheoryData))]
 		[ClassData(typeof(EntityFactoryMultipleTheoryData))]
 		public void ExportEntity(EntityFactory entityFactory, int numEntities)
@@ -51,40 +58,21 @@ namespace APITests.Tests.BotWritten
 			var entityList = entityFactory.ConstructAndSave(_output, numEntities);
 			var entityName = entityList[0].EntityName;
 
-			//setup the rest client
-			var client = new RestClient
-			{
-				BaseUrl = new Uri($"{_configure.BaseUrl}/api/entity/{entityName}/export")
-			};
+			var api = new WebApi(_configure, _output);
 
-			//setup the request
-			var request = new RestRequest
-			{
-				Method = Method.POST,
-				RequestFormat = DataFormat.Json
-			};
 
-			//get the authorization token and adds the token to the request
-			var loginToken = new LoginToken(_configure.BaseUrl, _configure.SuperUsername, _configure.SuperPassword);
-			string authorizationToken = $"{loginToken.TokenType} {loginToken.AccessToken}";
-			request.AddHeader("Authorization", authorizationToken);
+			var query = QueryBuilder.CreateExportQuery(entityList);
+			var queryList = new JsonArray { new JsonArray { query } };
+			api.ConfigureAuthenticationHeaders();
+			var response = api.Post($"/api/entity/{entityName}/export", queryList);
 
-			request.AddHeader("Content-Type", "application/json");
-			request.AddHeader("Accept", "*\\*");
-
-			JsonObject query = QueryBuilder.CreateExportQuery(entityList);
-			var queryList = new JsonArray { new JsonArray{query} };
-			request.AddParameter("text/json", queryList, ParameterType.RequestBody);
-
-			// execute the request
-			var response = client.Execute(request);
-			var responseDictionary = CsvToDictionary(response.Content);
-			ApiOutputHelper.WriteRequestResponseOutput(request, response, _output);
+			var responseDictionary = CsvToDictionary(response.Content)
+				.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 
 			foreach (var entity in entityList)
 			{
-				var entityDict = entity.toDictionary();
-				var attributeKeys = entityDict.Keys;
+				var entityDict = entity.ToDictionary()
+					.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 
 				if (entity is UserBaseEntity)
 				{
@@ -92,32 +80,46 @@ namespace APITests.Tests.BotWritten
 					entityDict.Remove("password");
 				}
 
-				foreach (var attributeKey in entityDict.Keys)
+
+				foreach (var attributeKey in entityDict.Keys.Select(x => x.ToLowerInvariant()))
 				{
-					Assert.Contains(entityDict[attributeKey], responseDictionary[attributeKey]);
+					responseDictionary.Should().ContainKey(attributeKey);
+					responseDictionary[attributeKey]
+						.Should()
+						.Contain(entityDict[attributeKey])
+						.And
+						.HaveCount(numEntities);
 				}
 			}
 		}
+		// % protected region % [Customize Export Entity tests here] end
 
+
+		// % protected region % [Customize CsvToDictionary logic here] off begin
 		private static Dictionary<string, List<string>> CsvToDictionary(string csv)
 		{
 			var entityDictionary = new Dictionary<string, List<string>>();
-			var splitcsv = csv.Split(Environment.NewLine.ToCharArray());
-			var entityAttributeKeys = splitcsv[0].Split(',');
 
-			for (var i = 1 ; i < splitcsv.Length; i++)
+			using var stringReader = new StringReader(csv);
+			using var reader = new CsvReader(stringReader, CultureInfo.InvariantCulture);
+
+			foreach (var record in reader.GetRecords<dynamic>())
 			{
-				var entityAttributeValues = splitcsv[i].Split(',');
-				for (var k = 0; k < entityAttributeKeys.Length; k++)
+				if (record is IDictionary<string, object> recordDictionary)
 				{
-					if (i == 1)
+					foreach (var key in recordDictionary.Keys)
 					{
-						entityDictionary[entityAttributeKeys[k]] = new List<string>();
+						if (!entityDictionary.ContainsKey(key))
+						{
+							entityDictionary[key] = new List<string>();
+						}
+						entityDictionary[key].Add((string)recordDictionary[key]);
 					}
-					entityDictionary[entityAttributeKeys[k]].Add(entityAttributeValues[k].Split('"')[1]);
 				}
 			}
 			return entityDictionary;
 		}
+		// % protected region % [Customize CsvToDictionary logic here] end
+
 	}
 }

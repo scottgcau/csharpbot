@@ -22,8 +22,12 @@ using Sportstats.Graphql.Types;
 using Sportstats.Models;
 using Sportstats.Services;
 using Sportstats.Services.Interfaces;
+using Sportstats.Utility;
 using GraphQL.EntityFramework;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Helpers
 {
@@ -38,40 +42,51 @@ namespace Sportstats.Helpers
 		/// </param>
 		/// <param name="userManager">The user manager</param>
 		/// <param name="dbContext">The database context to apply the reads with</param>
+		/// <param name="serviceProvider">Service provider to pass to the ACLs</param>
 		/// <typeparam name="T">The type of the model to apply the conditional over</typeparam>
 		/// <returns>The queryable with security filtering applied</returns>
 		public static IQueryable<T> AddReadSecurityFiltering<T>(
 			this IQueryable<T> queryable,
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where T : IOwnerAbstractModel, new()
 		{
-			return queryable.Where(SecurityService.CreateReadSecurityFilter<T>(identityService, userManager, dbContext));
+			// % protected region % [Change AddReadSecurityFiltering here] off begin
+			return queryable.Where(SecurityService.CreateReadSecurityFilter<T>(identityService, userManager, dbContext, serviceProvider));
+			// % protected region % [Change AddReadSecurityFiltering here] end
 		}
 
 		public static IQueryable<T> AddUpdateSecurityFiltering<T>(
 			this IQueryable<T> queryable,
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where T : IOwnerAbstractModel, new()
 		{
-			return queryable.Where(SecurityService.CreateUpdateSecurityFilter<T>(identityService, userManager, dbContext));
+			// % protected region % [Change AddUpdateSecurityFiltering here] off begin
+			return queryable.Where(SecurityService.CreateUpdateSecurityFilter<T>(identityService, userManager, dbContext, serviceProvider));
+			// % protected region % [Change AddUpdateSecurityFiltering here] end
 		}
 
 		public static IQueryable<T> AddDeleteSecurityFiltering<T>(
 			this IQueryable<T> queryable,
 			IIdentityService identityService,
 			UserManager<User> userManager,
-			SportstatsDBContext dbContext)
+			SportstatsDBContext dbContext,
+			IServiceProvider serviceProvider)
 			where T : IOwnerAbstractModel, new()
 		{
-			return queryable.Where(SecurityService.CreateDeleteSecurityFilter<T>(identityService, userManager, dbContext));
+			// % protected region % [Change AddDeleteSecurityFiltering here] off begin
+			return queryable.Where(SecurityService.CreateDeleteSecurityFilter<T>(identityService, userManager, dbContext, serviceProvider));
+			// % protected region % [Change AddDeleteSecurityFiltering here] end
 		}
 
 		public static IQueryable<T> AddPagination<T>(this IQueryable<T> queryable, Pagination pagination)
 		{
+			// % protected region % [Change AddPagination here] off begin
 			if (pagination != null && pagination.PageSize.HasValue && pagination.SkipAmount.HasValue)
 			{
 				return queryable
@@ -80,6 +95,7 @@ namespace Sportstats.Helpers
 			}
 
 			return queryable;
+			// % protected region % [Change AddPagination here] end
 		}
 
 		/// <summary>
@@ -118,6 +134,7 @@ namespace Sportstats.Helpers
 			this IQueryable<T> models,
 			IEnumerable<IEnumerable<WhereExpression>> wheres)
 		{
+			// % protected region % [Change AddConditionalWhereFilter here] off begin
 			if (wheres == null)
 			{
 				return models;
@@ -129,7 +146,28 @@ namespace Sportstats.Helpers
 				var combinedPredicate = Expression.OrElse(baseRule.Body, baseRule.Body);
 				foreach (var expression in where)
 				{
-					var predicate = ExpressionBuilder<T>.BuildPredicate(expression);
+					Expression<Func<T, bool>> predicate;
+					if (expression.Comparison == Comparison.Like && 
+						ReflectionCache.ILikeMethod != null &&
+						(expression.Case == StringComparison.CurrentCultureIgnoreCase ||
+						expression.Case == StringComparison.OrdinalIgnoreCase ||
+						expression.Case == StringComparison.InvariantCultureIgnoreCase))
+					{
+						var propertyParam = Expression.Parameter(typeof(T));
+						var field = Expression.PropertyOrField(propertyParam, expression.Path);
+						predicate = Expression.Lambda<Func<T, bool>>(
+							Expression.Call(
+								ReflectionCache.ILikeMethod,
+								Expression.Constant(EF.Functions),
+								Expression.Convert(field, typeof(string)),
+								Expression.Constant(expression.Value.FirstOrDefault())),
+							propertyParam);
+					}
+					else
+					{
+						predicate = ExpressionBuilder<T>.BuildPredicate(expression);
+					}
+
 					combinedPredicate = Expression.OrElse(combinedPredicate, predicate.Body);
 				}
 
@@ -141,6 +179,7 @@ namespace Sportstats.Helpers
 			}
 
 			return models;
+			// % protected region % [Change AddConditionalWhereFilter here] end
 		}
 
 		/// <summary>
@@ -153,6 +192,7 @@ namespace Sportstats.Helpers
 		public static IQueryable<T> AddWhereFilter<T>(this IQueryable<T> models, IEnumerable<WhereExpression> wheres)
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Change AddWhereFilter here] off begin
 			foreach (var where in wheres)
 			{
 				var predicate = ExpressionBuilder<T>.BuildPredicate(where);
@@ -160,6 +200,7 @@ namespace Sportstats.Helpers
 			}
 
 			return models;
+			// % protected region % [Change AddWhereFilter here] end
 		}
 
 		/// <summary>
@@ -171,6 +212,7 @@ namespace Sportstats.Helpers
 		/// <returns>A new queryable that is ordered by the given conditions</returns>
 		public static IQueryable<T> AddOrderBys<T>(this IQueryable<T> models, List<OrderBy> orderBys)
 		{
+			// % protected region % [Change AddOrderBys here] off begin
 			IOrderedQueryable<T> orderedQueryable = null;
 
 			for (var i = 0; i < orderBys.Count; i++)
@@ -196,6 +238,10 @@ namespace Sportstats.Helpers
 			}
 
 			return orderedQueryable ?? models;
+			// % protected region % [Change AddOrderBys here] end
 		}
+
+		// % protected region % [Add any further methods here] off begin
+		// % protected region % [Add any further methods here] end
 	}
 }

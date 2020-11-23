@@ -24,7 +24,7 @@ export default function validate() {
 		target[Symbols.validatorMap][key].push('Numeric');
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => new Promise((resolve) => {
-				if (!model[key] || !isNaN(model[key])) {
+				if (model[key] === null || model[key] === undefined || !isNaN(model[key])) {
 					resolve(null);
 					return;
 				}

@@ -24,23 +24,31 @@ import FilterEnumComboBox from './CollectionFilterAttributes/FilterEnumComboBox'
 import _ from 'lodash';
 import { ButtonGroup, Alignment } from '../Button/ButtonGroup';
 
+// % protected region % [Add extra imports and exports here] off begin
+// % protected region % [Add extra imports and exports here] end
+
 export interface IFilter<T> {
-	/** column name */
+	/** The column name to filter on */
 	path: string;
-	/** comparison operator */
+	/** The comparison operator */
 	comparison: Comparators | 'range';
-	/** operand 1 */
+	/** The value to filter on */
 	value1: string | string[] | Date | number | undefined;
-	/** operand 2. only valid for 'range' type comparison for now */
+	/** 
+	 * The second value to filter
+	 * Only valid for 'range' type comparison for now where this represents the end of the range 
+	 */
 	value2: string | Date | number | undefined;
 	/** this is specifically for the model of date range */
 	active: boolean;
-	/** display type of the filter*/
+	/** The display type of the filter */
 	displayType: displayType;
-	/** display name of the filter */
+	/** The display name of the filter */
 	displayName: string;
-	/** the function to resolve and return the options of the enum-combobox(for now only enum-combobox) */
-	referenceResolveFunction?: Array<{display: string, value: string}>;
+	/** The function to resolve and return the options of the enum-combobox (for now only enum-combobox) */
+	enumResolveFunction?: Array<{display: string, value: string}>;
+	// % protected region % [Add extra IFilter props here] off begin
+	// % protected region % [Add extra IFilter props here] end
 }
 
 export interface ICollectionFilterPanelProps<T> {
@@ -54,65 +62,82 @@ export interface ICollectionFilterPanelProps<T> {
 class CollectionFilterPanel<T> extends React.Component<ICollectionFilterPanelProps<T>> {
 
 	public render() {
-		const { filters } = this.props;
-		
-		if (filters == undefined || !filters.length){
+		const { 
+			filters, 
+			onFilterChanged, 
+			onApplyFilter, 
+			onClearFilter,
+		} = this.props;
+
+		if (filters === undefined || !filters.length) {
 			return null;
-		} else {
-			return (
-					<>
-						<div className="collection-filter-form__container">
-							{
-								filters.map(filter => {
-									switch (filter.displayType) {
-										case 'datepicker':
-											if (filter.comparison === 'range') {
-												return (
-													<FilterDateRange
-														filter={filter}
-														className={'filter-' + filter.path}
-														key={'filter-' + filter.path}
-														onAfterChange={() => {
-															if(this.props.onFilterChanged){
-																this.props.onFilterChanged();
-															}
-														}}
-													/>
-												);
-											}
-										case 'enum-combobox':
-											return <FilterEnumComboBox
+		}
+		
+		return (
+			<>
+				<div className="collection-filter-form__container">
+					{
+						filters.map(filter => {
+							switch (filter.displayType) {
+								case 'datepicker':
+									if (filter.comparison === 'range') {
+										return (
+											<FilterDateRange
 												filter={filter}
 												className={'filter-' + filter.path}
 												key={'filter-' + filter.path}
 												onAfterChange={() => {
-													if(this.props.onFilterChanged){
-														this.props.onFilterChanged();
+													if (onFilterChanged) {
+														onFilterChanged();
 													}
 												}}
 											/>
-										default:
-											return "";
+										);
 									}
-								})
-							}
-						</div>
-						<div className="collection-filter-form__actions">
-							<ButtonGroup alignment={Alignment.HORIZONTAL}>
-								<Button className="clear-filters"
-									display={Display.Outline}
-									onClick={this.props.onClearFilter}
-								>Clear Filters</Button>
-								<Button className="apply-filters"
-									display={Display.Solid}
-									onClick={this.props.onApplyFilter}
-								>Apply Filters</Button>
-							</ButtonGroup>
-						</div>
-					</>
-			)
-		}
+									return '';
+								case 'enum-combobox':
+									return (
+										<FilterEnumComboBox
+											filter={filter}
+											className={'filter-' + filter.path}
+											key={'filter-' + filter.path}
+											onAfterChange={() => {
+												if (onFilterChanged) {
+													onFilterChanged();
+												}
+											}}
+										/>
+									);
 
+								// % protected region % [Add extra filter cases here] off begin
+								// % protected region % [Add extra filter cases here] end
+								default:
+									console.error(`The filter display type ${filter.displayType} is not supported.`);
+									return '';
+							}
+						})
+					}
+				</div>
+				<div className="collection-filter-form__actions">
+					<ButtonGroup alignment={Alignment.HORIZONTAL}>
+						<Button 
+							className="clear-filters"
+							display={Display.Outline}
+							onClick={onClearFilter}
+						>
+							Clear Filters
+						</Button>
+						<Button 
+							className="apply-filters"
+							display={Display.Solid}
+							onClick={onApplyFilter}
+						>
+							Apply Filters
+						</Button>
+					</ButtonGroup>
+				</div>
+			</>
+		);
 	}
 }
 

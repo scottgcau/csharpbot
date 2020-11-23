@@ -23,6 +23,9 @@ using Sportstats.Models;
 using Sportstats.Services;
 using GraphQL.EntityFramework;
 using GraphQL.Types;
+using Microsoft.EntityFrameworkCore;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Graphql.Helpers
 {
@@ -37,13 +40,15 @@ namespace Sportstats.Graphql.Helpers
 		public static Func<ResolveFieldContext<object>, IQueryable<TModel>> CreateResolveFunction<TModel>()
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateResolveFunction here] off begin
 			return context =>
 			{
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
 				var crudService = graphQlContext.CrudService;
 				var auditFields = AuditReadData.FromGraphqlContext(context);
-				return crudService.Get<TModel>(auditFields: auditFields);
+				return crudService.Get<TModel>(auditFields: auditFields).AsNoTracking();
 			};
+			// % protected region % [Override CreateResolveFunction here] end
 		}
 
 		/// <summary>
@@ -61,6 +66,7 @@ namespace Sportstats.Graphql.Helpers
 			string argName = "conditions")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateConditionalWhere here] off begin
 			if (context.HasArgument(argName))
 			{
 				var wheres = context.GetArgument<List<List<WhereExpression>>>(argName);
@@ -68,6 +74,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateConditionalWhere here] end
 		}
 
 		/// <summary>
@@ -81,6 +88,7 @@ namespace Sportstats.Graphql.Helpers
 		public static IQueryable<T> CreateWhereCondition<T>(ResolveFieldContext<object> context, IQueryable<T> models, string argName = "where")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateWhereCondition here] off begin
 			if (context.HasArgument(argName))
 			{
 				var wheres = context.GetArgument<List<WhereExpression>>(argName);
@@ -88,6 +96,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateWhereCondition here] end
 		}
 
 		/// <summary>
@@ -101,6 +110,7 @@ namespace Sportstats.Graphql.Helpers
 		public static IQueryable<T> CreateIdCondition<T>(ResolveFieldContext<object> context, IQueryable<T> models, string argName = "id")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateIdCondition here] off begin
 			if (context.HasArgument(argName))
 			{
 				var id = context.GetArgument<Guid>(argName);
@@ -108,6 +118,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateIdCondition here] end
 		}
 
 		/// <summary>
@@ -121,6 +132,7 @@ namespace Sportstats.Graphql.Helpers
 		public static IQueryable<T> CreateIdsCondition<T>(ResolveFieldContext<object> context, IQueryable<T> models, string argName = "ids")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateIdsCondition here] off begin
 			if (context.HasArgument(argName))
 			{
 				var ids = context.GetArgument<List<Guid>>(argName);
@@ -128,6 +140,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateIdsCondition here] end
 		}
 
 		/// <summary>
@@ -141,6 +154,7 @@ namespace Sportstats.Graphql.Helpers
 		public static IQueryable<T> CreateSkip<T>(ResolveFieldContext<object> context, IQueryable<T> models, string argName = "skip")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateSkip here] off begin
 			if (context.HasArgument(argName))
 			{
 				var skip = context.GetArgument<int>(argName);
@@ -148,6 +162,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateSkip here] end
 		}
 
 		/// <summary>
@@ -161,6 +176,7 @@ namespace Sportstats.Graphql.Helpers
 		public static IQueryable<T> CreateTake<T>(ResolveFieldContext<object> context, IQueryable<T> models, string argName = "take")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateTake here] off begin
 			if (context.HasArgument(argName))
 			{
 				var take = context.GetArgument<int>(argName);
@@ -168,6 +184,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateTake here] end
 		}
 
 		/// <summary>
@@ -181,6 +198,7 @@ namespace Sportstats.Graphql.Helpers
 		public static IQueryable<T> CreateOrderBy<T>(ResolveFieldContext<object> context, IQueryable<T> models, string argName = "orderBy")
 			where T : IOwnerAbstractModel
 		{
+			// % protected region % [Override CreateOrderBy here] off begin
 			if (context.HasArgument(argName))
 			{
 				var orderBys = context.GetArgument<List<OrderBy>>(argName);
@@ -188,6 +206,7 @@ namespace Sportstats.Graphql.Helpers
 			}
 
 			return models;
+			// % protected region % [Override CreateOrderBy here] end
 		}
 	}
 }

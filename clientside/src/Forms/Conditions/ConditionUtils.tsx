@@ -14,27 +14,30 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import {Condition, Form} from "../Schema/Question";
-import {CompareText} from "./CompareText";
-import {CompareNumber} from "./CompareNumber";
-import {CompareBoolean} from "./CompareBoolean";
 import _ from 'lodash';
 
-export function CheckDisplayConditions<T>(condition: Condition, Model: T, schema: Form) : boolean {
-	let conditionalValue = Model[condition.path];
-	let conditionalQuestion = _.flatMap(schema, x => x.contents).find(q => q.id == condition.path);
+import { Condition, Form } from '../Schema/Question';
+import { questions } from '../Questions/QuestionUtils';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
-	if (conditionalQuestion !== undefined){
-		switch (conditionalQuestion.questionType) {
-			case "text":
-				return CompareText(condition, conditionalValue);
-			case "number":
-				return CompareNumber(condition, conditionalValue);
-			case "checkbox":
-				return CompareBoolean(condition, conditionalValue);
-			default:
-				return false;
+function CheckDisplayConditions<T>(condition: Condition, Model: T, schema: Form): boolean {
+	const conditionalValue: string = Model[condition.path];
+
+	const conditionalQuestion = _.flatMap(schema, x => { return x.contents; }).find(q => { return q.id === condition.path; });
+
+	// % protected region % [Customize CheckDisplayConditions conditions here] off begin
+	if (conditionalQuestion !== undefined) {
+		const questionObject = questions.find(q => { return q.questionType === conditionalQuestion.questionType; });
+		if (questionObject && questionObject.compareFunction) {
+			return questionObject.compareFunction(condition, conditionalValue);
 		}
+
+		return false;
 	}
+
 	return false;
+	// % protected region % [Customize CheckDisplayConditions conditions here] end
 }
+
+export default CheckDisplayConditions;

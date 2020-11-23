@@ -42,11 +42,11 @@ export class FormDesignerContents extends React.Component<{schema: Form, model: 
 				icon={{icon: 'more-horizontal', iconPos: 'icon-left'}}
 				display={Display.Outline}
 				labelVisible={false}
-				onClick={(event) => contextMenu.show({event: event, id: 'forms-question-more-' + question.id})}>
+				onClick={(event) => contextMenu.show({event: event, id: 'forms-question-more-' + question.id})}
+				className="icon-only">
 				More
 			</Button>
 			<ContextMenu
-				location="admin"
 				menuId={'forms-question-more-' + question.id}
 				actions={[
 					{label: 'Move Question Up', onClick: () => this.moveQuestionUp(slide, index)},

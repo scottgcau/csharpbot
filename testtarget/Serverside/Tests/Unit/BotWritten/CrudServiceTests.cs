@@ -15,42 +15,14 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 
-using Sportstats.Models;
 using Sportstats.Services;
 using Moq;
-using System;
 using Xunit;
-using Microsoft.AspNetCore.Identity;
 
 namespace ServersideTests.Tests.Unit.BotWritten
 {
 	public class CrudServiceTests
 	{
-
-		[Fact]
-		public void TestCrudService()
-		{
-			/*var mockDbContext = new Mock<SportstatsDBContext>();
-			var mockUser = new Mock<User>();
-			var mockUserManager = new Mock<UserManager<User>>();
-			var mockSecurityService = new Mock<SecurityService>();
-			var mockAuditService = new Mock<AuditService>();
-
-
-			var guid = new Guid("610895ac-bd18-4f6b-9f7c-82adfb3ea5fe");
-			var currentUser = Mock.Of<User>(u => u.Id == guid);
-
-			var crudService = new CrudService(mockDbContext.Object, mockUserManager.Object,
-				mockSecurityService.Object, mockAuditService.Object);
-
-
-			//var test = crudService.GetById<Team>(guid, mockUser.Object, null);
-
-			var a = "hsdflksdflk";*/
-			//crudService
-
-		}
-
 		[Theory]
 		[InlineData(null, null, false)]
 		[InlineData(null, 0, false)]

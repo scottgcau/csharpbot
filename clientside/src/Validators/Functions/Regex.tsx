@@ -24,7 +24,7 @@ export default function validate(pattern: RegExp, message?: string) {
 		target[Symbols.validatorMap][key].push('Regex');
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => new Promise((resolve) => {
-				if (!model[key] || pattern.test(model[key])) {
+				if (model[key] === null || model[key] === undefined || pattern.test(model[key])) {
 					resolve(null);
 					return;
 				}

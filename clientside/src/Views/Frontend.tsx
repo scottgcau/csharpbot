@@ -41,7 +41,13 @@ export default class Frontend extends React.Component<RouteComponentProps> {
 		return (
 			<>
 				<div className="body-container">
+					{
+					// % protected region % [Modify Topbar] off begin
+					}
 					<Topbar currentLocation="frontend" />
+					{
+					// % protected region % [Modify Topbar] end
+					}
 					<div className="frontend">
 						{
 						// % protected region % [Add any header content here] off begin
@@ -52,15 +58,27 @@ export default class Frontend extends React.Component<RouteComponentProps> {
 						<>
 							<Switch>
 								{/* Public routes */}
+								{
+								// % protected region % [customize the universal public routes] off begin
+								}
 								<Route path="/login" component={Pages.LoginPage} />
 								<Route path="/register" component={Pages.RegistrationPage} />
 								<Route path="/confirm-email" component={Pages.RegistrationConfirmPage} />
 								<Route path="/reset-password-request" component={Pages.ResetPasswordRequestPage} />
 								<Route path="/reset-password" component={Pages.ResetPasswordPage} />
 								<Route path="/logout" component={Logout} />
+								{
+								// % protected region % [customize the universal public routes] end
+								}
+
+								{
+								// % protected region % [customize the Home public routes] off begin
+								}
 								<Route path={"/home"} component={Pages.HomePage} />
 								<Redirect exact={true} from={`/`} to={`${path}/home`} />
- 
+								{
+								// % protected region % [customize the Home public routes] end
+								}
 
 								<Route path={`${path}/404`} component={PageNotFound} />
 
@@ -74,8 +92,13 @@ export default class Frontend extends React.Component<RouteComponentProps> {
 								<Auth {...this.props}>
 									<Switch>
 										{/* These routes require a login to view */}
-
 										{/* Pages from the ui model */}
+										{
+										// % protected region % [customize the page routes] off begin
+										}
+										{
+										// % protected region % [customize the page routes] end
+										}
 										{
 										// % protected region % [Add any extra page routes here] off begin
 										}

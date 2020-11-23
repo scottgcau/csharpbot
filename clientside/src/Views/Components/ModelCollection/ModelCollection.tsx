@@ -15,29 +15,30 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
+import _ from 'lodash';
 import Collection, { ICollectionListProps } from '../Collection/Collection';
 import { Model } from 'Models/Model';
-import { observable, runInAction, action } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import { Button, ICbButtonProps } from '../Button/Button';
 import { lowerCaseFirst } from 'Util/StringUtils';
 import { DocumentNode } from 'graphql';
 import Spinner from '../Spinner/Spinner';
-import PaginationData, { PaginationQueryOptions } from 'Models/PaginationData';
+import { PaginationQueryOptions } from 'Models/PaginationData';
 import { ICollectionHeaderProps } from '../Collection/CollectionHeaders';
 import ModelQuery, { IWhereCondition } from './ModelQuery';
-import { OperationVariables, ApolloQueryResult, ApolloError } from 'apollo-boost';
-import ModelAPIQuery from './ModelAPIQuery';
-import { IFilter, ICollectionFilterPanelProps } from '../Collection/CollectionFilterPanel';
+import { ApolloError, ApolloQueryResult, OperationVariables } from 'apollo-boost';
+import ModelAPIQuery, { ApiQueryParams } from './ModelAPIQuery';
+import { ICollectionFilterPanelProps, IFilter } from '../Collection/CollectionFilterPanel';
 import { isOrCondition } from 'Util/GraphQLUtils';
-import _ from 'lodash';
 
 type refetchFunc<TData> = (variables?: OperationVariables) => Promise<ApolloQueryResult<TData>>;
 
 export interface IModelCollectionProps<T extends Model> extends ICollectionListProps<T> {
-	model: {new(json?: {}): T};
+	model: { new(json?: {}): T };
 	perPage?: number;
 	conditions?: Array<IWhereCondition<T>> | Array<Array<IWhereCondition<T>>>;
+	getMoreParams?: (filters?: Array<IFilter<T>>, filterApplied?: boolean) => ApiQueryParams;
 	ids?: string[];
 	orderBy?: IOrderByCondition<T>;
 	customQuery?: DocumentNode;
@@ -51,6 +52,7 @@ export interface IModelCollectionProps<T extends Model> extends ICollectionListP
 	}>;
 	isApiQuery?: boolean;
 	url?: string;
+	searchStr?: string;
 	filters?: Array<IFilter<T>>;
 }
 
@@ -68,22 +70,26 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 	// @observable
 	private models: T[];
 
+	@observable
 	private filterConfig: ICollectionFilterPanelProps<T>;
 
 	@observable
-	private filterStatus: number = 0;
+	private filterApplied: boolean = false;
 
 	@observable
 	private filters: Array<IFilter<T>> = [];
 
 	@observable
 	private orderBy: IOrderByCondition<T> | undefined;
-	
-	@observable
-	private paginationQueryOptions: PaginationQueryOptions = new PaginationQueryOptions(); 
 
-	public refetch: refetchFunc<T> = (data) => new Promise(resolve => resolve());
-	
+	@observable
+	private searchStr?: string;
+
+	@observable
+	private paginationQueryOptions: PaginationQueryOptions = new PaginationQueryOptions();
+
+	public refetch: refetchFunc<T> | (() => void) = (data) => new Promise(resolve => resolve());
+
 	constructor(props: IModelCollectionProps<T>, context: any) {
 		super(props, context);
 		// Order by defaults to the prop
@@ -95,7 +101,8 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 		this.filterConfig = {
 			filters: this.getFilters(),
 			onClearFilter: this.onClearFilter,
-			onApplyFilter: this.onApplyFilter
+			onApplyFilter: this.onApplyFilter,
+			onFilterChanged: this.onFilterChanged
 		}
 		this.paginationQueryOptions.perPage = this.props.perPage || 20;
 	}
@@ -106,13 +113,12 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 		});
 	}
 
-
 	public render() {
 		const model = new this.props.model();
 
 		const headers: Array<ICollectionHeaderProps<T>> = this.props.headers.map(header => {
 			if (!header.transformItem) {
-				return {
+				header = {
 					...header,
 					sortable: true,
 					sortClicked: () => {
@@ -125,12 +131,33 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 							}
 							return this.orderBy;
 						} else {
-							runInAction(() => this.orderBy = {path: header.name, descending: true});
+							runInAction(() => this.orderBy = { path: header.name, descending: true });
 							return this.orderBy;
 						}
 					},
 				};
 			}
+
+			if (!header.sortClicked) {
+				header = {
+					...header,
+					sortClicked: () => {
+						if (this.orderBy && this.orderBy.path === header.name) {
+							if (this.orderBy.descending) {
+								const descending = !this.orderBy.descending;
+								runInAction(() => this.orderBy = { path: header.name, descending });
+							} else if (!this.orderBy.descending) {
+								runInAction(() => this.orderBy = undefined);
+							}
+							return this.orderBy;
+						} else {
+							runInAction(() => this.orderBy = { path: header.name, descending: true });
+							return this.orderBy;
+						}
+					},
+				};
+			}
+
 			return header;
 		});
 
@@ -139,54 +166,59 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 		let conditions = this.props.conditions;
 
 		let filterConditions = undefined;
-		if(this.filterStatus > 0){
+		if (this.filterApplied) {
 			filterConditions = new Model().getFilterConditions(this.filterConfig);
 		}
 
-		if(filterConditions && !!filterConditions.length){
-			if(conditions === undefined && filterConditions === undefined)
-			{
+		if (filterConditions && !!filterConditions.length) {
+			if (conditions === undefined && filterConditions === undefined) {
 				conditions = undefined;
 			}
 			if (isOrCondition(conditions)) {
 				conditions = [...conditions, ...filterConditions.map(x => {
-					if(Array.isArray(x)){
+					if (Array.isArray(x)) {
 						return x;
-					}else{
+					} else {
 						return [x];
 					}
 				})];
 			} else {
 				conditions = [
-					...(conditions?conditions.map(x => [x]):[]), 
+					...(conditions ? conditions.map(x => [x]) : []),
 					...filterConditions.map(x => {
-						if(Array.isArray(x)){
+						if (Array.isArray(x)) {
 							return x;
-						}else{
+						} else {
 							return [x];
 						}
 					})]
 				;
 			}
 		}
-		
+
 		const renderCollection = (loading: boolean, data?: any, error?: ApolloError | string) => {
-			if (loading) {
-				return customSpinner ? customSpinner : <Spinner/>;
-			}
 			if (error) {
 				return <h2>An unexpected error occurred:</h2>;
 			}
 
+			this.models = [];
+
 			const modelName = model.getModelName();
-			this.models = data[lowerCaseFirst(modelName) + 's'].map((e: any) => new this.props.model(e));
-		
-			// Extract pagination details and update total number
+			if (!!data && data[lowerCaseFirst(modelName) + 's']) {
+				this.models = data[lowerCaseFirst(modelName) + 's'].map((e: any) => new this.props.model(e));
+			}
+
+			let totalRecords = 0;
+
 			const countName = `count${modelName}s`;
-			const totalRecords = (data[countName]['number']);
+			if (!!data && data[countName]) {
+				// Extract pagination details and update total number
+				totalRecords = (data[countName]['number']);
+			}
 
 			return (
 				<>
+					{loading && <Spinner/>}
 					{this.props.customButtons && this.props.customButtons.map((button, i) => {
 						const onClick = () => {
 							if (button.onClick) {
@@ -201,29 +233,31 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 							{button.label}
 						</Button>;
 					})}
-					<Collection 
+					<Collection
 						{...this.props}
 						headers={headers}
 						collection={this.models}
+						orderBy={this.orderBy}
 						hidePagination={this.props.hidePagination}
-						pagination={{queryOptions: this.paginationQueryOptions, totalRecords}}
+						pagination={{ queryOptions: this.paginationQueryOptions, totalRecords }}
 						menuFilterConfig={this.filterConfig}
 					/>
 				</>
 			);
 		}
 
-		if(this.props.isApiQuery){
+		if (this.props.isApiQuery) {
 			return (
 				<ModelAPIQuery
-					url={url || ""}
-					// conditions={conditions}
+					url={url || ''}
+					moreParams={this.props.getMoreParams ? this.props.getMoreParams(this.filterConfig.filters, this.filterApplied) : undefined}
 					ids={ids}
+					searchStr={this.props.searchStr}
 					pagination={this.paginationQueryOptions}
 					model={modelConstruct}
-					orderBy={this.orderBy} >
-					{({loading, success, error, data}) => {
-						// this.refetch = refetch;
+					orderBy={this.orderBy}>
+					{({ loading, success, error, data, refetch }) => {
+						this.refetch = refetch;
 						return renderCollection(loading, data, error);
 					}}
 				</ModelAPIQuery>
@@ -236,8 +270,8 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 					pagination={this.paginationQueryOptions}
 					customQuery={customQuery}
 					model={modelConstruct}
-					orderBy={this.orderBy} >
-					{({loading, error, data, refetch}) => {
+					orderBy={this.orderBy}>
+					{({ loading, error, data, refetch }) => {
 						this.refetch = refetch;
 						return renderCollection(loading, data, error);
 					}}
@@ -248,20 +282,22 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 	}
 
 	protected getFilters = (): Array<IFilter<T>> => {
-		let filters = new Array<IFilter<T>>();
-		filters = [..._.cloneDeep(this.props.filters) || []];
-		return filters;
+		return [..._.cloneDeep(this.props.filters) || []];
 	}
 
 	@action
 	protected onClearFilter = () => {
 		this.filterConfig.filters = this.getFilters();
-		this.filterStatus++;
+		this.filterApplied = false;
 	};
 
 	@action
 	protected onApplyFilter = () => {
-		this.filterStatus++;
+		this.filterApplied = true;
 	};
 
+	@action
+	protected onFilterChanged = () => {
+		this.filterApplied = false;
+	};
 }

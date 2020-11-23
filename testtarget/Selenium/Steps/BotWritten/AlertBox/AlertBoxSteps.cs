@@ -21,15 +21,16 @@ using SeleniumTests.Utils;
 using SeleniumTests.Enums;
 using TechTalk.SpecFlow;
 using Xunit;
+using SeleniumTests.PageObjects;
 
 namespace SeleniumTests.Steps.BotWritten.AlertBox
 {
 	[Binding]
-	public sealed class AlertBoxSteps
+	public sealed class AlertBoxSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 
-		public AlertBoxSteps(ContextConfiguration contextConfiguration)
+		public AlertBoxSteps(ContextConfiguration contextConfiguration)  : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			// % protected region % [Add any additional setup options here] off begin
@@ -37,9 +38,9 @@ namespace SeleniumTests.Steps.BotWritten.AlertBox
 		}
 
 		[StepDefinition("I assert the message box reads (.*)")]
-		public void GivenINavigateToTheEntityPage(String expectedMessage)
+		public void GivenINavigateToTheEntityPage(string expectedMessage)
 		{
-			var messageBoxContents = AlertBoxUtils.ReadAlertBoxMessage(_contextConfiguration.WebDriver);
+			var messageBoxContents = AlertBoxUtils.ReadAlertBoxMessage(_driver);
 			Assert.Equal(messageBoxContents, expectedMessage);
 		}
 
@@ -49,10 +50,10 @@ namespace SeleniumTests.Steps.BotWritten.AlertBox
 			switch(acceptance)
 			{
 				case UserActionType.ACCEPT:
-					AlertBoxUtils.AlertBoxHandler(_contextConfiguration.WebDriver, true);
+					AlertBoxUtils.AlertBoxHandler(_driver, true);
 					break;
 				case UserActionType.DISMISS:
-					AlertBoxUtils.AlertBoxHandler(_contextConfiguration.WebDriver, false);
+					AlertBoxUtils.AlertBoxHandler(_driver, false);
 					break;
 			}
 		}
@@ -60,14 +61,14 @@ namespace SeleniumTests.Steps.BotWritten.AlertBox
 		[StepDefinition("I type (.*) and (.*) the alert")]
 		public void TypeAcceptDismissAlert(string text, UserActionType acceptance)
 		{
-			AlertBoxUtils.WriteToAlertBox(_contextConfiguration.WebDriver, text);
+			AlertBoxUtils.WriteToAlertBox(_driver, text);
 			switch (acceptance)
 			{
 				case UserActionType.ACCEPT:
-					AlertBoxUtils.AlertBoxHandler(_contextConfiguration.WebDriver, true);
+					AlertBoxUtils.AlertBoxHandler(_driver, true);
 					break;
 				case UserActionType.DISMISS:
-					AlertBoxUtils.AlertBoxHandler(_contextConfiguration.WebDriver, false);
+					AlertBoxUtils.AlertBoxHandler(_driver, false);
 					break;
 			}
 		}
@@ -75,8 +76,16 @@ namespace SeleniumTests.Steps.BotWritten.AlertBox
 		[StepDefinition("I expect the alert message to be '(.*)'")]
 		public void ExpectAlertMessage(string expectedMessage)
 		{
-			var displayedMessage = AlertBoxUtils.ReadAlertBoxMessage(_contextConfiguration.WebDriver);
+			var displayedMessage = AlertBoxUtils.ReadAlertBoxMessage(_driver);
 			Assert.Equal(expectedMessage, displayedMessage);
+		}
+
+		[Then(@"I assert that I can see a popup displays a message: (.*)")]
+		public void ThenIAssertThatICanSeeTheToasterWithAEntityAdddedSuccessMessage( string expectedSuccessMsg)
+		{
+			var toaster = new ToasterAlert(_contextConfiguration);
+			_driverWait.Until(_ => toaster.ToasterBody.Displayed);
+			Assert.Equal(expectedSuccessMsg, toaster.ToasterBody.Text);
 		}
 	}
 }

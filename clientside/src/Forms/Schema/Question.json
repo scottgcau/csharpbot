@@ -61,7 +61,7 @@
 							"examples": [
 								"text"
 							],
-							"enum": ["text", "number", "checkbox", "statement"]
+							"enum": ["text", "number", "checkbox", "statement", "date"]
 						},
 						"title": {
 							"$id": "#/items/properties/contents/items/properties/title",

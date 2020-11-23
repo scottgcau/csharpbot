@@ -61,7 +61,7 @@ class FilterDateRange<T> extends React.Component<IFilterDateRangeProps<T>> {
 			className={classes}
 			onAfterChange={(dates: Date[], currentDateString: string, self: Instance, data?: any) => {
 				filter.value1 = !!this.model.dateRange[0] ? moment(this.model.dateRange[0]).format('YYYY-MM-DD') : undefined;
-				filter.value2 = !!this.model.dateRange[1] ? moment(this.model.dateRange[1]).add('day', 1).format('YYYY-MM-DD') : undefined;
+				filter.value2 = !!this.model.dateRange[1] ? moment(this.model.dateRange[1]).format('YYYY-MM-DD') : undefined;
 				filter.active = !!filter.value1 && !!filter.value2;
 				if (this.props.onAfterChange) {
 					this.props.onAfterChange(dates, currentDateString, self, data);

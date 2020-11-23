@@ -15,6 +15,10 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 using System.Collections.Generic;
+using System;
+
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Models.RegistrationModels
 {
@@ -25,6 +29,9 @@ namespace Sportstats.Models.RegistrationModels
 		string Password { get; set; }
 
 		IList<string> Groups { get; }
+
+		// % protected region % [Add extra IRegistrationModel fields here] off begin
+		// % protected region % [Add extra IRegistrationModel fields here] end
 
 		T ToModel();
 	}

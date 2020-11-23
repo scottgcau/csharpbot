@@ -19,14 +19,20 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace APITests.Utils
 {
 	public class LoginToken
 	{
+		// % protected region % [Configure LoginToken fields here] off begin
 		public string TokenType { get; set; }
 		public string AccessToken { get; set; }
 		public string ExpiresIn { get; set; }
+		// % protected region % [Configure LoginToken fields here] end
 
+		// % protected region % [Configure LoginToken implementation here] off begin
 		public LoginToken(string baseUrl, string username, string password)
 		{
 			var client = new RestClient {BaseUrl = new Uri(baseUrl + "/api/authorization/connect/token")};
@@ -56,5 +62,9 @@ namespace APITests.Utils
 			AccessToken = loginResponse["access_token"].ToString();
 			ExpiresIn = loginResponse["expires_in"].ToString();
 		}
+		// % protected region % [Configure LoginToken implementation here] end
+	
+		// % protected region % [Add any further methods here] off begin
+		// % protected region % [Add any further methods here] end
 	}
 }

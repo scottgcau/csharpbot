@@ -17,6 +17,7 @@
 import * as moment from 'moment'
 import { CaseComparison } from '../Views/Components/ModelCollection/ModelQuery';
 import _ from 'lodash';
+import * as Enums from '../Models/Enums';
 
 export type transformFunction = (attr: any) => IStandardisedOption | null;
 export interface IStandardisedOption {
@@ -45,12 +46,12 @@ export function standardiseDate(attr: string): IStandardisedOption | null {
 		"MM/DD/YYYY HH:mm:ss",
 	];
 	const momentDate = moment(attr, formats);
-	
+
 	// Some invalid dates won't be marked invalid but just exist in year 0
 	if (momentDate.isValid() && momentDate.year() !== 0) {
-		const dateOnly = momentDate.hours() == 0
-			&& momentDate.minutes() == 0
-			&& momentDate.seconds() == 0;
+		const dateOnly = momentDate.hours() === 0
+			&& momentDate.minutes() === 0
+			&& momentDate.seconds() === 0;
 
 		if (dateOnly) {
 			return {
@@ -113,7 +114,23 @@ export function standardiseBoolean(attr: string): IStandardisedOption | null {
 export function standardiseString(attr: string): IStandardisedOption | null {
 	return {
 		query: `%${attr}%`,
+		extraOptions: {
+			case: 'INVARIANT_CULTURE_IGNORE_CASE'
+		}
 	}
+}
+
+/**
+ * Returns a search query for a complete Uuid
+ * @param attr The string to search for
+ */
+export function standardiseUuid(attr: string): IStandardisedOption | null {
+	const regex = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
+	if (!attr.match(regex)) {
+		return null;
+	}
+
+	return {query: attr}
 }
 
 /**

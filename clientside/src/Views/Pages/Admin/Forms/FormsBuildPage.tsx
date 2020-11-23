@@ -25,21 +25,16 @@ import { FormEntityData } from 'Forms/FormEntityData';
 import { Model } from 'Models/Model';
 import { FormEntityDesigner } from 'Forms/Designer/FormEntityDesigner';
 import {store} from "Models/Store";
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
+// % protected region % [Override FormEntityModel here] off begin
 type FormEntityModel = Model & FormEntityData;
+// % protected region % [Override FormEntityModel here] end
 
 @observer
 export default class FormsBuildPage extends React.Component<RouteComponentProps>{
-	@computed
-	private get formEntity(): string {
-		return this.props.match.params['entity'];
-	}
-
-	@computed
-	private get versionId(): string {
-		return this.props.match.params['id'];
-	}
-
+	// % protected region % [Override class variables here] off begin
 	@observable
 	private entity: FormEntityModel;
 
@@ -48,7 +43,26 @@ export default class FormsBuildPage extends React.Component<RouteComponentProps>
 
 	@observable
 	private errors: object;
+	// % protected region % [Override class variables here] end
 
+	// % protected region % [Add any extra class variables here] off begin
+	// % protected region % [Add any extra class variables here] end
+
+	// % protected region % [Override formEntity here] off begin
+	@computed
+	private get formEntity(): string {
+		return this.props.match.params['entity'];
+	}
+	// % protected region % [Override formEntity here] end
+
+	// % protected region % [Override versionId here] off begin
+	@computed
+	private get versionId(): string {
+		return this.props.match.params['id'];
+	}
+	// % protected region % [Override versionId here] end
+
+	// % protected region % [Override updateFormSchema here] off begin
 	@action
 	private updateFormSchema = (entity?: FormEntityModel, errors?: object) => {
 		if (entity) {
@@ -59,7 +73,9 @@ export default class FormsBuildPage extends React.Component<RouteComponentProps>
 			this.loadingState = 'error';
 		}
 	};
+	// % protected region % [Override updateFormSchema here] end
 
+	// % protected region % [Override componentDidMount here] off begin
 	public componentDidMount(): void {
 		const modelKey = Object.keys(Models).find(x => x.toLowerCase() === this.formEntity.toLowerCase());
 		if (modelKey){
@@ -75,7 +91,9 @@ export default class FormsBuildPage extends React.Component<RouteComponentProps>
 			store.routerHistory.push("/404")
 		}
 	}
+	// % protected region % [Override componentDidMount here] end
 
+	// % protected region % [Override renderContents here] off begin
 	private renderContents = () => {
 		switch (this.loadingState) {
 			case 'loading': return <Spinner/>;
@@ -83,7 +101,9 @@ export default class FormsBuildPage extends React.Component<RouteComponentProps>
 			case 'done': return <FormEntityDesigner form={this.entity} returnRoute="/admin/forms" />;
 		}
 	}
+	// % protected region % [Override renderContents here] end
 
+	// % protected region % [Override render here] off begin
 	public render() {
 		return (
 			<SecuredPage>
@@ -93,4 +113,8 @@ export default class FormsBuildPage extends React.Component<RouteComponentProps>
 			</SecuredPage>
 		);
 	}
+	// % protected region % [Override render here] end
+
+	// % protected region % [Add any extra methods here] off begin
+	// % protected region % [Add any extra methods here] end
 }

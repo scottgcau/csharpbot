@@ -18,6 +18,9 @@
 using OpenQA.Selenium;
 using SeleniumTests.Setup;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace SeleniumTests.PageObjects.BotWritten.UserPageObjects
 {
 	public class RegisterUserSuccessfulPage : BasePage

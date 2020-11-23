@@ -14,13 +14,22 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import {Condition} from "../Schema/Question";
+import { Condition } from '../Schema/Question';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
-export function CompareBoolean (condition: Condition, conditionalValue: any) :boolean{
+function CompareBoolean(condition: Condition, conditionalValue: string): boolean {
+	// % protected region % [Customize CompareBoolean conditions here] off begin
+	// Cast the string representations to boolean
+	const conditionValue = condition.value !== 'false';
+	
 	switch (condition.condition) {
-		case "equal":
-			return conditionalValue === condition.value;
+		case 'equal':
+			return Boolean(conditionalValue) === Boolean(conditionValue);
 		default:
 			return false;
 	}
+	// % protected region % [Customize CompareBoolean conditions here] end
 }
+
+export default CompareBoolean;

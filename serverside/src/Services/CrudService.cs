@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -28,11 +29,15 @@ using Sportstats.Utility;
 using Sportstats.Graphql.Types;
 using Sportstats.Models.RegistrationModels;
 using Sportstats.Services.Interfaces;
+using Sportstats.Services.Files;
 using GraphQL;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Z.EntityFramework.Plus;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Services
 {
@@ -44,6 +49,7 @@ namespace Sportstats.Services
 		private readonly IIdentityService _identityService;
 		private readonly ILogger<CrudService> _logger;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly IUploadStorageProvider _storageProvider;
 		private readonly IUserService _userService;
 		private readonly IAuditService _auditService;
 
@@ -54,6 +60,7 @@ namespace Sportstats.Services
 			IIdentityService identityService,
 			ILogger<CrudService> logger,
 			IServiceProvider serviceProvider,
+			IUploadStorageProvider storageProvider,
 			IUserService userService,
 			IAuditService auditService)
 		{
@@ -63,6 +70,7 @@ namespace Sportstats.Services
 			_identityService = identityService;
 			_logger = logger;
 			_serviceProvider = serviceProvider;
+			_storageProvider = storageProvider;
 			_userService = userService;
 			_auditService = auditService;
 		}
@@ -79,43 +87,49 @@ namespace Sportstats.Services
 			where T : class, IOwnerAbstractModel, new()
 		{
 			_identityService.RetrieveUserAsync().Wait();
-			var dbSet = _dbContext.GetDbSet<T>(typeof(T).Name) as IQueryable<T>;
+			var dbSet = _dbContext.Set<T>() as IQueryable<T>;
 
-			_auditService.CreateReadAudit(_identityService.User?.Id.ToString(), typeof(T).Name, auditFields);
+			_auditService.CreateReadAudit(
+				_identityService.User?.Id.ToString(),
+				_identityService.User?.UserName,
+				typeof(T).Name,
+				auditFields);
 
 			// % protected region % [Do extra things after get] off begin
 			// % protected region % [Do extra things after get] end
 
 			return dbSet
-				.AddReadSecurityFiltering(_identityService, _userManager, _dbContext)
+				.AddReadSecurityFiltering(_identityService, _userManager, _dbContext, _serviceProvider)
 				.AddPagination(pagination);
 		}
 
 		/// <inheritdoc />
 		public async Task<T> Create<T>(
 			T model,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new()
 		{
-			var result = await Create(new List<T> {model}, options);
+			var result = await Create(new List<T> {model}, options, cancellation);
 			return result.First();
 		}
 
 		/// <inheritdoc />
 		public async Task<ICollection<T>> Create<T>(
 			ICollection<T> models,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new()
 		{
+			var entityName = typeof(T).Name;
 			await _identityService.RetrieveUserAsync();
-			var dbSet = _dbContext.GetDbSet<T>(typeof(T).Name);
+			var dbSet = _dbContext.Set<T>();
 
 			using (var transaction = _dbContext.Database.BeginTransaction())
 			{
 				try
 				{
-
-					MergeReferences(models, options);
+					await MergeReferences(models, options, cancellation);
 
 					foreach (var model in models)
 					{
@@ -133,8 +147,26 @@ namespace Sportstats.Services
 						entry.State = EntityState.Added;
 					}
 
-					await AssignModelMetaData(_identityService.User);
-					ValidateModels(_dbContext.ChangeTracker.Entries().Select(e => e.Entity));
+					var fileModels = _dbContext
+						.ChangeTracker
+						.Entries()
+						.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+						.Select(e => e.Entity)
+						.ToList();
+					if (options?.Files != null)
+					{
+						await SaveFiles(fileModels, options.Files, cancellation);
+					}
+					else
+					{
+						ClearFileAttributes(models);
+					}
+
+					await AssignModelMetaData(_identityService.User, cancellation);
+					ValidateModels(_dbContext.ChangeTracker
+						.Entries()
+						.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+						.Select(e => e.Entity));
 
 					// % protected region % [Do extra things after create] off begin
 					// % protected region % [Do extra things after create] end
@@ -148,14 +180,19 @@ namespace Sportstats.Services
 
 					foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
 					{
-						entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+						await entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
 					}
 
-					await _dbContext.SaveChangesAsync();
+					var changes = _dbContext
+						.ChangeTracker
+						.Entries<IAbstractModel>()
+						.Select(e => new ChangeState { State = e.State, Entry = e })
+						.ToList();
+					await _dbContext.SaveChangesAsync(cancellation);
 
-					foreach (var model in models)
+					foreach (var change in changes)
 					{
-						model.AfterSave(EntityState.Added, _dbContext, _serviceProvider);
+						await change.Entry.Entity.AfterSave(change.State, _dbContext, _serviceProvider, changes);
 					}
 
 					transaction.Commit();
@@ -164,7 +201,7 @@ namespace Sportstats.Services
 				}
 				catch (Exception e)
 				{
-					_logger.LogInformation("Error completing create action - " + e);
+					_logger.LogError("Error completing create action - {Error}", e.ToString());
 					throw;
 				}
 			}
@@ -173,35 +210,55 @@ namespace Sportstats.Services
 		/// <inheritdoc />
 		public async Task<T> Update<T>(
 			T model,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new()
 		{
-			var result = await Update(new List<T> {model}, options);
+			var result = await Update(new List<T> {model}, options, cancellation);
 			return result.First();
 		}
 
 		/// <inheritdoc />
 		public async Task<ICollection<T>> Update<T>(
 			ICollection<T> models,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new()
 		{
 			await _identityService.RetrieveUserAsync();
-			var dbSet = _dbContext.GetDbSet<T>(typeof(T).Name);
+			var dbSet = _dbContext.Set<T>();
 
 			using (var transaction = _dbContext.Database.BeginTransaction())
 			{
 				try
 				{
-					MergeReferences(models, options);
+					await MergeReferences(models, options, cancellation);
 
 					foreach (var model in models)
 					{
 						dbSet.Update(model);
 					}
 
-					await AssignModelMetaData(_identityService.User);
-					ValidateModels(_dbContext.ChangeTracker.Entries().Select(e => e.Entity));
+					var fileModels = _dbContext
+						.ChangeTracker
+						.Entries()
+						.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+						.Select(e => e.Entity)
+						.ToList();
+					if (options?.Files != null)
+					{
+						await SaveFiles(fileModels, options.Files, cancellation);
+					}
+					else
+					{
+						ClearFileAttributes(models);
+					}
+
+					await AssignModelMetaData(_identityService.User, cancellation);
+					ValidateModels(_dbContext.ChangeTracker
+						.Entries()
+						.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+						.Select(e => e.Entity));
 
 					// % protected region % [Do extra things after update] off begin
 					// % protected region % [Do extra things after update] end
@@ -215,14 +272,20 @@ namespace Sportstats.Services
 
 					foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
 					{
-						entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+						await entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
 					}
 
-					await _dbContext.SaveChangesAsync();
 
-					foreach (var model in models)
+					var changes = _dbContext
+						.ChangeTracker
+						.Entries<IAbstractModel>()
+						.Select(e => new ChangeState { State = e.State, Entry = e })
+						.ToList();
+					await _dbContext.SaveChangesAsync(cancellation);
+
+					foreach (var change in changes)
 					{
-						model.AfterSave(EntityState.Modified, _dbContext, _serviceProvider);
+						await change.Entry.Entity.AfterSave(change.State, _dbContext, _serviceProvider, changes);
 					}
 
 					transaction.Commit();
@@ -231,7 +294,7 @@ namespace Sportstats.Services
 				}
 				catch (Exception e)
 				{
-					_logger.LogInformation("Error completing update action - " + e);
+					_logger.LogError("Error completing update action - {Error}", e.ToString());
 					throw;
 				}
 			}
@@ -240,13 +303,14 @@ namespace Sportstats.Services
 		/// <inheritdoc />
 		public async Task<BooleanObject> ConditionalUpdate<T>(
 			IQueryable<T> models,
-			MemberInitExpression updateMemberInitExpression)
+			MemberInitExpression updateMemberInitExpression,
+			CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new()
 		{
 			var param = Expression.Parameter(typeof(T), "model");
 			var replacer = new ParameterReplacer(param);
 			var updateFactory = Expression.Lambda<Func<T, T>>(replacer.Visit(updateMemberInitExpression), param);
-			models.AddUpdateSecurityFiltering(_identityService, _userManager, _dbContext).Update(updateFactory);
+			await models.AddUpdateSecurityFiltering(_identityService, _userManager, _dbContext, _serviceProvider).UpdateAsync(updateFactory, cancellation);
 
 			// % protected region % [Do extra things after delete] off begin
 			// % protected region % [Do extra things after delete] end
@@ -256,26 +320,27 @@ namespace Sportstats.Services
 			{
 				throw new AggregateException(errors.Select(error => new InvalidOperationException(error)));
 			}
-			await _dbContext.SaveChangesAsync();
-			return new BooleanObject { Value = true};
+			await _dbContext.SaveChangesAsync(cancellation);
+			return new BooleanObject { Value = true };
 		}
 
 		/// <inheritdoc />
-		public async Task<Guid> Delete<T>(Guid id) where T : class, IAbstractModel
+		public async Task<Guid> Delete<T>(Guid id, CancellationToken cancellation = default)
+			where T : class, IAbstractModel
 		{
-			var result = await Delete<T>(new List<Guid> {id});
+			var result = await Delete<T>(new List<Guid> {id}, cancellation);
 			return result.First();
 		}
 
 		/// <inheritdoc />
-		public async Task<ICollection<Guid>> Delete<T>(List<Guid> ids)
+		public async Task<ICollection<Guid>> Delete<T>(List<Guid> ids, CancellationToken cancellation = default)
 			where T : class, IAbstractModel
 		{
 			await _identityService.RetrieveUserAsync();
-			var dbSet = _dbContext.GetDbSet<T>(typeof(T).Name);
+			var dbSet = _dbContext.Set<T>();
 
-			await using var transaction = await _dbContext.Database.BeginTransactionAsync();
-			var models = await dbSet.Where(o => ids.Contains(o.Id)).ToListAsync();
+			await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellation);
+			var models = await dbSet.Where(o => ids.Contains(o.Id)).ToListAsync(cancellation);
 
 			dbSet.RemoveRange(models);
 
@@ -288,13 +353,20 @@ namespace Sportstats.Services
 				throw new AggregateException(errors.Select(error => new InvalidOperationException(error)));
 			}
 
+			await AssignModelMetaData(_identityService.User, cancellation);
+
 			foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
 			{
-				entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+				await entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
 			}
 
+			var changes = _dbContext
+				.ChangeTracker
+				.Entries<IAbstractModel>()
+				.Select(e => new ChangeState { State = e.State, Entry = e })
+				.ToList();
 			try {
-				await _dbContext.SaveChangesAsync();
+				await _dbContext.SaveChangesAsync(cancellation);
 			}
 			catch (Exception e)
 			{
@@ -307,9 +379,9 @@ namespace Sportstats.Services
 				throw new AggregateException(new InvalidOperationException(e.Message));
 			}
 
-			foreach (var model in models)
+			foreach (var change in changes)
 			{
-				model.AfterSave(EntityState.Deleted, _dbContext, _serviceProvider);
+				await change.Entry.Entity.AfterSave(change.State, _dbContext, _serviceProvider, changes);
 			}
 
 			transaction.Commit();
@@ -318,12 +390,12 @@ namespace Sportstats.Services
 		}
 
 		/// <inheritdoc />
-		public async Task<BooleanObject> ConditionalDelete<T>(IQueryable<T> models)
+		public async Task<BooleanObject> ConditionalDelete<T>(IQueryable<T> models, CancellationToken cancellation = default)
 			where T : class, IOwnerAbstractModel, new()
 		{
 			try
 			{
-				models.AddDeleteSecurityFiltering(_identityService, _userManager, _dbContext).Delete();
+				await models.AddDeleteSecurityFiltering(_identityService, _userManager, _dbContext, _serviceProvider).DeleteAsync(cancellation);
 			}
 			catch (Exception e) {
 				var exceptionData = e.Data;
@@ -343,30 +415,36 @@ namespace Sportstats.Services
 			{
 				throw new AggregateException(errors.Select(error => new InvalidOperationException(error)));
 			}
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.SaveChangesAsync(cancellation);
 			return new BooleanObject { Value = true };
 		}
 
 		/// <inheritdoc />
 		public async Task<ICollection<User>> CreateUser<TModel, TRegisterModel>(
 			ICollection<TRegisterModel> models,
-			UpdateOptions options = null)
+			UpdateOptions options = null,
+			CancellationToken cancellation = default)
 			where TModel : User, IOwnerAbstractModel, new()
 			where TRegisterModel : IRegistrationModel<TModel>
 		{
+			// % protected region % [Customise the registration before any action] off begin
+			// % protected region % [Customise the registration before any action] end
 			await _identityService.RetrieveUserAsync();
 
 			var dbModels = models.Select(m => m.ToModel()).ToList();
-			var dbSet = _dbContext.GetDbSet<TModel>();
+			var dbSet = _dbContext.Set<TModel>();
 
 			var roles = models.SelectMany(m => m.Groups).ToList();
-			var dbRoles = await _dbContext.Roles.Where(r => roles.Contains(r.Name)).ToListAsync();
+			var dbRoles = await _dbContext.Roles.Where(r => roles.Contains(r.Name)).ToListAsync(cancellation);
+			// % protected region % [Customise the registration after initial lookups] off begin
+			// % protected region % [Customise the registration after initial lookups] end
+
 
 			using (var transaction = _dbContext.Database.BeginTransaction())
 			{
 				try
 				{
-					MergeReferences(dbModels, options);
+					await MergeReferences(dbModels, options, cancellation);
 
 					var modelPairs = models.Select(model => (model, model.ToModel())).ToList();
 
@@ -374,6 +452,9 @@ namespace Sportstats.Services
 					var createdUsers = new List<User>();
 					foreach (var (registrationModel, model) in modelPairs)
 					{
+						// % protected region % [Customise for each registration model] off begin
+						// % protected region % [Customise for each registration model] end
+
 						if (model.Id == Guid.Empty)
 						{
 							model.Id = Guid.NewGuid();
@@ -398,6 +479,9 @@ namespace Sportstats.Services
 								.Select(s => new InvalidOperationException(s)));
 						}
 
+						// % protected region % [Customise user model here] off begin
+						// % protected region % [Customise user model here] end
+
 						model.UserName = model.Email;
 						model.PasswordHash = _userManager.PasswordHasher.HashPassword(model, registrationModel.Password);
 						model.ConcurrencyStamp = await _userManager.GenerateConcurrencyStampAsync(model);
@@ -418,11 +502,31 @@ namespace Sportstats.Services
 						entry.State = EntityState.Added;
 					}
 
-					await AssignModelMetaData(_identityService.User);
-					ValidateModels(_dbContext.ChangeTracker.Entries().Select(e => e.Entity));
+					var fileModels = _dbContext
+						.ChangeTracker
+						.Entries()
+						.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+						.Select(e => e.Entity)
+						.ToList();
+					if (options?.Files != null)
+					{
+						await SaveFiles(fileModels, options.Files, cancellation);
+					}
+					else
+					{
+						ClearFileAttributes(models);
+					}
+
+					await AssignModelMetaData(_identityService.User, cancellation);
+					ValidateModels(_dbContext.ChangeTracker
+						.Entries()
+						.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+						.Select(e => e.Entity));
 
 					foreach (var user in createdUsers)
 					{
+						// % protected region % [Add in any custom creates for each created user] off begin
+						// % protected region % [Add in any custom creates for each created user] end
 						user.Owner = user.Id;
 					}
 
@@ -435,14 +539,19 @@ namespace Sportstats.Services
 
 					foreach (var entry in _dbContext.ChangeTracker.Entries<IAbstractModel>().ToList())
 					{
-						entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
+						await entry.Entity.BeforeSave(entry.State, _dbContext, _serviceProvider);
 					}
 
-					await _dbContext.SaveChangesAsync();
+					var changes = _dbContext
+						.ChangeTracker
+						.Entries<IAbstractModel>()
+						.Select(e => new ChangeState { State = e.State, Entry = e })
+						.ToList();
+					await _dbContext.SaveChangesAsync(cancellation);
 
-					foreach (var (_, model) in modelPairs)
+					foreach (var change in changes)
 					{
-						model.AfterSave(EntityState.Added, _dbContext, _serviceProvider);
+						await change.Entry.Entity.AfterSave(change.State, _dbContext, _serviceProvider, changes);
 					}
 
 					transaction.Commit();
@@ -451,62 +560,142 @@ namespace Sportstats.Services
 				}
 				catch (Exception e)
 				{
-					_logger.LogInformation("Error completing create user action - " + e);
+					_logger.LogError("Error completing create user action - {Error}", e.ToString());
 					throw;
 				}
 			}
 		}
 
 		/// <inheritdoc />
-		public async Task<IEnumerable<string>> Export<TModel, TModelDto>(
-			IQueryable<TModel> queryable,
-			CancellationToken cancellation = default(CancellationToken),
-			bool exportHeaders = true,
-			string openDelimiter = "\"",
-			string closeDelimiter = "\"",
-			string separator = ",")
-			where TModelDto : ModelDto<TModel>, new()
+		public async Task<UploadFile> GetFile(Guid id, CancellationToken cancellation = default)
 		{
-			var headers = GetExportProperties<TModelDto>();
+			// % protected region % [Override GetFile here] off begin
+			await _identityService.RetrieveUserAsync();
 
-			var modelQuery = await queryable.ToListAsync(cancellation);
+			var file = await _dbContext
+				.Files
+				.FirstOrDefaultAsync(f => f.Id == id, cancellation);
 
-			var models = modelQuery
-				.Select(model => new TModelDto().LoadModelData(model))
-				.Select(model => ObjectAsString(model, headers, openDelimiter, closeDelimiter, separator));
-
-			// % protected region % [Do extra things after export] off begin
-			// % protected region % [Do extra things after export] end
-
-			if (!exportHeaders)
+			if (file == null)
 			{
-				return models;
+				throw new FileNotFoundException("File not found");
 			}
 
-			var exportList = new List<string> {string.Join(separator, headers)};
-			exportList.AddRange(models);
-			return exportList;
+			return file;
+			// % protected region % [Override GetFile here] end
 		}
 
-		/// <inheritdoc />
-		public async Task<string> ExportAsCsv<TModel, TModelDto>(
-			IQueryable<TModel> queryable,
-			CancellationToken cancellation = default(CancellationToken))
-			where TModelDto : ModelDto<TModel>, new()
+		private bool CanViewEntity<T>(T entity) where T : IOwnerAbstractModel, new()
 		{
-			var result = await Export<TModel, TModelDto>(queryable, cancellation);
-			return string.Join("\n", result);
+			var filter = SecurityService
+				.CreateReadSecurityFilter<T>(_identityService, _userManager, _dbContext, _serviceProvider);
+			var objList = new List<T> {entity};
+			return objList.Where(filter.Compile()).Any();
 		}
 
-		private async Task AssignModelMetaData(User user)
+		private void ThrowFileError(UploadFile file, string entityType)
+		{
+			_logger.LogInformation(
+				"User {User} with invalid security attempted to access file with ID {ID}",
+				_identityService.User?.UserName,
+				file.Id,
+				entityType,
+				file);
+			throw new UnauthorizedAccessException("Insufficient access to view this file");
+		}
+
+		private async Task SaveFiles<T>(
+			IEnumerable<T> models,
+			IFormFileCollection files,
+			CancellationToken cancellation = default)
+		{
+			foreach (var model in models)
+			{
+				var modelType = model.GetType();
+				var fileAttrs = ReflectionCache.GetFileAttributes(modelType);
+
+				if (fileAttrs.Count <= 0)
+				{
+					continue;
+				}
+
+				foreach (var attr in fileAttrs)
+				{
+					if (!(attr.GetValue(model) is Guid fileId))
+					{
+						continue;
+					}
+
+					var file = files.FirstOrDefault(f => f.Name == fileId.ToString());
+
+					if (file == null)
+					{
+						continue;
+					}
+
+					await using var fileStream = file.OpenReadStream();
+					var serverFileId = Guid.NewGuid().ToString();
+					await _storageProvider.PutAsync(new StoragePutOptions
+					{
+						Container = modelType.Name,
+						FileName = serverFileId,
+						Content = fileStream,
+						ContentType = file.ContentType,
+						CreateContainerIfNotExists = true,
+					}, cancellation);
+
+					var dbFile = new UploadFile
+					{
+						Id = Guid.NewGuid(),
+						FileName = file.FileName,
+						FileId = serverFileId,
+						Length = file.Length,
+						ContentType = file.ContentType,
+						Container = modelType.Name,
+					};
+
+					var existingFile = (await _dbContext.Entry(model).GetDatabaseValuesAsync(cancellation))?[attr.Name];
+
+					attr.SetValue(model, dbFile.Id);
+					_dbContext.Files.Add(dbFile);
+
+					if (existingFile is Guid oldFileId)
+					{
+						var fileEntry = await _dbContext
+							.Files
+							.FirstOrDefaultAsync(f => f.Id == oldFileId, cancellation);
+						if (fileEntry != null)
+						{
+							_dbContext.Files.Remove(fileEntry);
+						}
+					}
+				}
+			}
+		}
+
+		private static void ClearFileAttributes<T>(IEnumerable<T> models)
+		{
+			foreach (var model in models)
+			{
+				var modelType = model.GetType();
+				var fileAttrs = ReflectionCache.GetFileAttributes(modelType);
+
+				foreach (var attr in fileAttrs)
+				{
+					attr.SetValue(model, null);
+				}
+			}
+		}
+
+		private async Task AssignModelMetaData(User user, CancellationToken cancellation = default)
 		{
 			foreach (var entry in _dbContext.ChangeTracker.Entries<IOwnerAbstractModel>())
 			{
 				switch (entry.State)
 				{
 					case EntityState.Added:
-						entry.Entity.Created = DateTime.Now;
-						entry.Entity.Modified = DateTime.Now;
+						entry.Entity.Created = DateTime.UtcNow;
+						entry.Entity.Modified = DateTime.UtcNow;
 						if (entry.Entity.Owner == Guid.Empty)
 						{
 							entry.Entity.Owner = user?.Id ?? Guid.Empty;
@@ -523,16 +712,10 @@ namespace Sportstats.Services
 						// Unset fields we don't want to be changed on update
 						entry.Property("Owner").IsModified = false;
 						entry.Property("Created").IsModified = false;
-						entry.Entity.Modified = DateTime.Now;
+						entry.Entity.Modified = DateTime.UtcNow;
 						break;
 				}
 			}
-
-			var userProperties = typeof(User)
-				.GetProperties()
-				.Select(p => p.Name)
-				.Where(n => n != "Acls")
-				.ToList();
 
 			// Users have a concurrency stamp so they need to be pulled from the db and have
 			// the concurrency stamp applied to each of the objects we save back to the database
@@ -550,21 +733,37 @@ namespace Sportstats.Services
 						entry.Entity.Owner = entry.Entity.Id;
 						break;
 					case EntityState.Modified:
-						var databaseProperties = await entry.GetDatabaseValuesAsync();
+						// % protected region % [Adjust modification of user models here] off begin
+						var databaseProperties = await entry.GetDatabaseValuesAsync(cancellation);
 						var proposedProperties = entry.CurrentValues;
 
-						foreach (var userProperty in userProperties)
+						foreach (var userProperty in GetNonModifiableUserProperties())
 						{
 							proposedProperties[userProperty] = databaseProperties[userProperty];
 						}
 
 						entry.OriginalValues.SetValues(databaseProperties);
 						entry.Property("Discriminator").IsModified = false;
-
+						// % protected region % [Adjust modification of user models here] end
 						break;
 				}
 			}
 		}
+
+		// % protected region % [Configure the modelled groups here] off begin
+		/// <summary>
+		/// Return the list of fields that should not be modified on the User.cs Entity.
+		/// </summary>
+		/// <returns></returns>
+		private List<string> GetNonModifiableUserProperties()
+		{
+			return typeof(User)
+				.GetProperties()
+				.Select(p => p.Name)
+				.Where(n => n != "Acls")
+				.ToList();
+		}
+		// % protected region % [Configure the modelled groups here] end
 
 		private static void ValidateModels<T>(IEnumerable<T> models)
 		{
@@ -590,7 +789,7 @@ namespace Sportstats.Services
 			}
 		}
 
-		private void MergeReferences<T>(ICollection<T> models, UpdateOptions options)
+		private async Task MergeReferences<T>(ICollection<T> models, UpdateOptions options, CancellationToken cancellation = default)
 			where T : IOwnerAbstractModel, new()
 		{
 			if (options == null) return;
@@ -612,7 +811,7 @@ namespace Sportstats.Services
 					{
 						var foreignAttribute = referencesToMerge.First(attr => string
 							.Equals(attr?.Name, reference, StringComparison.OrdinalIgnoreCase));
-						models.First().CleanReference(foreignAttribute.Name, models, _dbContext);
+						await models.First().CleanReference(foreignAttribute.Name, models, _dbContext, cancellation);
 					}
 					catch
 					{
@@ -721,5 +920,6 @@ namespace Sportstats.Services
 	public class UpdateOptions
 	{
 		public IEnumerable<string> MergeReferences { get; set; }
+		public IFormFileCollection Files { get; set; }
 	}
 }

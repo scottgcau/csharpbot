@@ -19,6 +19,8 @@ using System.Linq;
 using Sportstats.Graphql.Helpers;
 using Sportstats.Models;
 using GraphQL.Types;
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace Sportstats.Graphql.Fields
 {
@@ -32,6 +34,7 @@ namespace Sportstats.Graphql.Fields
 		public static Func<ResolveFieldContext<object>, IQueryable<TModel>> CreateConditionalQuery<TModel>()
 			where TModel : class, IOwnerAbstractModel, new()
 		{
+			// % protected region % [Override CreateConditionalQuery here] off begin
 			return context =>
 			{
 				// Fetch the models that we need
@@ -42,6 +45,7 @@ namespace Sportstats.Graphql.Fields
 
 				return models;
 			};
+			// % protected region % [Override CreateConditionalQuery here] end
 		}
 	}
 }

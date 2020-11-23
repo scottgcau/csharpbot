@@ -21,10 +21,13 @@ import { observer } from 'mobx-react';
 import { DisplayType } from '../Models/Enums';
 import InputWrapper, { InputType } from '../Inputs/InputWrapper';
 import InputsHelper from '../Helpers/InputsHelper';
-import Flatpickr, { DateTimePickerProps } from 'react-flatpickr'
-import 'flatpickr/dist/themes/material_green.css'
+import Flatpickr, { DateTimePickerProps } from 'react-flatpickr';
 import { BaseOptions } from 'flatpickr/dist/types/options';
 import { Instance } from 'flatpickr/dist/types/instance';
+import { store } from 'Models/Store';
+// % protected region % [Override flatpicker theme here] off begin
+import 'flatpickr/dist/themes/material_green.css';
+// % protected region % [Override flatpicker theme here] end
 
 /**
  * Root properties inheritted by all Flatpickr wrapper classes.
@@ -136,8 +139,8 @@ export class DateTimePicker<T> extends React.Component<IDateTimePickerProps<T>> 
 	private get flatpickerOptions(): Partial<BaseOptions> {
 		/* Flatpickr custom options. See https://flatpickr.js.org/options/ for docs. */
 		const options = {
-			allowInput: this.props.allowInput,
-			enableTime: ((this.props.enableTime == undefined) ? true : this.props.enableTime),
+			allowInput: this.props.allowInput ?? true,
+			enableTime: ((this.props.enableTime === undefined) ? true : this.props.enableTime),
 			maxDate: this.props.maxDate,
 			minDate: this.props.minDate,
 			mode: (this.props.mode || "single"),
@@ -174,15 +177,21 @@ export class DateTimePicker<T> extends React.Component<IDateTimePickerProps<T>> 
 			value = undefined;
 		}
 
+		const isEditable = !(this.props.isDisabled || this.props.staticInput || this.props.isReadOnly);
+
 		/* Flatpickr component: handles all datetime picker logic */
 		return <Flatpickr
 			aria-label={ariaLabel}
 			aria-describedby={ariaDescribedby}
-			disabled={this.props.isDisabled || this.props.staticInput || this.props.isReadOnly}
+			disabled={!isEditable}
 			value={value}
 			id={fieldId}
+			className={isEditable ? 'enabled' : 'disabled'}
 			name={this.props.name}
 			options={{
+				onReady: (dates, currentDateString, self) => {
+					self.calendarContainer?.classList?.add(store.appLocation);
+				},
 				...this.flatpickerOptions,
 				...this.props.flatpickrOptions,
 			}}

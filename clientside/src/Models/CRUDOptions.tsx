@@ -14,10 +14,12 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+import * as React from 'react';
 import { crudOptions as crudOptions } from 'Symbols';
 import { Model } from './Model';
 import { Comparators } from "Views/Components/ModelCollection/ModelQuery";
 import { transformFunction } from 'Util/AttributeUtils';
+import { IFormTile } from "Views/Components/CRUD/Attributes/AttributeFormTile";
 
 export type displayType =
 	'hidden' |
@@ -34,13 +36,16 @@ export type displayType =
 	'enum-combobox'|
 	'reference-combobox' |
 	'reference-multicombobox' |
-	'form-tile'
+	'form-tile' |
+	'file'
 	// % protected region % [Add more display types here] off begin
 	// % protected region % [Add more display types here] end
 	;
 
 export interface ICRUDOptions {
 	name: string;
+	/** Classname to render out to the DOM */
+	className?: string;
 	/** How to display the field on the crud form */
 	displayType: displayType;
 	/** Weather this is a header to be displayed in the crud list */
@@ -58,10 +63,13 @@ export interface ICRUDOptions {
 	/** Anonymous props for the attribute that is being used */
 	inputProps?: {[key: string]: any};
 	/** A function that can change the display of the element on the crud list */
-	displayFunction?: (attribute: any) => string;
+	displayFunction?: (attribute: any, that: Model) => React.ReactNode;
 	onAfterChange?: (model: Model) => void;
 
+	// Form tile dropdown specific
+	formTileFilterFn?: (option: IFormTile) => boolean;
 
+	fileAttribute?: string;
 
 	// Reference Dropdown specific
 	referenceTypeFunc?: () => {new (json?: {}):  Model};
@@ -89,6 +97,7 @@ export interface ICRUDOptions {
 
 export class AttributeCRUDOptions implements ICRUDOptions {
 	public name: string;
+	public className?: string;
 	public attributeName: string;
 	public displayType: displayType;
 	public headerColumn: boolean;
@@ -100,9 +109,11 @@ export class AttributeCRUDOptions implements ICRUDOptions {
 	public enumResolveFunction?: Array<{display: string, value: string}>;
 	public optionEqualFunc?: (modelProperty: any, option: any) => boolean;
 	public isJoinEntity?: boolean = false;
-	public displayFunction?: (attribute: any) => string;
+	public displayFunction?: (attribute: any, that: Model) => React.ReactNode;
 	public onAfterChange?: (model: Model) => void;
+	public formTileFilterFn?: (option: IFormTile) => boolean;
 
+	public fileAttribute?: string;
 
 	public readFieldType?: displayType;
 	public createFieldType?: displayType;
@@ -117,13 +128,13 @@ export class AttributeCRUDOptions implements ICRUDOptions {
 	public groupId?: number;
 	/** The order of the attribute with the group which this attribute belongs to */
 	public order?: number;
-
 	// % protected region % [Add more Attribute CRUD Option properties here] off begin
 	// % protected region % [Add more Attribute CRUD Option properties here] end
 
 	constructor(attributeName: string, options: ICRUDOptions) {
 		this.attributeName = attributeName;
 		this.name = options.name;
+		this.className = options.className;
 		this.displayType = options.displayType;
 		this.headerColumn = !!options.headerColumn;
 		this.searchable = !!options.searchable;
@@ -146,6 +157,8 @@ export class AttributeCRUDOptions implements ICRUDOptions {
 		this.updateFieldType = options.updateFieldType || options.displayType;
 		this.groupId = options.groupId;
 		this.order = options.order;
+		this.formTileFilterFn = options.formTileFilterFn;
+		this.fileAttribute = options.fileAttribute;
 		// % protected region % [Add more Attribute CRUD Option constructor operations here] off begin
 		// % protected region % [Add more Attribute CRUD Option constructor operations here] end
 	}

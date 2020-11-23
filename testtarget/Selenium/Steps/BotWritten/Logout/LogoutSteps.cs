@@ -15,20 +15,28 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 
+using SeleniumTests.PageObjects.BotWritten.UserPageObjects;
 using SeleniumTests.Setup;
 using TechTalk.SpecFlow;
 using Xunit;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace SeleniumTests.Steps.BotWritten.Logout
 {
 	[Binding]
-	public class LogoutSteps
+	public class LogoutSteps  : BaseStepDefinition
 	{
+		// % protected region % [Customize LogoutSteps fields here] off begin
 		private readonly ContextConfiguration _contextConfiguration;
+		private readonly LogoutPage _logoutPage;
+		// % protected region % [Customize LogoutSteps fields here] end
 
-		public LogoutSteps(ContextConfiguration contextConfiguration)
+		public LogoutSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
+			_logoutPage = new LogoutPage(_contextConfiguration);
 			// % protected region % [Add any additional setup options here] off begin
 			// % protected region % [Add any additional setup options here] end
 		}
@@ -36,8 +44,16 @@ namespace SeleniumTests.Steps.BotWritten.Logout
 		[Then(@"I am redirected to the login page")]
 		public void ThenIamRedirectedToTheLoginPage()
 		{
-			Assert.Equal($"{_contextConfiguration.BaseUrl}/login?redirect=/", _contextConfiguration.WebDriver.Url);
+			Assert.Equal($"{_baseUrl}/login?redirect=/", _driver.Url);
 		}
-	}
-}
 
+		[StepDefinition("I am logged out of the site")]
+		public void Logout()
+		{
+			_logoutPage.Navigate();
+
+		}		
+	}
+	// % protected region % [Add any further steps here] off begin
+	// % protected region % [Add any further steps here] end
+}

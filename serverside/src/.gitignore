@@ -30,5 +30,8 @@
 log.txt
 *.pfx
 
+# Ignore triple underscore for any private folders
+___*
+
 # % protected region % [Add any further ignores here] off begin
 # % protected region % [Add any further ignores here] end

@@ -18,6 +18,7 @@ import { CRUD } from '../CRUDOptions';
 import { IModelAttributes, Model, attribute, entity } from '../Model';
 import { createUser, updateUser, deleteUser } from '../../Views/Components/UserCRUD/UserService';
 import { action, observable } from 'mobx';
+import { SERVER_URL } from 'Constants';
 import * as Validators from '../../Validators';
 import axios from 'axios';
 // % protected region % [Add any extra imports here] off begin
@@ -56,18 +57,20 @@ export interface IUserAttributes extends IModelAttributes {
 }
 
 function getGroups() {
-	return axios.get('/api/account/groups')
-		.then(({data}) => {
-			return data.map((groupName: any) => {return {display: groupName, value: groupName}});
+	return axios.get(`${SERVER_URL}/api/account/groups`)
+		.then(({ data }) => {
+			return data.map((groupName: any) => { return { display: groupName, value: groupName }});
 		});
 }
 
+// % protected region % [Customise user model name here] off begin
 @entity('user')
+// % protected region % [Customise user model name here] end
 export default class User extends Model implements IUserAttributes {
-
 	// % protected region % [Add any class properties here] off begin
 	// % protected region % [Add any class properties here] end
 
+	// % protected region % [Customize User fields here] off begin
 	@Validators.Required()
 	@Validators.Length(0, 255)
 	@Validators.Email()
@@ -80,14 +83,17 @@ export default class User extends Model implements IUserAttributes {
 	@Validators.Regex(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])"), "The password must contain an uppercase letter, a number and a symbol")
 	@attribute()
 	public password: string;
+	// % protected region % [Customize User fields here] end
 
 	// % protected region % [Add any extra user fields here] off begin
 	// % protected region % [Add any extra user fields here] end
 
+	// % protected region % [Customize user groups here] off begin
 	@attribute()
 	@observable
 	@CRUD({name:'Groups', displayType: 'reference-multicombobox', referenceTypeFunc: () => Group, headerColumn: false, searchable: false, referenceResolveFunction: getGroups})
 	public groups: string[];
+	// % protected region % [Customize user groups here] end
 
 	constructor(attributes?: Partial<IUserAttributes>) {
 		super(attributes);
@@ -116,11 +122,11 @@ export default class User extends Model implements IUserAttributes {
 
 		if (this.id === undefined) {
 			return createUser(this.toJSON(relationPath))
-				.then(({data}) => this.updateUser(data));
-		} else {
-			return updateUser(this.toJSON(relationPath))
-				.then(({data}) => this.updateUser(data));
-		}
+				.then(({ data }) => this.updateUser(data));
+		} 
+			
+		return updateUser(this.toJSON(relationPath))
+			.then(({ data }) => this.updateUser(data));
 	}
 
 	public async delete() {
@@ -147,4 +153,7 @@ export default class User extends Model implements IUserAttributes {
 		};
 		// % protected region % [Overwrite toJSON here] end
 	}
+
+	// % protected region % [Add additional methods here] off begin
+	// % protected region % [Add additional methods here] end
 }

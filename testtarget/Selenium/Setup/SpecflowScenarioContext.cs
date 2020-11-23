@@ -23,8 +23,6 @@ using System.Security.Cryptography;
 using System.Text;
 using BoDi;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using SeleniumTests.Setup;
 using TechTalk.SpecFlow;
 using Xunit.Abstractions;
 

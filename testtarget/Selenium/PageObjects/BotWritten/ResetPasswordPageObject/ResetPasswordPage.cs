@@ -18,24 +18,36 @@
 using OpenQA.Selenium;
 using SeleniumTests.Setup;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace SeleniumTests.PageObjects.ResetPasswordPageObject
 {
 	public class ResetPasswordPage : BasePage
 	{
+		// % protected region % [Customise ResetPasswordPage web elements here] off begin
 		public IWebElement NewPasswordInput => FindElementExt("NewPasswordInput");
 		public IWebElement ConfirmPasswordInput => FindElementExt("ConfirmPasswordInput");
 		public IWebElement ConfirmButton => FindElementExt("ConfirmButton");
+		// % protected region % [Customise ResetPasswordPage web elements here] end
+
+		// % protected region % [Add any extra fields here] off begin
+		// % protected region % [Add any extra fields here] end
 
 		public ResetPasswordPage(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
+			// % protected region % [Customise constructor logic here] off begin
 			InitializeSelectors();
+			// % protected region % [Customise constructor logic here] end
 		}
 
 		private void InitializeSelectors()
 		{
+			// % protected region % [Customise InitializeSelectors logic here] off begin
 			selectorDict.Add("NewPasswordInput", (selector: "new_password-field", type: SelectorType.ID));
 			selectorDict.Add("ConfirmPasswordInput", (selector: "confirm_password-field", type: SelectorType.ID));
 			selectorDict.Add("ConfirmButton", (selector: "confirm_reset_password", type: SelectorType.ID));
+			// % protected region % [Customise InitializeSelectors logic here] end
 		}
 
 		public void EnterNewPasswordAndSubmit(string password)
@@ -44,5 +56,8 @@ namespace SeleniumTests.PageObjects.ResetPasswordPageObject
 			ConfirmPasswordInput.SendKeys(password);
 			ConfirmButton.Click();
 		}
+		// % protected region % [Add any extra methods here] off begin
+		// % protected region % [Add any extra methods here] end
+	
 	}
 }

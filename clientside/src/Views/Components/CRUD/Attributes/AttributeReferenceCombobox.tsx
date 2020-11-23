@@ -42,17 +42,17 @@ interface IAttributeReferenceComboboxProps<T extends Model> extends IAttributePr
 class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttributeReferenceComboboxProps<T>> {
 	@observable
 	private internalOptions: Model[] = [];
-	
+
 	@computed
 	public get isRequired() {
 		return isRequired(this.props.model, this.props.options.attributeName);
 	}
-	
+
 	@action
 	private setInternalOptions = (options: Model[]) => {
 		this.internalOptions = options;
 	}
-	
+
 	@action
 	private onChange = (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
 		const { value } = data;
@@ -63,15 +63,19 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 				this.props.model[this.props.options.attributeName] = value;
 			}
 		}
+
+		if (this.props.onAfterChange) {
+			this.props.onAfterChange(event);
+		}
 	}
 
 	private fetchOptions = async (query?: string | string[]) => {
 		const { referenceType } = this.props;
-		
+
 		if (Array.isArray(query)) {
 			return [];
 		}
-		
+
 		const modelName = getModelName(referenceType);
 		const dataReturnName = lowerCaseFirst(modelName) + "s";
 
@@ -95,7 +99,7 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 				} else {
 					existingValue = this.props.model[this.props.options.attributeName.slice(0, -2)];
 				}
-					
+
 				if (existingValue) {
 					associatedObjects = _.unionBy(associatedObjects, [existingValue], x => x.id);
 				}
@@ -106,7 +110,7 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 					comboOptions = optionObjects
 						.map(obj => ({ display: obj.getDisplayName(), value: obj.id }));
 				}
-				
+
 				return comboOptions;
 			});
 	}

@@ -24,35 +24,52 @@ import { IIconProps } from '../Helpers/Common';
 import { ILink } from './Navigation';
 import NavigationLinks from './NavigationLinks';
 import If from '../If/If';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 interface INavigationLinkProps extends RouteComponentProps, IIconProps {
 	path: string;
 	className?: string;
-	label: string;
+	label: React.ReactNode;
 	isParent?: boolean;
 	subLinks?: ILink[];
 	subLinksFilter?: (link: ILink) => boolean;
 	onClick?: (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
 	isActive?: boolean;
 	isDisabled?: boolean;
+	useATag?: boolean;
+	customComponent?: React.ReactNode;
+	// % protected region % [Add any extra props here] off begin
+	// % protected region % [Add any extra props here] end
 }
 
 @observer
 class NavigationLink extends React.Component<INavigationLinkProps> {
 	static defaultProps = {
 		iconPos: 'left',
+		// % protected region % [Add any extra default props here] off begin
+		// % protected region % [Add any extra default props here] end
 	}
+
+	// % protected region % [Add any extra class fields here] off begin
+	// % protected region % [Add any extra class fields here] end
 
 	private liRef: HTMLLIElement | null = null;
 
 	componentDidMount() {
 		document.addEventListener('click', this.handleDocumentClick);
+		// % protected region % [Change componentDidMount here] off begin
+		// % protected region % [Change componentDidMount here] end
 	}
 	componentWillMount() {
 		document.removeEventListener('click', this.handleDocumentClick);
+		// % protected region % [Change componentWillMount here] off begin
+		// % protected region % [Change componentWillMount here] end
 	}
 	componentWillUnmount() {
 		document.removeEventListener('click', this.handleDocumentClick);
+		// % protected region % [Change componentWillUnmount here] off begin
+		// % protected region % [Change componentWillUnmount here] end
 	}
 
 	@observable
@@ -75,6 +92,7 @@ class NavigationLink extends React.Component<INavigationLinkProps> {
 	}
 
 	public render() {
+		// % protected region % [Customise render here] off begin
 		const { path, label, subLinks, subLinksFilter, ...routerProps } = this.props;
 		let subLinksNode = null;
 		if (this.props.isParent && !!this.props.subLinks) {
@@ -103,36 +121,49 @@ class NavigationLink extends React.Component<INavigationLinkProps> {
 				className={classNames({ 'nav__parent-link--active': this.subLinksExpanded && this.props.isParent, 'active': isActive && !this.props.isParent }, this.props.className)} key={path}
 				onClick={this.onClick}
 			>
-				<If condition={(this.props.isParent || this.props.isDisabled)}>
-					<a className={classNames(this.icon, this.iconPos)} aria-label={label}>{textNode}</a>
-				</If>
-				<If condition={!(this.props.isParent || this.props.isDisabled)}>
-					<Link to={path} className={classNames(this.icon, this.iconPos)} aria-label={label}>{textNode}</Link>
-				</If>
+				{
+					(this.props.isParent || this.props.isDisabled)
+						? <a className={classNames(this.icon, this.iconPos)} aria-label={typeof label === "string" ? label : undefined}>{textNode}</a>
+						: this.props.customComponent !== undefined
+						? this.props.customComponent
+						: this.props.useATag
+						? <a href={path} className={classNames(this.icon, this.iconPos)} target={'_blank'} aria-label={typeof label === "string" ? label : undefined}>{textNode}</a>
+						: <Link to={path} className={classNames(this.icon, this.iconPos)} aria-label={typeof label === "string" ? label : undefined}>{textNode}</Link>
+				}
 				{subLinksNode}
-			</li>);
+			</li>
+		);
+		// % protected region % [Customise render here] end
 	}
 
 	@action
 	private onClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+		// % protected region % [Customise onClick here] off begin
 		if (this.props.isParent) {
 			this.subLinksExpanded = !this.subLinksExpanded;
 		}
 		if (this.props.onClick) {
 			this.props.onClick(event);
 		}
+		// % protected region % [Customise onClick here] end
 	}
 
 	private isActive = (path: string) => {
+		// % protected region % [Customise isActive here] off begin
 		return !!matchPath(this.props.location.pathname, { path, exact: true });
+		// % protected region % [Customise isActive here] end
 	}
 
 	@action
 	private handleDocumentClick = (e: any) => {
+		// % protected region % [Customise handleDocumentClick here] off begin
 		if (this.subLinksExpanded && !!this.liRef && (!this.liRef.contains(e.target) || (!!this.liRef.lastElementChild && this.liRef.lastElementChild.contains(e.target)))) {
 			this.subLinksExpanded = !this.subLinksExpanded;
 		}
+		// % protected region % [Customise handleDocumentClick here] end
 	}
 }
 
+// % protected region % [Customise export here] off begin
 export default NavigationLink;
+// % protected region % [Customise export here] end

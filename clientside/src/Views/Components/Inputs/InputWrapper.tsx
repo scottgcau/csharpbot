@@ -22,6 +22,9 @@ import { Tooltip } from '../Tooltip/Tooltip';
 import If from '../If/If';
 import { DisplayType } from '../Models/Enums';
 
+// % protected region % [Add extra imports or definitoins here] off begin
+// % protected region % [Add extra imports or definitoins here] end
+
 export enum InputType {
 	INPUT = 'input',
 	TEXTAREA = 'textarea',
@@ -49,6 +52,8 @@ interface IInputWrapperProps {
 	subDescription?: string;
 	errors?: string | string[];
 	innerProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+	// % protected region % [Add extra inputwrapper props here] off begin
+	// % protected region % [Add extra inputwrapper props here] end
 }
 
 export enum LabelPositions {
@@ -59,16 +64,23 @@ export enum LabelPositions {
 export interface ILabelOptions{
 	text: string;
 	position?: LabelPositions;
+	// % protected region % [Add extra lable options here] off begin
+	// % protected region % [Add extra lable options here] end
 }
 
 @observer
 class InputWrapper extends React.Component<IInputWrapperProps, any> {
+	// % protected region % [Add extra options class properties here] off begin
+	// % protected region % [Add extra options class properties here] end
+
 	@observable
 	private focused: boolean;
+
 	@observable
 	private isHovered: boolean;
 
 	public render() {
+		// % protected region % [Customize options render here] off begin
 		const {isInputGroup, wrapperId, inputType, id, label, children, className, displayType, inputId, isRequired, staticInput, tooltip, subDescription, errors } = this.props;
 		const tooltipId = `${id}-tooltip`;
 		const subDescriptionId = `${id}-sub-description`;
@@ -108,7 +120,7 @@ class InputWrapper extends React.Component<IInputWrapperProps, any> {
 		const subDescriptionNode = (!tooltip && subDescription) ? <p id={subDescriptionId}>{subDescription}</p> : '';
 
 		let labelText: string | undefined;
-		if (typeof(label) == "string") {
+		if (typeof(label) === "string") {
 			labelText = label;
 		} else if (label === undefined) {
 			labelText = undefined;
@@ -117,7 +129,7 @@ class InputWrapper extends React.Component<IInputWrapperProps, any> {
 		}
 
 		return (
-			<div 
+			<div
 				id={wrapperId}
 				className={classes}
 				onFocus={this.onFocus}
@@ -135,50 +147,49 @@ class InputWrapper extends React.Component<IInputWrapperProps, any> {
 				</If>
 				{tooltipNode}
 				{subDescriptionNode}
-				<Errors errors={errors}/>
+				<Errors errors={errors} />
 			</div>
 		);
+		// % protected region % [Customize options render here] end
 	}
-	
+
 	@action
-	private onFocus = (event: React.ChangeEvent<HTMLDivElement>) => {
+	private onFocus = (event: React.ChangeEvent<HTMLDivElement>): void => {
 		this.focused = true;
-	}
+	};
 
 	@action
-	private onBlue = (event: React.ChangeEvent<HTMLDivElement>) => {
+	private onBlue = (event: React.ChangeEvent<HTMLDivElement>): void => {
 		this.focused = false;
-	}
+	};
 
 	@action
-	private handleHover = () => {
+	private handleHover = (): void => {
 		this.isHovered = !this.isHovered;
-	}
+	};
 
 	private setFocusClass = (classes?: string) => {
-		if(this.focused === true){
-			return classNames("input-group--focus", classes);
+		if (this.focused) {
+			return classNames('input-group--focus', classes);
 		}
-		else{
-			return classes;
-		}
-	}
+		return classes;
+	};
 
 	private setHoverClass = (classes?: string) => {
-		if(this.isHovered){
-			return classNames("input-group--hover", classes);
+		if (this.isHovered) {
+			return classNames('input-group--hover', classes);
 		}
-		else{
-			return classes;
-		}
-	}
+		return classes;
+	};
 
 	private setTooltipClass = (classes?: string, tooltip?: React.ReactNode) => {
-		if(tooltip){
-			return classNames("input-group--tooltip", classes);
-		}else{
-			return classes;
+		if (tooltip) {
+			return classNames('input-group--tooltip', classes);
 		}
-	}
+		return classes;
+	};
+
+	// % protected region % [Add extra methods here] off begin
+	// % protected region % [Add extra methods here] end
 }
 export default InputWrapper;

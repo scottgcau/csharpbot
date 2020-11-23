@@ -19,29 +19,198 @@ import Navigation, { Orientation, ILink } from 'Views/Components/Navigation/Navi
 import { RouteComponentProps } from 'react-router';
 import * as Models from 'Models/Entities';
 import { Model } from 'Models/Model';
-import {IIconProps} from "Views/Components/Helpers/Common";
-import {SecurityService} from "Services/SecurityService";
-import {store} from "Models/Store";
+import { IIconProps } from "Views/Components/Helpers/Common";
+import { SecurityService } from "Services/SecurityService";
+import { store } from "Models/Store";
+import { getModelDisplayName } from 'Util/EntityUtils';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 interface AdminLink extends IIconProps {
 	path: string;
 	label: string;
 	entity: {new (args: any): Model};
 	isMember?: boolean;
+	// % protected region % [Add extra AdminLink fields here] off begin
+	// % protected region % [Add extra AdminLink fields here] end
 }
 
-const LINKS : AdminLink[] = [
+const getPageLinks = (): AdminLink[] => [
 	{
-		path: '/admin/sportentityentity',
-		label: 'SportEntity',
-		entity: Models.SportentityEntity,
+		// % protected region % [Override navigation link for ScheduleEntity here] off begin
+		path: '/admin/scheduleentity',
+		label: getModelDisplayName(Models.ScheduleEntity),
+		entity: Models.ScheduleEntity,
 		isMember: false
+		// % protected region % [Override navigation link for ScheduleEntity here] end
 	},
 	{
-		path: '/admin/sportentitysubmissionentity',
-		label: 'SportEntity Submission',
-		entity: Models.SportentitySubmissionEntity,
+		// % protected region % [Override navigation link for SeasonEntity here] off begin
+		path: '/admin/seasonentity',
+		label: getModelDisplayName(Models.SeasonEntity),
+		entity: Models.SeasonEntity,
 		isMember: false
+		// % protected region % [Override navigation link for SeasonEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for VenueEntity here] off begin
+		path: '/admin/venueentity',
+		label: getModelDisplayName(Models.VenueEntity),
+		entity: Models.VenueEntity,
+		isMember: false
+		// % protected region % [Override navigation link for VenueEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for GameEntity here] off begin
+		path: '/admin/gameentity',
+		label: getModelDisplayName(Models.GameEntity),
+		entity: Models.GameEntity,
+		isMember: false
+		// % protected region % [Override navigation link for GameEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for SportEntity here] off begin
+		path: '/admin/sportentity',
+		label: getModelDisplayName(Models.SportEntity),
+		entity: Models.SportEntity,
+		isMember: false
+		// % protected region % [Override navigation link for SportEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for LeagueEntity here] off begin
+		path: '/admin/leagueentity',
+		label: getModelDisplayName(Models.LeagueEntity),
+		entity: Models.LeagueEntity,
+		isMember: false
+		// % protected region % [Override navigation link for LeagueEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for TeamEntity here] off begin
+		path: '/admin/teamentity',
+		label: getModelDisplayName(Models.TeamEntity),
+		entity: Models.TeamEntity,
+		isMember: false
+		// % protected region % [Override navigation link for TeamEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for PersonEntity here] off begin
+		path: '/admin/personentity',
+		label: getModelDisplayName(Models.PersonEntity),
+		entity: Models.PersonEntity,
+		isMember: false
+		// % protected region % [Override navigation link for PersonEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for RosterEntity here] off begin
+		path: '/admin/rosterentity',
+		label: getModelDisplayName(Models.RosterEntity),
+		entity: Models.RosterEntity,
+		isMember: false
+		// % protected region % [Override navigation link for RosterEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for RosterassignmentEntity here] off begin
+		path: '/admin/rosterassignmententity',
+		label: getModelDisplayName(Models.RosterassignmentEntity),
+		entity: Models.RosterassignmentEntity,
+		isMember: false
+		// % protected region % [Override navigation link for RosterassignmentEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for ScheduleSubmissionEntity here] off begin
+		path: '/admin/schedulesubmissionentity',
+		label: getModelDisplayName(Models.ScheduleSubmissionEntity),
+		entity: Models.ScheduleSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for ScheduleSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for SeasonSubmissionEntity here] off begin
+		path: '/admin/seasonsubmissionentity',
+		label: getModelDisplayName(Models.SeasonSubmissionEntity),
+		entity: Models.SeasonSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for SeasonSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for VenueSubmissionEntity here] off begin
+		path: '/admin/venuesubmissionentity',
+		label: getModelDisplayName(Models.VenueSubmissionEntity),
+		entity: Models.VenueSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for VenueSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for GameSubmissionEntity here] off begin
+		path: '/admin/gamesubmissionentity',
+		label: getModelDisplayName(Models.GameSubmissionEntity),
+		entity: Models.GameSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for GameSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for SportSubmissionEntity here] off begin
+		path: '/admin/sportsubmissionentity',
+		label: getModelDisplayName(Models.SportSubmissionEntity),
+		entity: Models.SportSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for SportSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for LeagueSubmissionEntity here] off begin
+		path: '/admin/leaguesubmissionentity',
+		label: getModelDisplayName(Models.LeagueSubmissionEntity),
+		entity: Models.LeagueSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for LeagueSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for TeamSubmissionEntity here] off begin
+		path: '/admin/teamsubmissionentity',
+		label: getModelDisplayName(Models.TeamSubmissionEntity),
+		entity: Models.TeamSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for TeamSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for PersonSubmissionEntity here] off begin
+		path: '/admin/personsubmissionentity',
+		label: getModelDisplayName(Models.PersonSubmissionEntity),
+		entity: Models.PersonSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for PersonSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for RosterSubmissionEntity here] off begin
+		path: '/admin/rostersubmissionentity',
+		label: getModelDisplayName(Models.RosterSubmissionEntity),
+		entity: Models.RosterSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for RosterSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for RosterassignmentSubmissionEntity here] off begin
+		path: '/admin/rosterassignmentsubmissionentity',
+		label: getModelDisplayName(Models.RosterassignmentSubmissionEntity),
+		entity: Models.RosterassignmentSubmissionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for RosterassignmentSubmissionEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for SportEntityFormTileEntity here] off begin
+		path: '/admin/sportentityformtileentity',
+		label: getModelDisplayName(Models.SportEntityFormTileEntity),
+		entity: Models.SportEntityFormTileEntity,
+		isMember: false
+		// % protected region % [Override navigation link for SportEntityFormTileEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for RosterTimelineEventsEntity here] off begin
+		path: '/admin/rostertimelineeventsentity',
+		label: getModelDisplayName(Models.RosterTimelineEventsEntity),
+		entity: Models.RosterTimelineEventsEntity,
+		isMember: false
+		// % protected region % [Override navigation link for RosterTimelineEventsEntity here] end
 	},
 	// % protected region % [Add any extra page links here] off begin
 	// % protected region % [Add any extra page links here] end
@@ -64,8 +233,9 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 		// % protected region % [Add custom logic before all here] off begin
 		// % protected region % [Add custom logic before all here] end
 
-		let userLinks = LINKS.filter(link => link.isMember).filter(this.filter);
-		let entityLinks = LINKS.filter(link => ! link.isMember).filter(this.filter);
+		const links = getPageLinks();
+		let userLinks = links.filter(link => link.isMember).filter(this.filter);
+		let entityLinks = links.filter(link => ! link.isMember).filter(this.filter);
 
 		let linkGroups: ILink[][] = [];
 
@@ -122,16 +292,42 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 		//otherlinkGroup.push({ path: '/admin/dashboards', label: 'Dashboards', icon: 'dashboard', iconPos: 'icon-left', isDisabled: true });
 		//otherlinkGroup.push({ path: '/admin/timelines', label: 'Timelines', icon: 'timeline', iconPos: 'icon-left', isDisabled: true });
 		const formsGroups: string[] = ['Visitors'];
-		if (store.userGroups.some(ug => formsGroups.some(fg => fg == ug.name))){
+		if (store.userGroups.some(ug => formsGroups.some(fg => fg === ug.name))){
 			otherlinkGroup.push({ path: '/admin/forms', label: 'Forms', icon: 'forms', iconPos: 'icon-left', isDisabled: false });
 		}
+		otherlinkGroup.push({ path: '/admin/timelines', label: 'Timelines', icon: 'timeline', iconPos: 'icon-left', isDisabled: false });
 		if (otherlinkGroup.length > 0) {
 			linkGroups.push(otherlinkGroup);
 		}
 
 		const bottomlinkGroup: ILink[] = [];
 		// bottomlinkGroup.push({ path: '/admin/documentation', label: 'Documentation', icon: 'help', iconPos: 'icon-left', isDisabled: true });
-		bottomlinkGroup.push({ path: '/logout', label: 'Logout', icon: 'logout', iconPos: 'icon-left' });
+		bottomlinkGroup.push(
+			{
+				path: '/admin/',
+				label: 'Utility',
+				icon: 'file',
+				iconPos: 'icon-left',
+				subLinks: [
+					{
+						path: '/admin/graphiql',
+						label: 'GraphiQL',
+						useATag: true,
+					},
+					{
+						path: '/api/swagger',
+						label: 'OpenAPI',
+						useATag: true,
+					},
+					{
+						path: 'https://codebots.app/app-settings-and-details/git',
+						label: 'Git',
+						useATag: true,
+					},
+				],
+			}
+		);
+		bottomlinkGroup.push({ path: '/logout', label: 'Logout', icon: 'room', iconPos: 'icon-left' });
 		linkGroups.push(bottomlinkGroup);
 
 		// % protected region % [Modify your link groups here before returning] off begin

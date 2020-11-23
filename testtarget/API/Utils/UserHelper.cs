@@ -19,6 +19,8 @@ using System;
 using System.Linq;
 using APITests.Setup;
 using Sportstats.Models;
+// % protected region % [Custom imports] off begin
+// % protected region % [Custom imports] end
 
 namespace APITests.Utils
 {
@@ -26,7 +28,9 @@ namespace APITests.Utils
 	{
 		public static User GetUserFromDB(Guid id)
 		{
+			// % protected region % [Adjust the dbContext] off begin
 			using var context = new SportstatsDBContext(new StartupTestFixture().DbContextOptions, null, null);
+			// % protected region % [Adjust the dbContext] end
 			return context.Users.FirstOrDefault(u => u.Id == id);
 		}
 	}

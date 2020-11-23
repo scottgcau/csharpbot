@@ -34,7 +34,7 @@ class AttributeCheckbox<T extends Model> extends React.Component<IAttributeCheck
 			isReadOnly={isReadonly}
 			isRequired={isRequired}
 			errors={errors}
-			onChecked={this.props.onAfterChange}
+			onAfterChecked={this.props.onAfterChange}
 		/>;
 	}
 }

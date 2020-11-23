@@ -32,6 +32,9 @@ namespace Sportstats.Services.Interfaces
 		/// <param name="userId">The id of the user performing the read operation</param>
 		/// <param name="modelName">The name of the entity that is being fetched</param>
 		/// <param name="data">Any audit data to be stored in the log</param>
-		void CreateReadAudit(string userId, string modelName, object data = null);
+		void CreateReadAudit(string userId, string userName, string modelName, object data = null);
+
+		// % protected region % [Add any additional methods here] off begin
+		// % protected region % [Add any additional methods here] end
 	}
 }

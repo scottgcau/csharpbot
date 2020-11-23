@@ -44,7 +44,7 @@ namespace SeleniumTests.PageObjects.Components
 
 		public TimePickerComponent(ContextConfiguration contextConfiguration, string className) : base(contextConfiguration)
 		{
-			TimePickerElement = contextConfiguration.WebDriver.FindElement(By.CssSelector($".{className}"));
+			TimePickerElement = driver.FindElement(By.CssSelector($".{className}"));
 			InitializeSelectors();
 		}
 

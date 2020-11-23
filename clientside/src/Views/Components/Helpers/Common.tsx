@@ -26,3 +26,9 @@ export enum EntityFormMode {
 	CREATE = 'create',
 	EDIT = 'edit'
 }
+
+export enum AttributeFormMode {
+	VIEW = 'view',
+	EDIT = 'edit',
+	HIDE = 'hide'
+}

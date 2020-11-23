@@ -20,18 +20,18 @@ using Xunit;
 
 namespace ServersideTests.Tests.Unit.BotWritten
 {
+	[Trait("Category", "BotWritten")]
+	[Trait("Category", "Unit")]
 	public class AuditServicesTests
 	{
 		[Fact]
-		[Trait("Category", "BotWritten")]
-		[Trait("Category", "Unit")]
 		public void AuditLogsTest()
 		{
 			var userId = Guid.NewGuid().ToString();
 			const string modelName = "TestModel";
 
 			var service = new AuditService(null);
-			service.CreateReadAudit(userId, modelName, null);
+			service.CreateReadAudit(userId, "TestUser", modelName, null);
 
 			Assert.Contains(
 				service.Logs,

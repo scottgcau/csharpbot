@@ -18,15 +18,23 @@
 using System;
 using RestSharp;
 using System.Net;
-using APITests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace APITests.Utils
 {
+	// % protected region % [Configure RequestHelpers type here] off begin
 	internal static class RequestHelpers
 	{
+	// % protected region % [Configure RequestHelpers type here] end
 
+		// % protected region % [Add any further fields here] off begin
+		// % protected region % [Add any further fields here] end
+
+		// % protected region % [Configure BasicGetRequest here] off begin
 		public static RestRequest BasicGetRequest()
 		{
 			//setup the request
@@ -38,7 +46,9 @@ namespace APITests.Utils
 
 			return request;
 		}
+		// % protected region % [Configure BasicGetRequest here] end
 
+		// % protected region % [Configure BasicGetRequest here] off begin
 		public static RestRequest BasicPostRequest()
 		{
 			//setup the request
@@ -50,15 +60,19 @@ namespace APITests.Utils
 
 			return request;
 		}
+		// % protected region % [Configure BasicGetRequest here] end
 
+		// % protected region % [Configure BasicGetRequest here] off begin
 		public static void ValidateResponse(RestClient client, Method method, RestRequest request, HttpStatusCode expectedResponse)
 		{
 			request.Method = method;
 			var response = client.Execute(request);
 			Assert.Equal(expectedResponse, response.StatusCode);
 		}
+		// % protected region % [Configure BasicGetRequest here] end
 
-		public static void SendPostRequest(string uri, JsonObject query, ITestOutputHelper output)
+		// % protected region % [Configure BasicGetRequest here] off begin
+		public static void SendPostRequest(string uri, RestSharp.JsonObject query, ITestOutputHelper output)
 		{
 			var client = new RestClient {BaseUrl = new Uri(uri)};
 			var request = new RestRequest {Method = Method.POST, RequestFormat = DataFormat.Json};
@@ -70,5 +84,9 @@ namespace APITests.Utils
 			ApiOutputHelper.WriteRequestResponseOutput(request, response, output);
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 		}
+		// % protected region % [Configure BasicGetRequest here] end
+
+		// % protected region % [Add any further request helper methods here] off begin
+		// % protected region % [Add any further request helper methods here] end
 	}
 }

@@ -14,9 +14,13 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-
 using APITests.Factories;
 using Xunit;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
+
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 namespace APITests.TheoryData.BotWritten
 {
@@ -24,6 +28,8 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public UserEntityFactorySingleTheoryData()
 		{
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end
 		}
 	}
 
@@ -31,7 +37,19 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityFactorySingleTheoryData()
 		{
-			Add(new EntityFactory("SportentityEntity"), 1);
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new EntityFactory("ScheduleEntity"), 1);
+			Add(new EntityFactory("SeasonEntity"), 1);
+			Add(new EntityFactory("VenueEntity"), 1);
+			Add(new EntityFactory("GameEntity"), 1);
+			Add(new EntityFactory("SportEntity"), 1);
+			Add(new EntityFactory("LeagueEntity"), 1);
+			Add(new EntityFactory("TeamEntity"), 1);
+			Add(new EntityFactory("PersonEntity"), 1);
+			Add(new EntityFactory("RosterEntity"), 1);
+			Add(new EntityFactory("RosterassignmentEntity"), 1);
+			Add(new EntityFactory("RosterTimelineEventsEntity"), 1);
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end
 		}
 	}
 
@@ -39,7 +57,19 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public NonUserEntityFactorySingleTheoryData()
 		{
-			Add(new EntityFactory("SportentityEntity"), 1);
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new EntityFactory("ScheduleEntity"), 1);
+			Add(new EntityFactory("SeasonEntity"), 1);
+			Add(new EntityFactory("VenueEntity"), 1);
+			Add(new EntityFactory("GameEntity"), 1);
+			Add(new EntityFactory("SportEntity"), 1);
+			Add(new EntityFactory("LeagueEntity"), 1);
+			Add(new EntityFactory("TeamEntity"), 1);
+			Add(new EntityFactory("PersonEntity"), 1);
+			Add(new EntityFactory("RosterEntity"), 1);
+			Add(new EntityFactory("RosterassignmentEntity"), 1);
+			Add(new EntityFactory("RosterTimelineEventsEntity"), 1);
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end
 		}
 	}
 
@@ -47,7 +77,19 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityFactoryTheoryData()
 		{
-			Add(new EntityFactory("SportentityEntity"));
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new EntityFactory("ScheduleEntity"));
+			Add(new EntityFactory("SeasonEntity"));
+			Add(new EntityFactory("VenueEntity"));
+			Add(new EntityFactory("GameEntity"));
+			Add(new EntityFactory("SportEntity"));
+			Add(new EntityFactory("LeagueEntity"));
+			Add(new EntityFactory("TeamEntity"));
+			Add(new EntityFactory("PersonEntity"));
+			Add(new EntityFactory("RosterEntity"));
+			Add(new EntityFactory("RosterassignmentEntity"));
+			Add(new EntityFactory("RosterTimelineEventsEntity"));
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end
 		}
 	}
 
@@ -55,8 +97,23 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityFactoryMultipleTheoryData()
 		{
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
 			var numEntities = 3;
-			Add(new EntityFactory("SportentityEntity"), numEntities);
+			Add(new EntityFactory("ScheduleEntity"), numEntities);
+			Add(new EntityFactory("SeasonEntity"), numEntities);
+			Add(new EntityFactory("VenueEntity"), numEntities);
+			Add(new EntityFactory("GameEntity"), numEntities);
+			Add(new EntityFactory("SportEntity"), numEntities);
+			Add(new EntityFactory("LeagueEntity"), numEntities);
+			Add(new EntityFactory("TeamEntity"), numEntities);
+			Add(new EntityFactory("PersonEntity"), numEntities);
+			Add(new EntityFactory("RosterassignmentEntity"), numEntities);
+			Add(new EntityFactory("RosterTimelineEventsEntity"), numEntities);
+			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end
 		}
 	}
+
+	// % protected region % [Add any further custom EntityFactoryTheoryData here] off begin
+	// % protected region % [Add any further custom EntityFactoryTheoryData here] end
+
 }

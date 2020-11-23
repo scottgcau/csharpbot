@@ -19,6 +19,8 @@ import { observer } from 'mobx-react';
 import If from 'Views/Components/If/If';
 import { ButtonGroup } from 'Views/Components/Button/ButtonGroup';
 import { Button, Display } from 'Views/Components/Button/Button';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export interface IFormProps {
 	/** Use the default Submit button or not */
@@ -35,10 +37,13 @@ export interface IFormProps {
 	onSubmit?: React.FormEventHandler<Element>;
 	/** The callback function when cencel button is pressed */
 	onCancel?: React.FormEventHandler<Element>;
+	// % protected region % [Add extra form props here] off begin
+	// % protected region % [Add extra form props here] end
 }
 
 @observer
 export class Form extends React.Component<IFormProps> {
+    // % protected region % [Modify render method] off begin
 	render() {
 		let actionGroups: React.ReactNode[] | undefined;
 		if (this.props.actionGroups) {
@@ -46,10 +51,10 @@ export class Form extends React.Component<IFormProps> {
 		} else {
 			actionGroups = [
 				<If condition={this.props.cancelButton}>
-					<Button className="cancel" type='button' display={Display.Outline} buttonProps={{ onClick: this.props.onCancel }}>Cancel</Button>
+					<Button className="cancel btn--md" type='button' display={Display.Outline} buttonProps={{ onClick: this.props.onCancel }}>Cancel</Button>
 				</If>,
 				<If condition={this.props.submitButton}>
-					<Button className="submit" type='submit' display={Display.Outline}>Submit</Button>
+					<Button className="submit btn--md" type='submit' display={Display.Solid}>Submit</Button>
 				</If>
 			];
 		}
@@ -65,4 +70,5 @@ export class Form extends React.Component<IFormProps> {
 			</form>
 		);
 	}
+	// % protected region % [Modify render method] end
 }

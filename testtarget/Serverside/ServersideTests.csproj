@@ -17,49 +17,32 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="../../serverside/src/appsettings.xml" CopyToOutputDirectory="Always" />
 		<None Include="../../serverside/src/appsettings.Test.xml" CopyToOutputDirectory="Always" />
+		<None Include="xunit.runner.json" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Audit.EntityFramework.Core" Version="14.7.0" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.0.0" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
-		<PackageReference Include="GraphQL" Version="2.4.0" />
-		<PackageReference Include="GraphQL.EntityFramework" Version="9.0.0" />
-		<PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
-		<PackageReference Include="GraphQL.Server.Transports.WebSockets" Version="3.4.0" />
-		<PackageReference Include="Moq" Version="4.13.1" />
-		<PackageReference Include="NCrontab" Version="3.3.1" />
-		<PackageReference Include="OpenIddict" Version="2.0.1" />
-		<PackageReference Include="OpenIddict.EntityFrameworkCore" Version="2.0.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
-		<PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.0.14" />
+		<ProjectReference Include="..\..\serverside\src\Sportstats.csproj" />
+		<ProjectReference Include="..\TestDataLib\TestDataLib.csproj" />
 
 		<PackageReference Include="AutoFixture.Xunit2" Version="4.11.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="3.0.0" />
+		<PackageReference Include="AutoFixture.SeedExtensions" Version="4.11.0" />
+		<PackageReference Include="FluentAssertions" Version="5.10.0" />
+		<PackageReference Include="ExpectedObjects" Version="2.3.4" />
+		<PackageReference Include="MockQueryable.Core" Version="3.1.1" />
+		<PackageReference Include="MockQueryable.Moq" Version="3.1.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="3.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="3.1.2" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+		<PackageReference Include="Moq" Version="4.13.1" />
 		<PackageReference Include="NCrontab" Version="3.3.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-		<PackageReference Include="RestSharp" Version="106.6.10" />
 		<PackageReference Include="dotnet-test-xunit" Version="2.2.0-preview2-build1029" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.console" Version="2.4.1">
@@ -71,10 +54,6 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 		<!-- % protected region % [Add any further imports here] off begin -->
 		<!-- % protected region % [Add any further imports here] end -->
 	</ItemGroup>
-	<ItemGroup>
-		<Reference Include="Sportstats">
-	    <HintPath>..\..\serverside\src\bin\$(Configuration)\netcoreapp3.0\Sportstats.dll</HintPath>
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Reference>
-	</ItemGroup>
+	<!-- % protected region % [Add any extra ItemGroups here] off begin -->
+	<!-- % protected region % [Add any extra ItemGroups here] end -->
 </Project>

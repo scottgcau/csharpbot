@@ -20,8 +20,9 @@ import { observer } from 'mobx-react';
 import { Form, Question, Slide } from './Schema/Question';
 import { getQuestion } from './Questions/QuestionUtils';
 
+	// % protected region % [Modify the slide tile here] off begin
 export interface ISlideTileProps<T> extends Slide {
-	model: T
+	model: T,
 	schema: Form;
 	isReadOnly?: boolean;
 	className?: string;
@@ -30,6 +31,7 @@ export interface ISlideTileProps<T> extends Slide {
 	afterQuestionContent?: (question: Question, slide: Slide, index: number) => React.ReactNode;
 	beforeSlideContent?: (slide: Slide) => React.ReactNode;
 	afterSlideContent?: (slide: Slide) => React.ReactNode;
+	reValidate?: boolean;
 }
 
 @observer
@@ -40,13 +42,14 @@ export class SlideTile<T> extends React.Component<ISlideTileProps<T>> {
 				{this.props.beforeSlideContent ? this.props.beforeSlideContent(this.props) : undefined}
 				<h3>{this.props.name}</h3>
 				{this.props.contents.map((question, i) => (
-					<div className="form__question-container" id={question.id} key={question.id}>
+					<div className="form__question-container" id={question.id} key={question.id} data-name={question.title}>
 						{this.props.beforeQuestionContent ? this.props.beforeQuestionContent(question, this.props, i) : undefined}
 						{getQuestion({
 							schema: this.props.schema,
 							model: this.props.model,
 							isReadOnly: this.props.isReadOnly,
 							disableShowConditions: this.props.disableShowConditions,
+							reValidate: this.props.reValidate,
 							...question
 						})}
 						{this.props.afterQuestionContent ? this.props.afterQuestionContent(question, this.props, i) : undefined}
@@ -57,3 +60,4 @@ export class SlideTile<T> extends React.Component<ISlideTileProps<T>> {
 		);
 	}
 }
+// % protected region % [Modify the slide tile here] end

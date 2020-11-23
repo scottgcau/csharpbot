@@ -22,6 +22,8 @@ import { observer } from 'mobx-react';
 import { DisplayType } from '../Models/Enums';
 import * as uuid from 'uuid';
 import { Tooltip } from '../Tooltip/Tooltip';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 export enum RadioAlignment {
 	VERTICAL = "radio-group--vertical",
@@ -46,12 +48,23 @@ export interface IRadioButtonGroupProps<T> {
 	errors?: string | string[];
 	/** Action to perform after the onChange method is called */
 	onAfterChange?: (value: string) => void;
+	/**
+	 * Should the key for the fields be random uuids. This is useful for when there is a chance for non unique values.
+	 * If this is not set or is false then the option field is used as the key.
+	 */
+	uuidKey?: boolean;
+	// % protected region % [Add any further props here] off begin
+	// % protected region % [Add any further props here] end
 }
 
 @observer
 export class RadioButtonGroup<T> extends React.Component<IRadioButtonGroupProps<T>, any> {
 	private uuid = uuid.v4();
+
+	// % protected region % [Add any further methods and fields here] off begin
+	// % protected region % [Add any further methods and fields here] end
 	
+	// % protected region % [customize the RadioButtonGroup render function] off begin
 	public render() {
 		const id = this.props.id || this.uuid.toString();
 		const { displayType, tooltip, isDisabled, isReadOnly, isRequired, errors } = this.props;
@@ -75,27 +88,30 @@ export class RadioButtonGroup<T> extends React.Component<IRadioButtonGroupProps<
 				id = {id}
 				className={classes}
 				displayType={displayType}
-				innerProps={this.props.innerProps}
-			>
+				innerProps={this.props.innerProps}>
 				{labelNode}
 				{tooltipNode}
 				{this.props.options.map(option => 
-					<InputWrapper inputType={InputType.RADIO} key={option.value} label={{text:option.display, position:LabelPositions.AFTER}} inputId={option.value} >
+					<InputWrapper
+						inputType={InputType.RADIO}
+						key={this.props.uuidKey ? uuid.v4() : option.value}
+						label={{text:option.display, position:LabelPositions.AFTER}}
+						inputId={option.value}>
 						<input
 							type="radio"
 							name={groupName}
 							id={option.value}
 							defaultChecked={this.props.model[this.props.modelProperty] === option.value}
-							key={option.value}
+							key={this.props.uuidKey ? uuid.v4() : option.value}
 							onChange={this.onChecked}
-							disabled={isDisabled}
-							readOnly={isReadOnly}
+							disabled={isDisabled || isReadOnly}
 						/>
 					</InputWrapper>,
 				)}
 			</InputWrapper>
 		);
 	}
+	// % protected region % [customize the RadioButtonGroup render function] end
 
 	@action
 	public onChecked = (event: React.ChangeEvent<HTMLInputElement>) => {

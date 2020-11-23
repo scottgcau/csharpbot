@@ -27,11 +27,11 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.AdminNav
 {
 	[Binding]
-	public class AdminMenuNavigationSteps
+	public class AdminMenuNavigationSteps : BaseStepDefinition
 	{
 		private readonly AdminNavSection _adminNavSection;
 
-		public AdminMenuNavigationSteps(ContextConfiguration contextConfiguration)
+		public AdminMenuNavigationSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_adminNavSection = new AdminNavSection(contextConfiguration);
 			// % protected region % [Add any additional setup options here] off begin
@@ -50,16 +50,20 @@ namespace SeleniumTests.Steps.BotWritten.AdminNav
 			_adminNavSection.AdminNavToggle.Click();
 		}
 
-		[When(@"I click on (.*) Nav link on the Admin Nav section")]
+		[StepDefinition(@"I click on (.*) Nav link on the Admin Nav section")]
 		public void WhenIClickOnLinkOfTheAdminNavSection(AdminSubMenuType subMenuType)
 		{
+			var adminNavSection = new AdminNavSection(_contextConfiguration);
 			switch (subMenuType)
 			{
 				case AdminSubMenuType.USERS:
-					_adminNavSection.AdminNavIconUsers.Click();
+					adminNavSection.AdminNavIconUsers.ClickWithWait(_driverWait);
 					break;
 				case AdminSubMenuType.ENTITIES:
-					_adminNavSection.AdminNavIconEntities.Click();
+					adminNavSection.AdminNavIconEntities.ClickWithWait(_driverWait);
+					break;
+				case AdminSubMenuType.TIMELINES:
+					adminNavSection.AdminNavIconTimelines.ClickWithWait(_driverWait);
 					break;
 				default:
 					throw new ArgumentException("Invalid Submenu Type: " + subMenuType);

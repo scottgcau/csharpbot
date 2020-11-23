@@ -17,24 +17,27 @@
 import * as React from 'react';
 import { action } from 'mobx';
 import * as AdminPages from './Pages/Admin/Entity';
-import Cookies from 'js-cookie';
 import Auth from "./Components/Auth/Auth";
 import AllUsersPage from './Pages/Admin/AllUsersPage';
 import AdminPage from './Pages/Admin/AdminPage';
 import Topbar from "./Components/Topbar/Topbar";
 import PageLinks from './Pages/Admin/PageLinks';
+import Spinner from 'Views/Components/Spinner/Spinner';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
-import { SERVER_URL } from "../Constants";
 import { store } from "Models/Store";
 import FormsPage from "./Pages/Admin/Forms/FormsPage";
-
-// This ts-ignore is needed since there is no types for graphiql
-// @ts-ignore
-import GraphiQL from 'graphiql';
+import TimelinePage from "./Pages/Admin/Timelines/TimelinePage";
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
+// % protected region % [Customize lazy imports here] off begin
+const GraphiQlLazy = React.lazy(() => import("./Pages/Admin/Graphiql"));
+// % protected region % [Customize lazy imports here] end
+
 export default class Admin extends React.Component<RouteComponentProps> {
+	
+	private path = this.props.match.path === '/' ? '' : this.props.match.path;
+	
 	@action
 	private setAppLocation = () => {
 		store.appLocation = 'admin';
@@ -48,10 +51,29 @@ export default class Admin extends React.Component<RouteComponentProps> {
 		return (
 			<>
 				<div className="body-container">
+					{
+					// % protected region % [Modify Topbar] off begin
+					}
 					<Topbar currentLocation="admin" />
+					{
+					// % protected region % [Modify Topbar] end
+					}
 					<div className="admin">
 						<Auth {...this.props}>
-							<this.adminSwitch />
+							<Switch>
+								{
+								// % protected region % [Modify top level admin routing here] off begin
+								}
+								<Route path={`${this.path}/graphiql`}>
+									<React.Suspense fallback={<Spinner />}>
+										<GraphiQlLazy />
+									</React.Suspense>
+								</Route>
+								<Route component={this.adminSwitch} />
+								{
+								// % protected region % [Modify top level admin routing here] end
+								}
+							</Switch>
 						</Auth>
 					</div>
 				</div>
@@ -63,14 +85,6 @@ export default class Admin extends React.Component<RouteComponentProps> {
 		if (!store.userGroups.some(ug => ug.hasBackendAccess)) {
 			return <Redirect to="/404" />;
 		}
-
-		const path = this.props.match.path === '/' ? '' : this.props.match.path;
-
-		const graphiQl = () => (
-			<div className="graphiql-content-container body-content">
-				<GraphiQL fetcher={this.graphiQLFetcher} />
-			</div>
-		);
 
 		return (
 			<>
@@ -86,11 +100,41 @@ export default class Admin extends React.Component<RouteComponentProps> {
 						{/* These routes require a login to view */}
 
 						{/* Admin entity pages */}
-						<Route exact={true} path={`${path}`} component={AdminPage} />
-						<Route path={`${path}/User`} component={AllUsersPage} />
-						<Route path={`${path}/forms`} component={FormsPage} />
-						<Route path={`${path}/SportentityEntity`} component={AdminPages.SportentityEntityPage} />
-						<Route path={`${path}/SportentitySubmissionEntity`} component={AdminPages.SportentitySubmissionEntityPage} />
+						<Route exact={true} path={`${this.path}`} component={AdminPage} />
+						<Route path={`${this.path}/User`} component={AllUsersPage} />
+						<Route path={`${this.path}/forms`} component={FormsPage} />
+						<Route path={`${this.path}/Timelines`} component={TimelinePage} />
+						<Route path={`${this.path}/ScheduleEntity`} component={AdminPages.ScheduleEntityPage} />
+						<Route path={`${this.path}/SeasonEntity`} component={AdminPages.SeasonEntityPage} />
+						<Route path={`${this.path}/VenueEntity`} component={AdminPages.VenueEntityPage} />
+						<Route path={`${this.path}/GameEntity`} component={AdminPages.GameEntityPage} />
+						<Route path={`${this.path}/SportEntity`} component={AdminPages.SportEntityPage} />
+						<Route path={`${this.path}/LeagueEntity`} component={AdminPages.LeagueEntityPage} />
+						<Route path={`${this.path}/TeamEntity`} component={AdminPages.TeamEntityPage} />
+						<Route path={`${this.path}/PersonEntity`} component={AdminPages.PersonEntityPage} />
+						<Route path={`${this.path}/RosterEntity`} component={AdminPages.RosterEntityPage} />
+						<Route path={`${this.path}/RosterassignmentEntity`} component={AdminPages.RosterassignmentEntityPage} />
+						<Route path={`${this.path}/ScheduleSubmissionEntity`} component={AdminPages.ScheduleSubmissionEntityPage} />
+						<Route path={`${this.path}/SeasonSubmissionEntity`} component={AdminPages.SeasonSubmissionEntityPage} />
+						<Route path={`${this.path}/VenueSubmissionEntity`} component={AdminPages.VenueSubmissionEntityPage} />
+						<Route path={`${this.path}/GameSubmissionEntity`} component={AdminPages.GameSubmissionEntityPage} />
+						<Route path={`${this.path}/SportSubmissionEntity`} component={AdminPages.SportSubmissionEntityPage} />
+						<Route path={`${this.path}/LeagueSubmissionEntity`} component={AdminPages.LeagueSubmissionEntityPage} />
+						<Route path={`${this.path}/TeamSubmissionEntity`} component={AdminPages.TeamSubmissionEntityPage} />
+						<Route path={`${this.path}/PersonSubmissionEntity`} component={AdminPages.PersonSubmissionEntityPage} />
+						<Route path={`${this.path}/RosterSubmissionEntity`} component={AdminPages.RosterSubmissionEntityPage} />
+						<Route path={`${this.path}/RosterassignmentSubmissionEntity`} component={AdminPages.RosterassignmentSubmissionEntityPage} />
+						<Route path={`${this.path}/ScheduleEntityFormTileEntity`} component={AdminPages.ScheduleEntityFormTileEntityPage} />
+						<Route path={`${this.path}/SeasonEntityFormTileEntity`} component={AdminPages.SeasonEntityFormTileEntityPage} />
+						<Route path={`${this.path}/VenueEntityFormTileEntity`} component={AdminPages.VenueEntityFormTileEntityPage} />
+						<Route path={`${this.path}/GameEntityFormTileEntity`} component={AdminPages.GameEntityFormTileEntityPage} />
+						<Route path={`${this.path}/SportEntityFormTileEntity`} component={AdminPages.SportEntityFormTileEntityPage} />
+						<Route path={`${this.path}/LeagueEntityFormTileEntity`} component={AdminPages.LeagueEntityFormTileEntityPage} />
+						<Route path={`${this.path}/TeamEntityFormTileEntity`} component={AdminPages.TeamEntityFormTileEntityPage} />
+						<Route path={`${this.path}/PersonEntityFormTileEntity`} component={AdminPages.PersonEntityFormTileEntityPage} />
+						<Route path={`${this.path}/RosterEntityFormTileEntity`} component={AdminPages.RosterEntityFormTileEntityPage} />
+						<Route path={`${this.path}/RosterassignmentEntityFormTileEntity`} component={AdminPages.RosterassignmentEntityFormTileEntityPage} />
+						<Route path={`${this.path}/RosterTimelineEventsEntity`} component={AdminPages.RosterTimelineEventsEntityPage} />
 
 						{
 						// % protected region % [Add any extra page routes here] off begin
@@ -106,23 +150,7 @@ export default class Admin extends React.Component<RouteComponentProps> {
 				{
 				// % protected region % [Add any admin footer content here] end
 				}
-
-				<Switch>
-					<Route path={`${path}/graphiql`} component={graphiQl} />
-				</Switch>
 			</>
 		);
-	}
-
-	private graphiQLFetcher = (graphQLParams: {}) => {
-		const token = Cookies.get('XSRF-TOKEN');
-		return fetch(`${SERVER_URL}/api/graphql`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-XSRF-TOKEN': token ? token : '',
-			},
-			body: JSON.stringify(graphQLParams),
-		}).then(response => response.json());
 	}
 }

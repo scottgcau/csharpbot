@@ -16,6 +16,8 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Sportstats.Security;
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
@@ -33,9 +35,14 @@ namespace Sportstats.Models
 		/// <param name="reference">The reference to delete entities from</param>
 		/// <param name="models">A list of models of the type of the current object which will have their related data deleted</param>
 		/// <param name="dbContext">The database context that contains the data</param>
+		/// <param name="cancellation">Cancellation token for the operation</param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		int CleanReference<T>(string reference, IEnumerable<T> models, SportstatsDBContext dbContext)
+		Task<int> CleanReference<T>(
+			string reference,
+			IEnumerable<T> models,
+			SportstatsDBContext dbContext,
+			CancellationToken cancellation = default)
 			where T : IOwnerAbstractModel;
 
 		// % protected region % [Add any owner abstract model configuration here] off begin

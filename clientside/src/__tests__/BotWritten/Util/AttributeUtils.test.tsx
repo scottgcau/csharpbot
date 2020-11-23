@@ -37,7 +37,7 @@ const standardBoolTheoryData = [
 describe("Test standardise integer function with different inputs", () => {
 	test.each(standardIntTheoryData)(
 		"given %p input we expect to return %p", (inputString, expectedOutput) => {
-			if (typeof(inputString) == 'string'){
+			if (typeof(inputString) === 'string'){
 				expect(standardiseInteger(inputString)).toEqual(expectedOutput);
 			} else {
 				expect(standardiseInteger(inputString?.query)).toEqual(expectedOutput);
@@ -49,7 +49,7 @@ describe("Test standardise integer function with different inputs", () => {
 describe("Test standardise bool function with different inputs", () => {
 	test.each(standardBoolTheoryData)(
 		"given %p input we expect to return %p", (inputString, expectedOutput) => {
-			if (typeof(inputString) == 'string'){
+			if (typeof(inputString) === 'string'){
 				expect(standardiseBoolean(inputString)).toEqual(expectedOutput);
 			} else {
 				expect(standardiseInteger(inputString?.query)).toEqual(expectedOutput);

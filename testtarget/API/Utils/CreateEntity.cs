@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using APITests.Setup;
-using APITests.Utils;
 using APITests.EntityObjects.Models;
 using RestSharp;
 using Xunit;
@@ -28,6 +27,7 @@ namespace APITests.Utils
 {
 	internal static class CreateEntityUtil
 	{
+		// % protected region % [Customize CreateEntities here] off begin
 		public static void CreateEntities(List<BaseEntity> entityList)
 		{
 			var configure = new StartupTestFixture();
@@ -63,5 +63,6 @@ namespace APITests.Utils
 			//valid ids returned and a valid response
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 		}
+		// % protected region % [Customize CreateEntities here] end
 	}
 }

@@ -25,9 +25,9 @@ export default function validate(seconds: boolean = true) {
 		target[Symbols.validatorMap][key].push('DateTime');
 		target[Symbols.validator].push(
 			(model: Model): Promise<IModelAttributeValidationError | null> => {
-				const format = `YYYY-MM-DD HH:mm${seconds ? ':ss' : null}`;
+				const format = `YYYY-MM-DD HH:mm${seconds ? ':ss' : ''}`;
 				return new Promise((resolve) => {
-					if(!model[key]) {
+					if(model[key] === null || model[key] === undefined) {
 						resolve(null);
 					} else {
 						resolve(

@@ -15,6 +15,8 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as queryString from 'querystring';
+import { convertCaseComparisonToPascalCase } from 'Util/GraphQLUtils';
+import { IWhereCondition, IWhereConditionApi } from 'Views/Components/ModelCollection/ModelQuery';
 
 /**
  * Handles the response from a javascript fetch call
@@ -42,6 +44,24 @@ export function buildUrl(route: string, params?: {[key: string]: string}) {
 	}
 
 	return route;
+}
+
+/**
+ * Formats a collection filter for use with rest endpoints
+ * @param collectionFilters an array of array of IWhereCondition
+ */
+export function formatConditionsForRest<T>(collectionFilters: Array<Array<IWhereCondition<T>>>){
+	return [
+		...collectionFilters.map(andCondition => andCondition.map(orCondition => {
+			if (orCondition.case) {
+				return {
+					...orCondition,
+					case: convertCaseComparisonToPascalCase(orCondition.case),
+					value: [orCondition.value]
+				}
+			}
+			return orCondition as IWhereConditionApi<T>;
+		}))];
 }
 
 // % protected region % [Add any extra fetch utils here] off begin

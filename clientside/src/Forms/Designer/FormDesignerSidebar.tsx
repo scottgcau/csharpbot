@@ -15,7 +15,7 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import classNames from 'classnames';
 import { action, computed } from 'mobx';
 import { observer } from 'mobx-react';
@@ -49,7 +49,8 @@ export class FormDesignerSidebar extends React.Component<{schema: Form, designer
 						<Button
 							labelVisible={false}
 							onClick={this.onContextMenuClick(this.menuId, slide, i)}
-							icon={{icon: 'more-horizontal', iconPos: 'icon-left'}}>
+							icon={{icon: 'more-horizontal', iconPos: 'icon-left'}}
+							className="icon-only">
 							More
 						</Button>
 					</>
@@ -158,7 +159,7 @@ export class FormDesignerSidebar extends React.Component<{schema: Form, designer
 		];
 		return (
 			<div className="slide-builder__list slide-builder__list--view-slide">
-				<ContextMenu location="admin" menuId={this.menuId} actions={contextMenuActions} />
+				<ContextMenu menuId={this.menuId} actions={contextMenuActions} />
 				<AccordionGroup accordions={this.accordionCollection} />
 				<Button
 					display={Display.Text}

@@ -19,11 +19,16 @@ import { Model } from 'Models/Model';
 import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 import { TextArea } from '../../TextArea/TextArea';
 import { IAttributeProps } from './IAttributeProps';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
+// % protected region % [Modify IAttributeTextAreaProps here] off begin
 interface IAttributeTextAreaProps<T extends Model> extends IAttributeProps<T> {
-	onChangeAndBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onChangeAndBlur?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
+// % protected region % [Modify IAttributeTextAreaProps here] end
 
+// % protected region % [Modify AttributeTextArea here] off begin
 class AttributeTextArea<T extends Model> extends React.Component<IAttributeTextAreaProps<T>> {
 	public render() {
 		const { model, options, errors, className, isReadonly, isRequired } = this.props;
@@ -35,8 +40,11 @@ class AttributeTextArea<T extends Model> extends React.Component<IAttributeTextA
 			className={className}
 			isReadOnly = {isReadonly}
 			isRequired={isRequired}
+			onAfterChange = {this.props.onAfterChange}
+			onChangeAndBlur = {this.props.onChangeAndBlur}
 		/>;
 	}
 }
+// % protected region % [Modify AttributeTextArea here] end
 
 export default AttributeTextArea;

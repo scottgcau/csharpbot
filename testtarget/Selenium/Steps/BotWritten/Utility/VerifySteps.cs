@@ -28,12 +28,12 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.Utility
 {
 	[Binding]
-	public sealed class VerifySteps
+	public sealed class VerifySteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private readonly GenericEntityPage _genericEntityPage;
 
-		public VerifySteps(ContextConfiguration contextConfiguration)
+		public VerifySteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			_genericEntityPage = new GenericEntityPage(_contextConfiguration);
@@ -43,7 +43,8 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void AssertRedirectedFromToLoginPage (String entityName)
 		{
 			LoginPage page = new LoginPage (_contextConfiguration);
-			Assert.Equal (page.Url + "?redirect=/admin/" + entityName.ToLower(), _contextConfiguration.WebDriver.Url);
+			var expectedPage = page.Url + "?redirect=/admin/" + entityName.ToLower();
+			_driverWait.Until(x => expectedPage == x.Url);
 		}
 
 		[ObsoleteAttribute]
@@ -51,7 +52,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void ExpectElementByToContainText(SelectorPathType selector, string path, string expectedText)
 		{
 			By elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			var elementText = _contextConfiguration.WebDriver.FindElement(elementBy).Text;
+			var elementText = _driver.FindElement(elementBy).Text;
 			Assert.Equal(expectedText, elementText);
 		}
 
@@ -60,7 +61,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void ExpectAnElementToBePresentBy(SelectorPathType selector, string path, string expectedDate)
 		{
 			By elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			var elementText = _contextConfiguration.WebDriver.FindElement(elementBy).Text;
+			var elementText = _driver.FindElement(elementBy).Text;
 			Assert.Equal(expectedDate, elementText);
 		}
 
@@ -69,7 +70,7 @@ namespace SeleniumTests.Steps.BotWritten.Utility
 		public void ExpectAnElementToBePresentBy(SelectorPathType selector, string path)
 		{
 			By elementBy = WebElementUtils.GetElementAsBy(selector, path);
-			Assert.True(_contextConfiguration.WebDriver.FindElement(elementBy).Displayed);
+			Assert.True(_driver.FindElement(elementBy).Displayed);
 		}
 
 		[StepDefinition("The string (.*) is in each row of the the collection content")]

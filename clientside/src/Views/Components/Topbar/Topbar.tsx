@@ -38,6 +38,7 @@ export default class Topbar extends React.Component<ITopBarProps> {
 		}
 		return <Link to="/admin" className="icon-right icon-arrow-right-up link-rm-txt-dec active">Admin</Link>;
 	}
+	
 
 	public render() {
 		return (

@@ -39,7 +39,8 @@ export interface FormEntityDataAttributes {
 	 * The published form version. This is fetched by default.
 	 */
 	publishedVersion?: FormVersion;
-
+	// % protected region % [Add additional form attributes here] off begin
+	// % protected region % [Add additional form attributes here] end
 }
 
 export interface FormEntityData extends FormEntityDataAttributes {

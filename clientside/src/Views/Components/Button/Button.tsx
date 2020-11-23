@@ -14,16 +14,20 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-import * as React from "react";
+import * as React from 'react';
 import { observer } from 'mobx-react';
 import classNames from 'classnames';
 import { IIconProps } from '../Helpers/Common';
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
 
 export enum Display {
 	Solid = 'btn--solid',
 	Outline = 'btn--outline',
 	Text = 'btn--text',
 	None = '',
+	// % protected region % [Add extra Display literals here] off begin
+	// % protected region % [Add extra Display literals here] end
 }
 
 export enum Colors {
@@ -31,8 +35,10 @@ export enum Colors {
 	Secondary = 'btn--secondary',
 	Warning = 'btn--warning',
 	Error = 'btn--error',
-	Success = "btn--success",
+	Success = 'btn--success',
 	None = '',
+	// % protected region % [Add extra Color literals here] off begin
+	// % protected region % [Add extra Color literals here] end
 }
 
 export enum Sizes {
@@ -42,21 +48,27 @@ export enum Sizes {
 	Large = 'btn--lg',
 	ExtraLarge = 'btn--xlg',
 	None = '',
+	// % protected region % [Add extra Sizes literals here] off begin
+	// % protected region % [Add extra Sizes literals here] end
 }
 
 export enum Widths {
 	auto = 'btn--auto-width',
 	fullWidth = 'btn--full-width',
+	// % protected region % [Add extra widths literals here] off begin
+	// % protected region % [Add extra widths literals here] end
 }
 
 export enum QuickTypes {
 	Primary = 'btn--primary',
 	Secondary = 'btn--secondary',
 	None = '',
+	// % protected region % [Add extra QuickTypes literals here] off begin
+	// % protected region % [Add extra QuickTypes literals here] end
 }
 
 export interface ICbButtonProps {
-	type?: 'submit' | 'reset' | 'button',
+	type?: 'submit' | 'reset' | 'button';
 	display?: Display;
 	colors?: Colors;
 	sizes?: Sizes;
@@ -68,16 +80,23 @@ export interface ICbButtonProps {
 	onClick?: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void);
 	icon?: IIconProps;
 	labelVisible?: false;
+	// % protected region % [Add extra ICbButtonProps fields here] off begin
+	// % protected region % [Add extra ICbButtonProps fields here] end
 }
 
-// Please rename to ComponentButton
 @observer
 export class Button extends React.Component<ICbButtonProps, any> {
-	constructor(props: ICbButtonProps, context?: any) {
-		super(props, context);
+	static defaultProps: Partial<ICbButtonProps> = {
+		colors: Colors.Primary,
+		// % protected region % [Add extra default props here] off begin
+		// % protected region % [Add extra default props here] end
 	}
 
-	public render(){
+	// % protected region % [Add extra methods and fields here] off begin
+	// % protected region % [Add extra methods and fields here] end
+
+	public render() {
+		// % protected region % [Override render here] off begin
 		const icon = this.props.icon ? `btn--icon icon-${this.props.icon.icon} ${this.props.icon.iconPos}` : '';
 		const quickTypes = this.props.quickTypes ? this.props.quickTypes : '';
 		const display = this.props.display ? this.props.display : '';
@@ -85,7 +104,7 @@ export class Button extends React.Component<ICbButtonProps, any> {
 		const sizes = this.props.sizes ? this.props.sizes : '';
 		const widths = this.props.widths ? this.props.widths : '';
 		const className = this.props.className ? this.props.className : '';
-		const {disabled} = this.props;
+		const { disabled } = this.props;
 
 		const clazz = ['btn', icon, quickTypes, display, colors, sizes, widths, className];
 
@@ -105,5 +124,6 @@ export class Button extends React.Component<ICbButtonProps, any> {
 				{labelVisible ? this.props.children : null}
 			</button>
 		);
+		// % protected region % [Override render here] end
 	}
 }

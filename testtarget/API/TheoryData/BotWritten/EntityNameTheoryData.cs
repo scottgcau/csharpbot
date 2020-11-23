@@ -14,8 +14,9 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-
 using Xunit;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace APITests.TheoryData.BotWritten
 {
@@ -23,8 +24,29 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityNamePluralizedTheoryData()
 		{
-			Add("sportentityEntitys");
-			Add("sportentitySubmissionEntitys");
+			// % protected region % [Modify EntityNamePluralizedTheoryData entities here] off begin
+			Add("scheduleEntitys");
+			Add("seasonEntitys");
+			Add("venueEntitys");
+			Add("gameEntitys");
+			Add("sportEntitys");
+			Add("leagueEntitys");
+			Add("teamEntitys");
+			Add("personEntitys");
+			Add("rosterEntitys");
+			Add("rosterassignmentEntitys");
+			Add("scheduleSubmissionEntitys");
+			Add("seasonSubmissionEntitys");
+			Add("venueSubmissionEntitys");
+			Add("gameSubmissionEntitys");
+			Add("sportSubmissionEntitys");
+			Add("leagueSubmissionEntitys");
+			Add("teamSubmissionEntitys");
+			Add("personSubmissionEntitys");
+			Add("rosterSubmissionEntitys");
+			Add("rosterassignmentSubmissionEntitys");
+			Add("rosterTimelineEventsEntitys");
+			// % protected region % [Modify EntityNamePluralizedTheoryData entities here] end
 		}
 
 	}
@@ -33,9 +55,38 @@ namespace APITests.TheoryData.BotWritten
 	{
 		public EntityNameTheoryData()
 		{
-			Add("sportentityEntity");
-			Add("sportentitySubmissionEntity");
+			// % protected region % [Modify EntityNameTheoryData entities here] off begin
+			Add("scheduleEntity");
+			Add("seasonEntity");
+			Add("venueEntity");
+			Add("gameEntity");
+			Add("sportEntity");
+			Add("leagueEntity");
+			Add("teamEntity");
+			Add("personEntity");
+			Add("rosterEntity");
+			Add("rosterassignmentEntity");
+			Add("scheduleSubmissionEntity");
+			Add("seasonSubmissionEntity");
+			Add("venueSubmissionEntity");
+			Add("gameSubmissionEntity");
+			Add("sportSubmissionEntity");
+			Add("leagueSubmissionEntity");
+			Add("teamSubmissionEntity");
+			Add("personSubmissionEntity");
+			Add("rosterSubmissionEntity");
+			Add("rosterassignmentSubmissionEntity");
+			Add("rosterTimelineEventsEntity");
+			// % protected region % [Modify EntityNameTheoryData entities here] end
 		}
+	}
 
+	public class VisitorUnauthorisedEntityNameTheoryData : TheoryData<string>
+	{
+		public VisitorUnauthorisedEntityNameTheoryData()
+		{
+			// % protected region % [Modify EntityNameTheoryData entities here] off begin
+			// % protected region % [Modify EntityNameTheoryData entities here] end
+		}
 	}
 }

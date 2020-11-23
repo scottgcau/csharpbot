@@ -14,7 +14,6 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
-
 using System;
 using System.IO;
 using System.Linq;
@@ -23,64 +22,99 @@ using APITests.Utils;
 using Microsoft.EntityFrameworkCore;
 using APITests.Settings;
 using Microsoft.Extensions.Configuration;
+// % protected region % [Custom imports] off begin
+// % protected region % [Custom imports] end
 
 namespace APITests.Setup
 {
 	public class StartupTestFixture
 	{
 		public string BaseUrl { get; }
+
 		public string TestUsername { get; }
+
 		public string TestPassword { get;}
+
 		public string SuperUsername { get; }
+
 		public string SuperPassword { get; }
+
 		public DbContextOptions<SportstatsDBContext> DbContextOptions {get;}
+
 		public Guid SuperOwnerId { get; private set; }
+
+		public IConfigurationRoot AppSettings { get; }
+
+		public SiteSettings SiteSettings { get; }
+
+		public IConfigurationRoot UserSettings { get; }
+
+		// % protected region % [Add extra class fields here] off begin
+		// % protected region % [Add extra class fields here] end
 
 		public StartupTestFixture()
 		{
-			var appSettingBuilder = new ConfigurationBuilder()
+			// % protected region % [Adjust the appsettings configuration here] off begin
+			AppSettings = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddXmlFile("appsettings.Test.xml", optional: true, reloadOnChange: false);
-			var appSettings = appSettingBuilder.Build();
+				.AddXmlFile("appsettings.Test.xml", optional: true, reloadOnChange: false)
+				.AddEnvironmentVariables()
+				.AddEnvironmentVariables("Sportstats_")
+				.AddEnvironmentVariables($"Sportstats_Test_")
+				.Build();
+			// % protected region % [Adjust the appsettings configuration here] end
 
+			// % protected region % [Adjust the site configuration here] off begin
 			//load in site configuration
 			var siteConfiguration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddIniFile("SiteConfig.ini", optional: true, reloadOnChange: false)
 				.Build();
 
-			var siteSettings = new SiteSettings();
-			siteConfiguration.GetSection("site").Bind(siteSettings);
+			SiteSettings = new SiteSettings();
+			siteConfiguration.GetSection("site").Bind(SiteSettings);
+			// % protected region % [Adjust the site configuration here] end
 
+			// % protected region % [Adjust the user configuration here] off begin
 			//load in the user configurations
-			var userConfiguration = new ConfigurationBuilder()
+			UserSettings = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddIniFile("UserConfig.ini", optional: true, reloadOnChange: false)
 				.Build();
 
 			var superUserSettings = new UserSettings();
 			var testUserSettings = new UserSettings();
-			userConfiguration.GetSection("super").Bind(superUserSettings);
-			userConfiguration.GetSection("test").Bind(testUserSettings);
+			UserSettings.GetSection("super").Bind(superUserSettings);
+			UserSettings.GetSection("test").Bind(testUserSettings);
+			// % protected region % [Adjust the user configuration here] end
 
+			// % protected region % [Adjust the site url and user config here] off begin
 			var baseUrlFromEnvironment = Environment.GetEnvironmentVariable("BASE_URL");
-			BaseUrl = baseUrlFromEnvironment ?? siteSettings.BaseUrl;
+			BaseUrl = baseUrlFromEnvironment ?? SiteSettings.BaseUrl;
 
 			TestUsername = testUserSettings.Username;
 			TestPassword = testUserSettings.Password;
 			SuperUsername = superUserSettings.Username;
 			SuperPassword = superUserSettings.Password;
+			// % protected region % [Adjust the site url and user config here] end
 
-			var dbConnectionString = appSettings["ConnectionStrings:DbConnectionString"];
+			// % protected region % [Adjust the dbcontext settings here] off begin
+			var dbConnectionString = AppSettings["ConnectionStrings:DbConnectionString"];
 			DbContextOptions = new DbContextOptionsBuilder<SportstatsDBContext>()
-				.UseNpgsql(dbConnectionString).Options;
+				.UseNpgsql(dbConnectionString)
+				.Options;
+			// % protected region % [Adjust the dbcontext settings here] end
 
 			PingServer.TestConnection(BaseUrl);
-
+			// % protected region % [Adjust the dbcontext] off begin
 			using (var context = new SportstatsDBContext(DbContextOptions, null, null))
 			{
 				SuperOwnerId = context.Users.First(x => x.UserName == SuperUsername).Id;
 			}
+			// % protected region % [Adjust the dbcontext] end
 		}
+
+		// % protected region % [Add extra methods here] off begin
+		// % protected region % [Add extra methods here] end
 	}
 }

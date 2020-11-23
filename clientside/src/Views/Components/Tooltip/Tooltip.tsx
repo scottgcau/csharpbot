@@ -15,19 +15,28 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
 
 export interface ITooltipProps<T> {
 	id: string;
 	content: React.ReactNode;
+	// % protected region % [Add extra props here] off begin
+	// % protected region % [Add extra props here] end
 }
 
 export class Tooltip<T> extends React.Component<ITooltipProps<T>, any> {
 	public render(){
+		// % protected region % [Override render here] off begin
 		const {id, content} = this.props;
 		return (
 			<div className="tooltip icon-information icon-right" id={id}>
 				<span className="tooltip__content">{content}</span>
 			</div>
 		);
+		// % protected region % [Override render here] end
 	}
+	
+	// % protected region % [Add extra class fields here] off begin
+	// % protected region % [Add extra class fields here] end
 }

@@ -65,15 +65,15 @@ type formResponse = {
 export default class FormVersionCollection extends React.Component<IFormVersionCollectionProps>{
 	@computed
 	private get createTile() {
-		return this.props.showCreateTile 
+		return this.props.showCreateTile
 			? <NewFormVersionTile formName={this.props.formName} formDisplayName={this.props.formDisplayName} />
 			: null;
 	}
 
 	private getFormTile = (form: responseData) => {
-		let currentVersion = form.formVersions == undefined ? undefined : _.maxBy(form.formVersions, 'version');
-		let currentVersionNumber = currentVersion == undefined ? undefined : currentVersion.version;
-		let publishedVersionNumber = form.publishedVersion == undefined ? undefined : form.publishedVersion.version;
+		const currentVersion = !form.formVersions ? undefined : _.maxBy(form.formVersions, 'version');
+		const currentVersionNumber = !currentVersion ? undefined : currentVersion.version;
+		const publishedVersionNumber = !form.publishedVersion ? undefined : form.publishedVersion.version;
 
 		if (form.id != null){
 			return <FormVersionTile

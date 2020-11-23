@@ -21,10 +21,14 @@ using APITests.Setup;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
+// % protected region % [Add any further imports here] off begin
+// % protected region % [Add any further imports here] end
+
 namespace APITests.Utils
 {
-	internal static class ClientXSRF
+	internal static class ClientXsrf
 	{
+		// % protected region % [Customize GetValidClientAndxsrfTokenPair here] off begin
 		public static (RestClient client, string xsrfToken) GetValidClientAndxsrfTokenPair(StartupTestFixture _configure)
 		{
 			//make a new client
@@ -57,7 +61,7 @@ namespace APITests.Utils
 
 			// return the client containing cookies and token
 			return (client, xsrfToken);
-
 		}
+		// % protected region % [Customize GetValidClientAndxsrfTokenPair here] end
 	}
 }

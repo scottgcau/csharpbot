@@ -44,12 +44,12 @@ namespace SeleniumTests.PageObjects.BotWritten.Forms
 		
 		public bool QuestionExists(string question)
 		{
-			return WaitUtils.elementState(driverWait, By.XPath($"//p[contains(text(),'{question}')]"), ElementState.EXISTS );
+			return WaitUtils.elementState(driverWait, By.XPath($"//div[@data-name='{question}']"), ElementState.EXISTS );
 		}
 
 		public void AnswerTextQuestion(string question, string answer)
 		{
-			var input = driver.FindElement(By.XPath($"//input[@placeholder='{question}']"));
+			var input = driver.FindElement(By.XPath($"//div[@data-name='{question}']//input"));
 			input.SendKeys(answer);
 		}
 	}

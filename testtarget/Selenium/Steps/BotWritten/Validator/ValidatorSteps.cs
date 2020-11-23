@@ -28,13 +28,13 @@ using Xunit;
 namespace SeleniumTests.Steps.BotWritten.Validator
 {
 	[Binding]
-	public sealed class ValidatorSteps
+	public sealed class ValidatorSteps  : BaseStepDefinition
 	{
 		private readonly ContextConfiguration _contextConfiguration;
 		private string _entityName;
 		private GenericEntityEditPage _createPage;
 
-		public ValidatorSteps(ContextConfiguration contextConfiguration)
+		public ValidatorSteps(ContextConfiguration contextConfiguration) : base(contextConfiguration)
 		{
 			_contextConfiguration = contextConfiguration;
 			// % protected region % [Add any additional setup options here] off begin

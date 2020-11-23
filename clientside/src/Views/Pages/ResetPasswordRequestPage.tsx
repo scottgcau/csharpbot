@@ -22,6 +22,7 @@ import { Button, Display, Sizes, Colors } from '../Components/Button/Button';
 import { action, observable } from 'mobx';
 import { TextField } from '../Components/TextBox/TextBox';
 import { store } from 'Models/Store';
+import { SERVER_URL } from 'Constants';
 import axios from 'axios';
 import { ButtonGroup, Alignment } from 'Views/Components/Button/ButtonGroup';
 import _ from 'lodash';
@@ -101,7 +102,7 @@ export default class ResetPasswordRequestPage extends React.Component<RouteCompo
 			return;
 		} else {
 			axios.post(
-				'/api/account/reset-password-request',
+				`${SERVER_URL}/api/account/reset-password-request`,
 				{
 					username: this.ResetRequestState.username,
 				})
