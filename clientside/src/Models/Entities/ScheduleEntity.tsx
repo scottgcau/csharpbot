@@ -26,26 +26,24 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsScheduleEntity } from 'Models/Security/Acl/VisitorsScheduleEntity';
+import { SystemuserScheduleEntity } from 'Models/Security/Acl/SystemuserScheduleEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface IScheduleEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface IScheduleEntityAttributes extends IModelAttributes {
 	fullname: string;
 	scheduletype: Enums.scheduletype;
 
-	gamess: Array<Models.GameEntity | Models.IGameEntityAttributes>;
-	seasonId: string;
-	season: Models.SeasonEntity | Models.ISeasonEntityAttributes;
-	formPages: Array<Models.ScheduleEntityFormTileEntity | Models.IScheduleEntityFormTileEntityAttributes>;
+	roundss: Array<Models.RoundEntity | Models.IRoundEntityAttributes>;
+	seasonId?: string;
+	season?: Models.SeasonEntity | Models.ISeasonEntityAttributes;
+	ladderId?: string;
+	ladder?: Models.LadderEntity | Models.ILadderEntityAttributes;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -53,10 +51,11 @@ export interface IScheduleEntityAttributes extends IModelAttributes, FormEntityD
 // % protected region % [Customise your entity metadata here] off begin
 @entity('ScheduleEntity', 'Schedule')
 // % protected region % [Customise your entity metadata here] end
-export default class ScheduleEntity extends Model implements IScheduleEntityAttributes, FormEntityData  {
+export default class ScheduleEntity extends Model implements IScheduleEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsScheduleEntity(),
+		new SystemuserScheduleEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -77,22 +76,6 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'FullName'] off begin
 	/**
 	 * Schedule name
@@ -103,7 +86,7 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 	@CRUD({
 		name: 'FullName',
 		displayType: 'textfield',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -118,7 +101,7 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 	@CRUD({
 		name: 'ScheduleType',
 		displayType: 'enum-combobox',
-		order: 30,
+		order: 20,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -133,68 +116,52 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 
 	@observable
 	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
-
-	@observable
-	@attribute()
-	public publishedVersionId?: string;
-
-	@observable
-	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
-
-	@observable
-	@attribute({isReference: true})
 	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Games'] off begin
-		name: "Gamess",
+		// % protected region % [Modify props to the crud options here for reference 'Rounds'] off begin
+		name: "Roundss",
 		displayType: 'reference-multicombobox',
-		order: 40,
-		referenceTypeFunc: () => Models.GameEntity,
-		disableDefaultOptionRemoval: true,
+		order: 30,
+		referenceTypeFunc: () => Models.RoundEntity,
 		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'gamess',
-			oppositeEntity: () => Models.GameEntity,
+			relationName: 'roundss',
+			oppositeEntity: () => Models.RoundEntity,
 		}),
-		// % protected region % [Modify props to the crud options here for reference 'Games'] end
+		// % protected region % [Modify props to the crud options here for reference 'Rounds'] end
 	})
-	public gamess: Models.GameEntity[] = [];
+	public roundss: Models.RoundEntity[] = [];
 
 	/**
 	 * Season schedules
 	 */
-	@Validators.Required()
 	@observable
 	@attribute()
 	@CRUD({
 		// % protected region % [Modify props to the crud options here for reference 'Season'] off begin
 		name: 'Season',
 		displayType: 'reference-combobox',
-		order: 50,
+		order: 40,
 		referenceTypeFunc: () => Models.SeasonEntity,
 		// % protected region % [Modify props to the crud options here for reference 'Season'] end
 	})
-	public seasonId: string;
+	public seasonId?: string;
 	@observable
 	@attribute({isReference: true})
 	public season: Models.SeasonEntity;
 
 	@observable
-	@attribute({isReference: true})
+	@attribute()
 	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 60,
-		referenceTypeFunc: () => Models.ScheduleEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.ScheduleEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
+		// % protected region % [Modify props to the crud options here for reference 'Ladder'] off begin
+		name: 'Ladder',
+		displayType: 'reference-combobox',
+		order: 50,
+		referenceTypeFunc: () => Models.LadderEntity,
+		// % protected region % [Modify props to the crud options here for reference 'Ladder'] end
 	})
-	public formPages: Models.ScheduleEntityFormTileEntity[] = [];
+	public ladderId?: string;
+	@observable
+	@attribute({isReference: true})
+	public ladder: Models.LadderEntity;
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -226,27 +193,12 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 			if (attributes.scheduletype) {
 				this.scheduletype = attributes.scheduletype;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
-				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
-			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
-			}
-			if (attributes.gamess) {
-				for (const model of attributes.gamess) {
-					if (model instanceof Models.GameEntity) {
-						this.gamess.push(model);
+			if (attributes.roundss) {
+				for (const model of attributes.roundss) {
+					if (model instanceof Models.RoundEntity) {
+						this.roundss.push(model);
 					} else {
-						this.gamess.push(new Models.GameEntity(model));
+						this.roundss.push(new Models.RoundEntity(model));
 					}
 				}
 			}
@@ -261,14 +213,16 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 			} else if (attributes.seasonId !== undefined) {
 				this.seasonId = attributes.seasonId;
 			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.ScheduleEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.ScheduleEntityFormTileEntity(model));
-					}
+			if (attributes.ladder) {
+				if (attributes.ladder instanceof Models.LadderEntity) {
+					this.ladder = attributes.ladder;
+					this.ladderId = attributes.ladder.id;
+				} else {
+					this.ladder = new Models.LadderEntity(attributes.ladder);
+					this.ladderId = this.ladder.id;
 				}
+			} else if (attributes.ladderId !== undefined) {
+				this.ladderId = attributes.ladderId;
 			}
 			// % protected region % [Override assign attributes here] end
 
@@ -283,20 +237,14 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
-		}
-		gamess {
-			${Models.GameEntity.getAttributes().join('\n')}
+		roundss {
+			${Models.RoundEntity.getAttributes().join('\n')}
 		}
 		season {
 			${Models.SeasonEntity.getAttributes().join('\n')}
 		}
-		formPages {
-			${Models.ScheduleEntityFormTileEntity.getAttributes().join('\n')}
+		ladder {
+			${Models.LadderEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -307,8 +255,7 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 	// % protected region % [Customize Save From Crud here] off begin
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
-			gamess: {},
-			formPages: {},
+			roundss: {},
 		};
 		return this.save(
 			relationPath,
@@ -318,6 +265,8 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 						key: 'mergeReferences',
 						graphQlType: '[String]',
 						value: [
+							'roundss',
+							'ladder',
 						]
 					},
 				],
@@ -331,43 +280,8 @@ export default class ScheduleEntity extends Model implements IScheduleEntityAttr
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.ScheduleSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 

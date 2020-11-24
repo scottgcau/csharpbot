@@ -23,10 +23,47 @@ Users of the system and the details related to them.
 
 | Name | Description |
 | ---- | ----
-
+| SystemUser Entity | System users |
 
 ---
 
 
+## SystemUser Entity Details
+
+System users
+
+### Special Attributes
+
+| Name | Description |
+| ---- | ---- |
+| CRUD | Allows for management of data. CRUD stands for create, read, update and delete. |
+| Export | Allows for data to be exported. |
+
+### Attributes
+| Name | Type | Example | Required | Rules | Description |
+| ---- | :----: | :--------: | :-----: | ----- | ----- |
+
+
+
+### Security
+| Group  | Create | Read | Update | Delete |
+| ---- | :----: | :----:  | :----:  | :----:  |
+| Visitors | <i class="fa fa-times"> | <i class="fa fa-check"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Systemuser | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
+
+### Actions
+
+Available actions include,
+
+- Create,
+- Update,
+- Read,
+- Delete,
+- Export
+
+---
+
+
+---
 
 

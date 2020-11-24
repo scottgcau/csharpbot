@@ -26,29 +26,27 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsGameEntity } from 'Models/Security/Acl/VisitorsGameEntity';
+import { SystemuserGameEntity } from 'Models/Security/Acl/SystemuserGameEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface IGameEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface IGameEntityAttributes extends IModelAttributes {
 	datestart: Date;
-	hometeamid: number;
-	awayteamid: number;
+	homepoints: number;
+	awaypoints: number;
+	hometeamid: string;
+	awayteamid: string;
 
+	roundId?: string;
+	round?: Models.RoundEntity | Models.IRoundEntityAttributes;
+	gamerefereess: Array<Models.GamerefereeEntity | Models.IGamerefereeEntityAttributes>;
 	venueId?: string;
 	venue?: Models.VenueEntity | Models.IVenueEntityAttributes;
-	scheduleId: string;
-	schedule: Models.ScheduleEntity | Models.IScheduleEntityAttributes;
-	refereess: Array<Models.PersonEntity | Models.IPersonEntityAttributes>;
-	formPages: Array<Models.GameEntityFormTileEntity | Models.IGameEntityFormTileEntityAttributes>;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -56,10 +54,11 @@ export interface IGameEntityAttributes extends IModelAttributes, FormEntityDataA
 // % protected region % [Customise your entity metadata here] off begin
 @entity('GameEntity', 'Game')
 // % protected region % [Customise your entity metadata here] end
-export default class GameEntity extends Model implements IGameEntityAttributes, FormEntityData  {
+export default class GameEntity extends Model implements IGameEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsGameEntity(),
+		new SystemuserGameEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -80,29 +79,14 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'DateStart'] off begin
+	@Validators.Required()
 	@observable
 	@attribute()
 	@CRUD({
 		name: 'DateStart',
 		displayType: 'datetimepicker',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -111,13 +95,28 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 	public datestart: Date;
 	// % protected region % [Modify props to the crud options here for attribute 'DateStart'] end
 
-	// % protected region % [Modify props to the crud options here for attribute 'HomeTeamId'] off begin
-	@Validators.Required()
+	// % protected region % [Modify props to the crud options here for attribute 'HomePoints'] off begin
 	@Validators.Integer()
 	@observable
 	@attribute()
 	@CRUD({
-		name: 'HomeTeamId',
+		name: 'HomePoints',
+		displayType: 'textfield',
+		order: 20,
+		headerColumn: true,
+		searchable: true,
+		searchFunction: 'equal',
+		searchTransform: AttrUtils.standardiseInteger,
+	})
+	public homepoints: number;
+	// % protected region % [Modify props to the crud options here for attribute 'HomePoints'] end
+
+	// % protected region % [Modify props to the crud options here for attribute 'AwayPoints'] off begin
+	@Validators.Integer()
+	@observable
+	@attribute()
+	@CRUD({
+		name: 'AwayPoints',
 		displayType: 'textfield',
 		order: 30,
 		headerColumn: true,
@@ -125,36 +124,69 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 		searchFunction: 'equal',
 		searchTransform: AttrUtils.standardiseInteger,
 	})
-	public hometeamid: number;
+	public awaypoints: number;
+	// % protected region % [Modify props to the crud options here for attribute 'AwayPoints'] end
+
+	// % protected region % [Modify props to the crud options here for attribute 'HomeTeamId'] off begin
+	@observable
+	@attribute()
+	@CRUD({
+		name: 'HomeTeamId',
+		displayType: 'textfield',
+		order: 40,
+		headerColumn: true,
+		searchable: true,
+		searchFunction: 'like',
+		searchTransform: AttrUtils.standardiseString,
+	})
+	public hometeamid: string;
 	// % protected region % [Modify props to the crud options here for attribute 'HomeTeamId'] end
 
 	// % protected region % [Modify props to the crud options here for attribute 'AwayTeamId'] off begin
-	@Validators.Integer()
 	@observable
 	@attribute()
 	@CRUD({
 		name: 'AwayTeamId',
 		displayType: 'textfield',
-		order: 40,
+		order: 50,
 		headerColumn: true,
 		searchable: true,
-		searchFunction: 'equal',
-		searchTransform: AttrUtils.standardiseInteger,
+		searchFunction: 'like',
+		searchTransform: AttrUtils.standardiseString,
 	})
-	public awayteamid: number;
+	public awayteamid: string;
 	// % protected region % [Modify props to the crud options here for attribute 'AwayTeamId'] end
 
 	@observable
-	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
-
-	@observable
 	@attribute()
-	public publishedVersionId?: string;
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'Round'] off begin
+		name: 'Round',
+		displayType: 'reference-combobox',
+		order: 60,
+		referenceTypeFunc: () => Models.RoundEntity,
+		// % protected region % [Modify props to the crud options here for reference 'Round'] end
+	})
+	public roundId?: string;
+	@observable
+	@attribute({isReference: true})
+	public round: Models.RoundEntity;
 
 	@observable
 	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'GameReferees'] off begin
+		name: "GameRefereess",
+		displayType: 'reference-multicombobox',
+		order: 70,
+		referenceTypeFunc: () => Models.GamerefereeEntity,
+		referenceResolveFunction: makeFetchOneToManyFunc({
+			relationName: 'gamerefereess',
+			oppositeEntity: () => Models.GamerefereeEntity,
+		}),
+		// % protected region % [Modify props to the crud options here for reference 'GameReferees'] end
+	})
+	public gamerefereess: Models.GamerefereeEntity[] = [];
 
 	@observable
 	@attribute()
@@ -162,7 +194,7 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 		// % protected region % [Modify props to the crud options here for reference 'Venue'] off begin
 		name: 'Venue',
 		displayType: 'reference-combobox',
-		order: 50,
+		order: 80,
 		referenceTypeFunc: () => Models.VenueEntity,
 		// % protected region % [Modify props to the crud options here for reference 'Venue'] end
 	})
@@ -170,55 +202,6 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 	@observable
 	@attribute({isReference: true})
 	public venue: Models.VenueEntity;
-
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Schedule'] off begin
-		name: 'Schedule',
-		displayType: 'reference-combobox',
-		order: 60,
-		referenceTypeFunc: () => Models.ScheduleEntity,
-		// % protected region % [Modify props to the crud options here for reference 'Schedule'] end
-	})
-	public scheduleId: string;
-	@observable
-	@attribute({isReference: true})
-	public schedule: Models.ScheduleEntity;
-
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Referees'] off begin
-		name: "Refereess",
-		displayType: 'reference-multicombobox',
-		order: 70,
-		referenceTypeFunc: () => Models.PersonEntity,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'refereess',
-			oppositeEntity: () => Models.PersonEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Referees'] end
-	})
-	public refereess: Models.PersonEntity[] = [];
-
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 80,
-		referenceTypeFunc: () => Models.GameEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.GameEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
-	})
-	public formPages: Models.GameEntityFormTileEntity[] = [];
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -247,26 +230,37 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 			if (attributes.datestart) {
 				this.datestart = moment(attributes.datestart).toDate();
 			}
+			if (attributes.homepoints) {
+				this.homepoints = attributes.homepoints;
+			}
+			if (attributes.awaypoints) {
+				this.awaypoints = attributes.awaypoints;
+			}
 			if (attributes.hometeamid) {
 				this.hometeamid = attributes.hometeamid;
 			}
 			if (attributes.awayteamid) {
 				this.awayteamid = attributes.awayteamid;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
+			if (attributes.round) {
+				if (attributes.round instanceof Models.RoundEntity) {
+					this.round = attributes.round;
+					this.roundId = attributes.round.id;
+				} else {
+					this.round = new Models.RoundEntity(attributes.round);
+					this.roundId = this.round.id;
 				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
+			} else if (attributes.roundId !== undefined) {
+				this.roundId = attributes.roundId;
 			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
+			if (attributes.gamerefereess) {
+				for (const model of attributes.gamerefereess) {
+					if (model instanceof Models.GamerefereeEntity) {
+						this.gamerefereess.push(model);
+					} else {
+						this.gamerefereess.push(new Models.GamerefereeEntity(model));
+					}
+				}
 			}
 			if (attributes.venue) {
 				if (attributes.venue instanceof Models.VenueEntity) {
@@ -278,35 +272,6 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 				}
 			} else if (attributes.venueId !== undefined) {
 				this.venueId = attributes.venueId;
-			}
-			if (attributes.schedule) {
-				if (attributes.schedule instanceof Models.ScheduleEntity) {
-					this.schedule = attributes.schedule;
-					this.scheduleId = attributes.schedule.id;
-				} else {
-					this.schedule = new Models.ScheduleEntity(attributes.schedule);
-					this.scheduleId = this.schedule.id;
-				}
-			} else if (attributes.scheduleId !== undefined) {
-				this.scheduleId = attributes.scheduleId;
-			}
-			if (attributes.refereess) {
-				for (const model of attributes.refereess) {
-					if (model instanceof Models.PersonEntity) {
-						this.refereess.push(model);
-					} else {
-						this.refereess.push(new Models.PersonEntity(model));
-					}
-				}
-			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.GameEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.GameEntityFormTileEntity(model));
-					}
-				}
 			}
 			// % protected region % [Override assign attributes here] end
 
@@ -321,23 +286,14 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
+		round {
+			${Models.RoundEntity.getAttributes().join('\n')}
+		}
+		gamerefereess {
+			${Models.GamerefereeEntity.getAttributes().join('\n')}
 		}
 		venue {
 			${Models.VenueEntity.getAttributes().join('\n')}
-		}
-		schedule {
-			${Models.ScheduleEntity.getAttributes().join('\n')}
-		}
-		refereess {
-			${Models.PersonEntity.getAttributes().join('\n')}
-		}
-		formPages {
-			${Models.GameEntityFormTileEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -348,8 +304,7 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 	// % protected region % [Customize Save From Crud here] off begin
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
-			refereess: {},
-			formPages: {},
+			gamerefereess: {},
 		};
 		return this.save(
 			relationPath,
@@ -359,7 +314,7 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 						key: 'mergeReferences',
 						graphQlType: '[String]',
 						value: [
-							'refereess',
+							'gamerefereess',
 						]
 					},
 				],
@@ -373,43 +328,8 @@ export default class GameEntity extends Model implements IGameEntityAttributes, 
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.GameSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 

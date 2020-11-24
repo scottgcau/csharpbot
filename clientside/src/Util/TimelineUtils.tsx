@@ -94,7 +94,7 @@ export const getTimelineEntityFromName = (modelName: string | undefined) => {
 	if (!modelName) {
 		return undefined;
 	}
-	switch (modelName.toLowerCase()) {
+	switch (modelName.toLowerCase().replace(" ", "")) {
 		case 'roster':
 			return Models.RosterEntity;
 		default:
@@ -122,7 +122,16 @@ export const getEventEntityNameFromTimelineEntity = (model: IModelType<Model & T
 export const getTimelineQueryWhereConditions = (timelineFilter: ITimelineFilter): Array<Array<IWhereCondition<any>>> => {
 	const eventEntityModel = getTimelineEventEntity(timelineFilter.selectedTimelineEntity);
 	if (eventEntityModel) {
+
+		// Create initial search conditions coupled to base model
 		let searchConditions = new eventEntityModel().getSearchConditions(timelineFilter.searchTerm) ?? [];
+		
+		// Add initial search conditions passed in from component
+		if (timelineFilter.initialSearchConditions && timelineFilter.initialSearchConditions.length > 0) {
+			searchConditions.push(timelineFilter.initialSearchConditions);
+		}
+
+		// Add search conditions from filters
 		if (timelineFilter.startDate) {
 			searchConditions.push([{ comparison: 'greaterThanOrEqual', path: 'created', value: [moment(timelineFilter.startDate).format('YYYY-MM-DD HH:mm:ss')]}])
 		} if (timelineFilter.endDate) {
@@ -132,6 +141,7 @@ export const getTimelineQueryWhereConditions = (timelineFilter: ITimelineFilter)
 		} if (timelineFilter.instanceIds.length > 0) {
 			searchConditions.push(timelineFilter.instanceIds.map(id => { return { comparison: "equal", path: 'entityId', value: [id] } }));
 		}
+
 		return searchConditions;
 	}
 	return [];

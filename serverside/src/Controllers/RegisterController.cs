@@ -49,6 +49,22 @@ namespace Sportstats.Controllers
 			_logger = logger;
 		}
 
+		// % protected region % [The default register function for SystemUser Entity] off begin
+		/// <summary>
+		/// Registers a new SystemUser Entity user
+		/// </summary>
+		/// <param name="registrationModel">The fields to set on the user</param>
+		/// <returns>A user result on success or a list of errors on failure</returns>
+		[HttpPost]
+		[Route("systemuser-entity")]
+		[Authorize(Roles = "Visitors,Systemuser,Super Administrators")]
+		public async Task<IActionResult> RegisterSystemuserEntity([FromBody] SystemuserEntityRegistrationModel registrationModel)
+		{
+			var model = registrationModel.ToModel();
+			return await Register(model, registrationModel.Password, registrationModel.Groups);
+		}
+		// % protected region % [The default register function for SystemUser Entity] end
+
 
 		// % protected region % [Customise confirm email here] off begin
 		[HttpPost]

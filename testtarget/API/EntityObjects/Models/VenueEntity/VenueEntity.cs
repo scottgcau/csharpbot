@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class VenueEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// 
 		public String Fullname { get; set; }
 		// 
@@ -47,13 +45,6 @@ namespace APITests.EntityObjects.Models
 		/// <see cref="Sportstats.Models.Games"/>
 		public List<Guid> GamesIds { get; set; }
 		public ICollection<GameEntity> Gamess { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<VenueEntityFormTileEntity> FormPages { get; set; }
 
 
 		public VenueEntity()
@@ -97,11 +88,6 @@ namespace APITests.EntityObjects.Models
 
 		private void InitialiseAttributes()
 		{
-			Attributes.Add(new Attribute
-			{
-				Name = "Name",
-				IsRequired = true
-			});
 			Attributes.Add(new Attribute
 			{
 				Name = "Fullname",
@@ -196,7 +182,6 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining fullname,
 						["shortname"] = Shortname,
 						["address"] = Address,
@@ -213,7 +198,6 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining shortname,
 						["fullname"] = Fullname,
 						["address"] = Address,
@@ -230,7 +214,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"fullname" , Fullname},
 				{"shortname" , Shortname},
 				{"address" , Address},
@@ -247,7 +230,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["fullname"] = Fullname.ToString(),
 				["shortname"] = Shortname.ToString(),
 				["address"] = Address.ToString(),
@@ -310,7 +292,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Fullname
 			// not defining Shortname
 		}
@@ -354,7 +335,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Fullname = DataUtils.RandString();
 			Shortname = DataUtils.RandString();
 			Address = DataUtils.RandString();
@@ -370,7 +350,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var venueEntity = new VenueEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Fullname = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 

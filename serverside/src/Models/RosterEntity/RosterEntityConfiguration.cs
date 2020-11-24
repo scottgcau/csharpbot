@@ -26,47 +26,38 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
-			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
-
 			// % protected region % [Override Rosterassignmentss Roster configuration here] off begin
 			builder
 				.HasMany(e => e.Rosterassignmentss)
 				.WithOne(e => e.Roster)
 				.OnDelete(DeleteBehavior.Cascade);
 			// % protected region % [Override Rosterassignmentss Roster configuration here] end
-			// % protected region % [Override Season Rosterss configuration here] off begin
-			builder
-				.HasOne(e => e.Season)
-				.WithMany(e => e.Rosterss)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override Season Rosterss configuration here] end
+
 			// % protected region % [Override Team Rosterss configuration here] off begin
 			builder
 				.HasOne(e => e.Team)
 				.WithMany(e => e.Rosterss)
 				.OnDelete(DeleteBehavior.Restrict);
 			// % protected region % [Override Team Rosterss configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
+
+			// % protected region % [Override Season Rosterss configuration here] off begin
 			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
+				.HasOne(e => e.Season)
+				.WithMany(e => e.Rosterss)
 				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+			// % protected region % [Override Season Rosterss configuration here] end
+
 			// % protected region % [Override LoggedEvents Entity configuration here] off begin
 			builder
 				.HasMany(e => e.LoggedEvents)
 				.WithOne(e => e.Entity)
 				.OnDelete(DeleteBehavior.SetNull);
 			// % protected region % [Override LoggedEvents Entity configuration here] end
+
+			// % protected region % [Override Fullname index configuration here] off begin
+			builder.HasIndex(e => e.Fullname);
+			// % protected region % [Override Fullname index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

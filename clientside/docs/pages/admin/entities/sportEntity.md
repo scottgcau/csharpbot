@@ -30,13 +30,14 @@ Details regarding a given SportEntity.
 | Name | Type | Example | Required | Rules | Description |
 | ---- | :----: | :--------: | :-----: | ----- | ----- |
 | Order | NUMBER | 42 | <i class="fa fa-times"> | <ul></ul> | Order | 
-| Fullname | STRING | Sally | <i class="fa fa-times"> | <ul></ul> |  | 
+| Fullname | STRING | Sally | <i class="fa fa-check"> | <ul><li>Attribute must be entered.</li></ul> |  | 
 
 
 ## Security
 | Group  | Create | Read | Update | Delete |
 | ---- | :----: | :----:  | :----:  | :----:  |
-| Visitors | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
+| Visitors | <i class="fa fa-times"> | <i class="fa fa-check"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Systemuser | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
 
 ## List of Records
 

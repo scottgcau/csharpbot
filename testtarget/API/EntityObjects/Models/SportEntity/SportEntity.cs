@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class SportEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// Order
 		public int? Order { get; set; }
 		// 
@@ -41,13 +39,6 @@ namespace APITests.EntityObjects.Models
 		/// <see cref="Sportstats.Models.Leagues"/>
 		public List<Guid> LeaguesIds { get; set; }
 		public ICollection<LeagueEntity> Leaguess { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<SportEntityFormTileEntity> FormPages { get; set; }
 
 
 		public SportEntity()
@@ -93,18 +84,13 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Order",
 				IsRequired = false
 			});
 			Attributes.Add(new Attribute
 			{
 				Name = "Fullname",
-				IsRequired = false
+				IsRequired = true
 			});
 		}
 
@@ -125,11 +111,23 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (attribute)
 			{
+				case "FullName":
+					return GetInvalidFullname(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
 		}
 
+		private static string GetInvalidFullname(string validator)
+		{
+			switch (validator)
+			{
+					case "Required":
+						return "";
+				default:
+					throw new Exception($"Cannot find validator {validator} for attribute Fullname");
+			}
+		}
 
 
 		/// <summary>
@@ -142,6 +140,19 @@ namespace APITests.EntityObjects.Models
 			return new List<(List<string> expectedError, RestSharp.JsonObject jsonObject)>
 			{
 
+			(
+				new List<string>
+				{
+					"The Fullname field is required.",
+				},
+
+				new RestSharp.JsonObject
+				{
+						["id"] = Id,
+						// not defining fullname,
+						["order"] = Order.ToString(),
+				}
+			),
 
 			};
 		}
@@ -151,7 +162,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"order" , Order.ToString()},
 				{"fullname" , Fullname},
 			};
@@ -165,7 +175,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["order"] = Order,
 				["fullname"] = Fullname.ToString(),
 			};
@@ -225,7 +234,7 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
+			// not defining Fullname
 		}
 
 		/// <summary>
@@ -247,6 +256,7 @@ namespace APITests.EntityObjects.Models
 		{
 			var sportEntity = new SportEntity
 			{
+				// not defining Fullname
 			};
 			return sportEntity;
 		}
@@ -265,7 +275,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Order = DataUtils.RandInt();
 			Fullname = DataUtils.RandString();
 			// % protected region % [Override generated entity attributes here] end
@@ -278,7 +287,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var sportEntity = new SportEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Order = DataUtils.RandInt(),
 

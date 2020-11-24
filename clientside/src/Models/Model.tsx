@@ -250,6 +250,7 @@ export class Model implements IModelAttributes {
 	@observable
 	public id: string;
 
+	// % protected region % [Customize time format here] off begin
 	@observable
 	private _created: Date;
 	@computed
@@ -277,6 +278,7 @@ export class Model implements IModelAttributes {
 			this._modified = date;
 		}
 	}
+	// % protected region % [Customize time format here] end
 
 	// % protected region % [Add any custom attributes to the abstract model here] off begin
 	// % protected region % [Add any custom attributes to the abstract model here] end

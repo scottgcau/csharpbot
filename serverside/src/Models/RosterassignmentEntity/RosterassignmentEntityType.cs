@@ -43,35 +43,12 @@ namespace Sportstats.Models
 			Field(o => o.Datefrom, type: typeof(DateTimeGraphType)).Description(@"Date assigned to the roster");
 			Field(o => o.Dateto, type: typeof(DateTimeGraphType)).Description(@"Date left the roster");
 			Field(o => o.Roletype, type: typeof(EnumerationGraphType<Roletype>));
-			Field(o => o.Name, type: typeof(StringGraphType));
-			Field(o => o.PublishedVersionId, type: typeof(IdGraphType));
 			// % protected region % [Add any extra GraphQL fields here] off begin
 			// % protected region % [Add any extra GraphQL fields here] end
 
 			// Add entity references
-			AddNavigationListField("FormVersions", context => context.Source.FormVersions);
-			AddNavigationConnectionField("FormVersionConnection", context => context.Source.FormVersions);
-			AddNavigationField("PublishedVersion", context => context.Source.PublishedVersion);
-
-			Field(o => o.RosterId, type: typeof(IdGraphType));
 			Field(o => o.PersonId, type: typeof(IdGraphType));
-
-			// GraphQL reference to entity RosterEntity via reference Roster
-			AddNavigationField("Roster", context => {
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<RosterEntity>(
-					graphQlContext.IdentityService,
-					graphQlContext.UserManager,
-					graphQlContext.DbContext,
-					graphQlContext.ServiceProvider);
-				var value = context.Source.Roster;
-
-				if (value != null)
-				{
-					return new List<RosterEntity> {value}.All(filter.Compile()) ? value : null;
-				}
-				return null;
-			});
+			Field(o => o.RosterId, type: typeof(IdGraphType));
 
 			// GraphQL reference to entity PersonEntity via reference Person
 			AddNavigationField("Person", context => {
@@ -90,15 +67,22 @@ namespace Sportstats.Models
 				return null;
 			});
 
-			// GraphQL reference to entity RosterassignmentEntityFormTileEntity via reference FormPage
-			IEnumerable<RosterassignmentEntityFormTileEntity> FormPagesResolveFunction(ResolveFieldContext<RosterassignmentEntity> context)
-			{
+			// GraphQL reference to entity RosterEntity via reference Roster
+			AddNavigationField("Roster", context => {
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<RosterassignmentEntityFormTileEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
-				return context.Source.FormPages.Where(filter.Compile());
-			}
-			AddNavigationListField("FormPages", (Func<ResolveFieldContext<RosterassignmentEntity>, IEnumerable<RosterassignmentEntityFormTileEntity>>) FormPagesResolveFunction);
-			AddNavigationConnectionField("FormPagesConnection", FormPagesResolveFunction);
+				var filter = SecurityService.CreateReadSecurityFilter<RosterEntity>(
+					graphQlContext.IdentityService,
+					graphQlContext.UserManager,
+					graphQlContext.DbContext,
+					graphQlContext.ServiceProvider);
+				var value = context.Source.Roster;
+
+				if (value != null)
+				{
+					return new List<RosterEntity> {value}.All(filter.Compile()) ? value : null;
+				}
+				return null;
+			});
 
 			// % protected region % [Add any extra GraphQL references here] off begin
 			// % protected region % [Add any extra GraphQL references here] end
@@ -122,18 +106,14 @@ namespace Sportstats.Models
 			Field<DateTimeGraphType>("Datefrom").Description = @"Date assigned to the roster";
 			Field<DateTimeGraphType>("Dateto").Description = @"Date left the roster";
 			Field<EnumerationGraphType<Roletype>>("Roletype");
-			Field<StringGraphType>("Name");
-			Field<IdGraphType>("PublishedVersionId").Description = "The current published version for the form";
-			Field<ListGraphType<RosterassignmentEntityFormVersionInputType>>("FormVersions").Description = "The versions for this form";
 
 			// Add entity references
-			Field<IdGraphType>("RosterId");
 			Field<IdGraphType>("PersonId");
+			Field<IdGraphType>("RosterId");
 
 			// Add references to foreign models to allow nested creation
-			Field<RosterEntityInputType>("Roster");
 			Field<PersonEntityInputType>("Person");
-			Field<ListGraphType<RosterassignmentEntityFormTileEntityInputType>>("FormPages");
+			Field<RosterEntityInputType>("Roster");
 
 			// % protected region % [Add any extra GraphQL input fields here] off begin
 			// % protected region % [Add any extra GraphQL input fields here] end

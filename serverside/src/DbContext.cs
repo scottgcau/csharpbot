@@ -41,51 +41,29 @@ namespace Sportstats.Models {
 		// % protected region % [Add any custom class variables] end
 
 		public DbSet<UploadFile> Files { get; set; }
+		public DbSet<LadderEntity> LadderEntity { get; set; }
 		public DbSet<ScheduleEntity> ScheduleEntity { get; set; }
-		public DbSet<ScheduleEntityFormVersion> ScheduleEntityFormVersion { get; set; }
-		public DbSet<SeasonEntity> SeasonEntity { get; set; }
-		public DbSet<SeasonEntityFormVersion> SeasonEntityFormVersion { get; set; }
-		public DbSet<VenueEntity> VenueEntity { get; set; }
-		public DbSet<VenueEntityFormVersion> VenueEntityFormVersion { get; set; }
+		public DbSet<LaddereliminationEntity> LaddereliminationEntity { get; set; }
+		public DbSet<LadderwinlossEntity> LadderwinlossEntity { get; set; }
+		public DbSet<RoundEntity> RoundEntity { get; set; }
 		public DbSet<GameEntity> GameEntity { get; set; }
-		public DbSet<GameEntityFormVersion> GameEntityFormVersion { get; set; }
-		public DbSet<SportEntity> SportEntity { get; set; }
-		public DbSet<SportEntityFormVersion> SportEntityFormVersion { get; set; }
-		public DbSet<LeagueEntity> LeagueEntity { get; set; }
-		public DbSet<LeagueEntityFormVersion> LeagueEntityFormVersion { get; set; }
+		public DbSet<DivisionEntity> DivisionEntity { get; set; }
+		public DbSet<VenueEntity> VenueEntity { get; set; }
 		public DbSet<TeamEntity> TeamEntity { get; set; }
-		public DbSet<TeamEntityFormVersion> TeamEntityFormVersion { get; set; }
+		public DbSet<GamerefereeEntity> GamerefereeEntity { get; set; }
+		public DbSet<SeasonEntity> SeasonEntity { get; set; }
 		public DbSet<PersonEntity> PersonEntity { get; set; }
-		public DbSet<PersonEntityFormVersion> PersonEntityFormVersion { get; set; }
+		public DbSet<SystemuserEntity> SystemuserEntity { get; set; }
+		public DbSet<SportEntity> SportEntity { get; set; }
+		public DbSet<LeagueEntity> LeagueEntity { get; set; }
 		public DbSet<RosterEntity> RosterEntity { get; set; }
-		public DbSet<RosterEntityFormVersion> RosterEntityFormVersion { get; set; }
 		public DbSet<RosterassignmentEntity> RosterassignmentEntity { get; set; }
-		public DbSet<RosterassignmentEntityFormVersion> RosterassignmentEntityFormVersion { get; set; }
-		public DbSet<ScheduleSubmissionEntity> ScheduleSubmissionEntity { get; set; }
-		public DbSet<SeasonSubmissionEntity> SeasonSubmissionEntity { get; set; }
-		public DbSet<VenueSubmissionEntity> VenueSubmissionEntity { get; set; }
-		public DbSet<GameSubmissionEntity> GameSubmissionEntity { get; set; }
-		public DbSet<SportSubmissionEntity> SportSubmissionEntity { get; set; }
-		public DbSet<LeagueSubmissionEntity> LeagueSubmissionEntity { get; set; }
-		public DbSet<TeamSubmissionEntity> TeamSubmissionEntity { get; set; }
-		public DbSet<PersonSubmissionEntity> PersonSubmissionEntity { get; set; }
-		public DbSet<RosterSubmissionEntity> RosterSubmissionEntity { get; set; }
-		public DbSet<RosterassignmentSubmissionEntity> RosterassignmentSubmissionEntity { get; set; }
-		public DbSet<ScheduleEntityFormTileEntity> ScheduleEntityFormTileEntity { get; set; }
-		public DbSet<SeasonEntityFormTileEntity> SeasonEntityFormTileEntity { get; set; }
-		public DbSet<VenueEntityFormTileEntity> VenueEntityFormTileEntity { get; set; }
-		public DbSet<GameEntityFormTileEntity> GameEntityFormTileEntity { get; set; }
-		public DbSet<SportEntityFormTileEntity> SportEntityFormTileEntity { get; set; }
-		public DbSet<LeagueEntityFormTileEntity> LeagueEntityFormTileEntity { get; set; }
-		public DbSet<TeamEntityFormTileEntity> TeamEntityFormTileEntity { get; set; }
-		public DbSet<PersonEntityFormTileEntity> PersonEntityFormTileEntity { get; set; }
-		public DbSet<RosterEntityFormTileEntity> RosterEntityFormTileEntity { get; set; }
-		public DbSet<RosterassignmentEntityFormTileEntity> RosterassignmentEntityFormTileEntity { get; set; }
 		public DbSet<RosterTimelineEventsEntity> RosterTimelineEventsEntity { get; set; }
 		public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
 		static SportstatsDBContext()
 		{
+			NpgsqlConnection.GlobalTypeMapper.MapEnum<Laddertype>();
 			NpgsqlConnection.GlobalTypeMapper.MapEnum<Scheduletype>();
 			NpgsqlConnection.GlobalTypeMapper.MapEnum<Roletype>();
 			// % protected region % [Add extra methods to the static constructor here] off begin
@@ -113,40 +91,28 @@ namespace Sportstats.Models {
 		{
 			base.OnModelCreating(modelBuilder);
 
+			modelBuilder.HasPostgresEnum<Laddertype>();
 			modelBuilder.HasPostgresEnum<Scheduletype>();
 			modelBuilder.HasPostgresEnum<Roletype>();
 			// Configure models from the entity diagram
 			modelBuilder.HasPostgresExtension("uuid-ossp");
+			modelBuilder.ApplyConfiguration(new LadderEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new ScheduleEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new SeasonEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new VenueEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new LaddereliminationEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new LadderwinlossEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new RoundEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new GameEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new DivisionEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new VenueEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new TeamEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new GamerefereeEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new SeasonEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new PersonEntityConfiguration());
+			modelBuilder.ApplyConfiguration(new SystemuserEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new SportEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new LeagueEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new TeamEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new PersonEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new RosterEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new RosterassignmentEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new ScheduleSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new SeasonSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new VenueSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new GameSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new SportSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new LeagueSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new TeamSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new PersonSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new RosterSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new RosterassignmentSubmissionEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new ScheduleEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new SeasonEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new VenueEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new GameEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new SportEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new LeagueEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new TeamEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new PersonEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new RosterEntityFormTileEntityConfiguration());
-			modelBuilder.ApplyConfiguration(new RosterassignmentEntityFormTileEntityConfiguration());
 			modelBuilder.ApplyConfiguration(new RosterTimelineEventsEntityConfiguration());
 
 			// Configure the user and group models

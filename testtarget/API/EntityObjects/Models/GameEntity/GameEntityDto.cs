@@ -29,27 +29,29 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public DateTime? Datestart { get; set; }
-		public int? Hometeamid { get; set; }
-		public int? Awayteamid { get; set; }
+		public int? Homepoints { get; set; }
+		public int? Awaypoints { get; set; }
+		public String Hometeamid { get; set; }
+		public String Awayteamid { get; set; }
 
+		public Guid? RoundId { get; set; }
+		public ICollection<GamerefereeEntity> Gamerefereess { get; set; }
 		public Guid? VenueId { get; set; }
-		public Guid ScheduleId { get; set; }
-		public ICollection<PersonEntity> Refereess { get; set; }
 
 		public GameEntityDto(GameEntity model)
 		{
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Datestart = model.Datestart;
+			Homepoints = model.Homepoints;
+			Awaypoints = model.Awaypoints;
 			Hometeamid = model.Hometeamid;
 			Awayteamid = model.Awayteamid;
+			RoundId = model.RoundId;
+			Gamerefereess = model.Gamerefereess;
 			VenueId = model.VenueId;
-			ScheduleId = model.ScheduleId;
-			Refereess = model.Refereess;
 		}
 
 		public GameEntityDto(ServersideGameEntity model)
@@ -57,13 +59,14 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Datestart = model.Datestart;
+			Homepoints = model.Homepoints;
+			Awaypoints = model.Awaypoints;
 			Hometeamid = model.Hometeamid;
 			Awayteamid = model.Awayteamid;
+			RoundId = model.RoundId;
+			Gamerefereess = model.Gamerefereess.Select(GamerefereeEntityDto.Convert).ToList();
 			VenueId = model.VenueId;
-			ScheduleId = model.ScheduleId;
-			Refereess = model.Refereess.Select(PersonEntityDto.Convert).ToList();
 		}
 
 		public GameEntity GetTesttargetGameEntity()
@@ -73,13 +76,14 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Datestart = Datestart,
+				Homepoints = Homepoints,
+				Awaypoints = Awaypoints,
 				Hometeamid = Hometeamid,
 				Awayteamid = Awayteamid,
+				RoundId = RoundId,
+				Gamerefereess = Gamerefereess,
 				VenueId = VenueId,
-				ScheduleId = ScheduleId,
-				Refereess = Refereess,
 			};
 		}
 
@@ -90,13 +94,14 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Datestart = Datestart,
+				Homepoints = Homepoints,
+				Awaypoints = Awaypoints,
 				Hometeamid = Hometeamid,
 				Awayteamid = Awayteamid,
+				RoundId = RoundId,
+				Gamerefereess = Gamerefereess?.Select(GamerefereeEntityDto.Convert).ToList(),
 				VenueId = VenueId,
-				ScheduleId = ScheduleId,
-				Refereess = Refereess?.Select(PersonEntityDto.Convert).ToList(),
 			};
 		}
 

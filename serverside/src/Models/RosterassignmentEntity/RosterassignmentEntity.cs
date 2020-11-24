@@ -45,10 +45,6 @@ namespace Sportstats.Models {
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
 
-		[Required]
-		[EntityAttribute]
-		public string Name { get; set; }
-
 		/// <summary>
 		/// Date assigned to the roster
 		/// </summary>
@@ -90,25 +86,21 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsRosterassignmentEntity(),
+			new SystemuserRosterassignmentEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
 
+		// % protected region % [Customise Person here] off begin
 		/// <summary>
-		/// Reference to the versions for this form
+		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.RosterassignmentEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(RosterassignmentEntityFormVersion))]
-		public ICollection<RosterassignmentEntityFormVersion> FormVersions { get; set; }
-
-		/// <summary>
-		/// The current published version for the form
-		/// </summary>
-		/// <see cref="Sportstats.Models.RosterassignmentEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(RosterassignmentEntityFormVersion))]
-		public RosterassignmentEntityFormVersion PublishedVersion { get; set; }
+		/// <see cref="Sportstats.Models.PersonEntity"/>
+		public Guid? PersonId { get; set; }
+		[EntityForeignKey("Person", "Rosterassignmentss", false, typeof(PersonEntity))]
+		public PersonEntity Person { get; set; }
+		// % protected region % [Customise Person here] end
 
 		// % protected region % [Customise Roster here] off begin
 		/// <summary>
@@ -120,31 +112,15 @@ namespace Sportstats.Models {
 		public RosterEntity Roster { get; set; }
 		// % protected region % [Customise Roster here] end
 
-		// % protected region % [Customise Person here] off begin
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.PersonEntity"/>
-		public Guid PersonId { get; set; }
-		[EntityForeignKey("Person", "Rosterassignmentss", true, typeof(PersonEntity))]
-		public PersonEntity Person { get; set; }
-		// % protected region % [Customise Person here] end
-
-		// % protected region % [Customise FormPages here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.RosterassignmentEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(RosterassignmentEntityFormTileEntity))]
-		public ICollection<RosterassignmentEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
-
 		public async Task BeforeSave(
 			EntityState operation,
 			SportstatsDBContext dbContext,
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -156,6 +132,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}

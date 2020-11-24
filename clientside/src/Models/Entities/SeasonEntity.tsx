@@ -26,29 +26,26 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsSeasonEntity } from 'Models/Security/Acl/VisitorsSeasonEntity';
+import { SystemuserSeasonEntity } from 'Models/Security/Acl/SystemuserSeasonEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface ISeasonEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface ISeasonEntityAttributes extends IModelAttributes {
 	startdate: Date;
 	enddate: Date;
 	fullname: string;
 	shortname: string;
 
+	divisionss: Array<Models.DivisionEntity | Models.IDivisionEntityAttributes>;
+	leagueId?: string;
+	league?: Models.LeagueEntity | Models.ILeagueEntityAttributes;
 	rosterss: Array<Models.RosterEntity | Models.IRosterEntityAttributes>;
 	scheduless: Array<Models.ScheduleEntity | Models.IScheduleEntityAttributes>;
-	leagueId: string;
-	league: Models.LeagueEntity | Models.ILeagueEntityAttributes;
-	formPages: Array<Models.SeasonEntityFormTileEntity | Models.ISeasonEntityFormTileEntityAttributes>;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -56,10 +53,11 @@ export interface ISeasonEntityAttributes extends IModelAttributes, FormEntityDat
 // % protected region % [Customise your entity metadata here] off begin
 @entity('SeasonEntity', 'Season')
 // % protected region % [Customise your entity metadata here] end
-export default class SeasonEntity extends Model implements ISeasonEntityAttributes, FormEntityData  {
+export default class SeasonEntity extends Model implements ISeasonEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsSeasonEntity(),
+		new SystemuserSeasonEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -80,22 +78,6 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'StartDate'] off begin
 	@Validators.Required()
 	@observable
@@ -103,7 +85,7 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	@CRUD({
 		name: 'StartDate',
 		displayType: 'datepicker',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -119,7 +101,7 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	@CRUD({
 		name: 'EndDate',
 		displayType: 'datepicker',
-		order: 30,
+		order: 20,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -138,7 +120,7 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	@CRUD({
 		name: 'FullName',
 		displayType: 'textfield',
-		order: 40,
+		order: 30,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -157,7 +139,7 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	@CRUD({
 		name: 'ShortName',
 		displayType: 'textfield',
-		order: 50,
+		order: 40,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -168,15 +150,37 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 
 	@observable
 	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'Divisions'] off begin
+		name: "Divisionss",
+		displayType: 'reference-multicombobox',
+		order: 50,
+		referenceTypeFunc: () => Models.DivisionEntity,
+		referenceResolveFunction: makeFetchOneToManyFunc({
+			relationName: 'divisionss',
+			oppositeEntity: () => Models.DivisionEntity,
+		}),
+		// % protected region % [Modify props to the crud options here for reference 'Divisions'] end
+	})
+	public divisionss: Models.DivisionEntity[] = [];
 
+	/**
+	 * Collection of seasons for a league
+	 */
 	@observable
 	@attribute()
-	public publishedVersionId?: string;
-
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'League'] off begin
+		name: 'League',
+		displayType: 'reference-combobox',
+		order: 60,
+		referenceTypeFunc: () => Models.LeagueEntity,
+		// % protected region % [Modify props to the crud options here for reference 'League'] end
+	})
+	public leagueId?: string;
 	@observable
 	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
+	public league: Models.LeagueEntity;
 
 	/**
 	 * Team rosters for season
@@ -187,9 +191,8 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'Rosters'] off begin
 		name: "Rosterss",
 		displayType: 'reference-multicombobox',
-		order: 60,
+		order: 70,
 		referenceTypeFunc: () => Models.RosterEntity,
-		disableDefaultOptionRemoval: true,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'rosterss',
 			oppositeEntity: () => Models.RosterEntity,
@@ -207,9 +210,8 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'Schedules'] off begin
 		name: "Scheduless",
 		displayType: 'reference-multicombobox',
-		order: 70,
+		order: 80,
 		referenceTypeFunc: () => Models.ScheduleEntity,
-		disableDefaultOptionRemoval: true,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'scheduless',
 			oppositeEntity: () => Models.ScheduleEntity,
@@ -217,42 +219,6 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'Schedules'] end
 	})
 	public scheduless: Models.ScheduleEntity[] = [];
-
-	/**
-	 * Collection of seasons for a league
-	 */
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'League'] off begin
-		name: 'League',
-		displayType: 'reference-combobox',
-		order: 80,
-		referenceTypeFunc: () => Models.LeagueEntity,
-		// % protected region % [Modify props to the crud options here for reference 'League'] end
-	})
-	public leagueId: string;
-	@observable
-	@attribute({isReference: true})
-	public league: Models.LeagueEntity;
-
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 90,
-		referenceTypeFunc: () => Models.SeasonEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.SeasonEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
-	})
-	public formPages: Models.SeasonEntityFormTileEntity[] = [];
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -290,20 +256,25 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 			if (attributes.shortname) {
 				this.shortname = attributes.shortname;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
+			if (attributes.divisionss) {
+				for (const model of attributes.divisionss) {
+					if (model instanceof Models.DivisionEntity) {
+						this.divisionss.push(model);
+					} else {
+						this.divisionss.push(new Models.DivisionEntity(model));
+					}
 				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
 			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
+			if (attributes.league) {
+				if (attributes.league instanceof Models.LeagueEntity) {
+					this.league = attributes.league;
+					this.leagueId = attributes.league.id;
+				} else {
+					this.league = new Models.LeagueEntity(attributes.league);
+					this.leagueId = this.league.id;
+				}
+			} else if (attributes.leagueId !== undefined) {
+				this.leagueId = attributes.leagueId;
 			}
 			if (attributes.rosterss) {
 				for (const model of attributes.rosterss) {
@@ -323,26 +294,6 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 					}
 				}
 			}
-			if (attributes.league) {
-				if (attributes.league instanceof Models.LeagueEntity) {
-					this.league = attributes.league;
-					this.leagueId = attributes.league.id;
-				} else {
-					this.league = new Models.LeagueEntity(attributes.league);
-					this.leagueId = this.league.id;
-				}
-			} else if (attributes.leagueId !== undefined) {
-				this.leagueId = attributes.leagueId;
-			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.SeasonEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.SeasonEntityFormTileEntity(model));
-					}
-				}
-			}
 			// % protected region % [Override assign attributes here] end
 
 			// % protected region % [Add any extra assign attributes logic here] off begin
@@ -356,23 +307,17 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
+		divisionss {
+			${Models.DivisionEntity.getAttributes().join('\n')}
+		}
+		league {
+			${Models.LeagueEntity.getAttributes().join('\n')}
 		}
 		rosterss {
 			${Models.RosterEntity.getAttributes().join('\n')}
 		}
 		scheduless {
 			${Models.ScheduleEntity.getAttributes().join('\n')}
-		}
-		league {
-			${Models.LeagueEntity.getAttributes().join('\n')}
-		}
-		formPages {
-			${Models.SeasonEntityFormTileEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -383,9 +328,9 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	// % protected region % [Customize Save From Crud here] off begin
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
+			divisionss: {},
 			rosterss: {},
 			scheduless: {},
-			formPages: {},
 		};
 		return this.save(
 			relationPath,
@@ -395,6 +340,9 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 						key: 'mergeReferences',
 						graphQlType: '[String]',
 						value: [
+							'divisionss',
+							'rosterss',
+							'scheduless',
 						]
 					},
 				],
@@ -408,43 +356,8 @@ export default class SeasonEntity extends Model implements ISeasonEntityAttribut
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.SeasonSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 

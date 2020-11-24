@@ -23,6 +23,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sportstats.Services.Files;
 using Microsoft.AspNetCore.Mvc;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace ServersideTests.Helpers.FileProviders
 {
@@ -106,5 +108,8 @@ namespace ServersideTests.Helpers.FileProviders
 		{
 			return $"{container}/{fileName}";
 		}
+
+		// % protected region % [Add any extra methods here] off begin
+		// % protected region % [Add any extra methods here] end
 	}
 }

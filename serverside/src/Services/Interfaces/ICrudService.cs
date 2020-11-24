@@ -180,7 +180,7 @@ namespace Sportstats.Services.Interfaces
 		/// <exception cref="UnauthorizedAccessException">If the user does not have access to view the file</exception>
 		Task<UploadFile> GetFile(Guid id, CancellationToken cancellation = default);
 
-		// % protected region % [Add extra ICrudServide methods here] off begin
-		// % protected region % [Add extra ICrudServide methods here] end
+		// % protected region % [Add extra ICrudService methods here] off begin
+		// % protected region % [Add extra ICrudService methods here] end
 	}
 }

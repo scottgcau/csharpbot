@@ -31,6 +31,9 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- % protected region % [Add any further imports here] off begin -->
+		<!-- % protected region % [Add any further imports here] end -->
+		
 		<PackageReference Include="Audit.EntityFramework.Core" Version="15.0.4" />
 		<PackageReference Include="Audit.EntityFramework.Identity.Core" Version="15.0.4" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
@@ -68,10 +71,7 @@ Any changes out side of "protected regions" will be lost next time the bot makes
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.2" />
 		<PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.0.40" />
 		<!-- % protected region % [Customise authorization library here] end -->
-	
-		<!-- % protected region % [Add any further imports here] off begin -->
-		<!-- % protected region % [Add any further imports here] end -->
-	
+		
 		<None Update="appsettings.xml" CopyToPublishDirectory="PreserveNewest" />
 		<None Update="appsettings.Development.xml" CopyToPublishDirectory="PreserveNewest" />
 	

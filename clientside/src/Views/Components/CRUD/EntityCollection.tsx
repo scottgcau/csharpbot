@@ -16,23 +16,23 @@
  */
 import * as React from 'react';
 import Collection, {
-	ICollectionItemActionProps,
 	expandFn,
-	showExpandFn,
-	ICollectionBulkActionProps,
 	ICollectionActionProps,
+	ICollectionBulkActionProps,
+	ICollectionItemActionProps,
 	ICollectionProps,
+	showExpandFn,
 } from '../Collection/Collection';
 import { Button, Display } from '../Button/Button';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
-import { Model, IModelType } from 'Models/Model';
-import { getModelName, getModelDisplayName, getAttributeCRUDOptions, exportAll } from 'Util/EntityUtils';
-import {observable, action, runInAction, computed} from 'mobx';
+import { IModelType, Model } from 'Models/Model';
+import { exportAll, getAttributeCRUDOptions, getModelDisplayName, getModelName } from 'Util/EntityUtils';
+import { action, computed, observable, runInAction } from 'mobx';
 import Spinner from '../Spinner/Spinner';
 import { ICollectionHeaderProps } from '../Collection/CollectionHeaders';
-import ModelQuery, { IWhereCondition, IOrderByCondition, IWhereConditionApi } from '../ModelCollection/ModelQuery';
-import { IFilter } from '../Collection/CollectionFilterPanel';
+import ModelQuery, { IOrderByCondition, IWhereCondition, IWhereConditionApi } from '../ModelCollection/ModelQuery';
+import { ICollectionFilterPanelProps, IFilter } from '../Collection/CollectionFilterPanel';
 import { PaginationQueryOptions } from 'Models/PaginationData';
 import { QueryResult } from 'react-apollo';
 import { lowerCaseFirst } from 'Util/StringUtils';
@@ -44,8 +44,8 @@ import { confirmModal } from '../Modal/ModalUtils';
 import alert from 'Util/ToastifyUtils';
 import { IEntityContextMenuActions } from '../EntityContextMenu/EntityContextMenu';
 import { convertCaseComparisonToPascalCase } from 'Util/GraphQLUtils';
-import { ICollectionFilterPanelProps } from '../Collection/CollectionFilterPanel';
 import moment from 'moment';
+import { AttributeCRUDOptions } from 'Models/CRUDOptions';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -83,11 +83,12 @@ export interface IEntityCollectionProps<T extends Model> extends RouteComponentP
 	updateAction?: actionOverrideFn<T>;
 	disableBulkExport?: boolean;
 	disableBulkDelete?: boolean;
-	collectionProps?: ICollectionProps<T>;
+	collectionProps?: Partial<ICollectionProps<T>>;
 	disableCreateButtonSecurity?: boolean;
 	disableReadButtonSecurity?: boolean;
 	disableUpdateButtonSecurity?: boolean;
 	disableDeleteButtonSecurity?: boolean;
+	headerAttributes?: AttributeCRUDOptions[];
 	// % protected region % [Add any extra props here] off begin
 	// % protected region % [Add any extra props here] end
 }
@@ -469,7 +470,9 @@ class EntityCollection<T extends Model> extends React.Component<IEntityCollectio
 
 	// % protected region % [Customize GetHeaders method here] off begin
 	public getHeaders = (): Array<ICollectionHeaderProps<T>> => {
-		const attributeOptions = getAttributeCRUDOptions(this.props.modelType);
+
+		const attributeOptions = this.props.headerAttributes ?? getAttributeCRUDOptions(this.props.modelType);
+
 		return attributeOptions.filter(attributeOption => attributeOption.headerColumn)
 			.map(attributeOption => {
 					const headers: ICollectionHeaderProps<T> = {

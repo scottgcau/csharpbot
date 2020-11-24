@@ -41,26 +41,23 @@ namespace APITests.Factories
 		{
 			return _type switch
 			{
+				"LadderEntity" => LadderEntity.GetEntity(isValid, _fixedStrValues),
 				"ScheduleEntity" => ScheduleEntity.GetEntity(isValid, _fixedStrValues),
-				"SeasonEntity" => SeasonEntity.GetEntity(isValid, _fixedStrValues),
-				"VenueEntity" => VenueEntity.GetEntity(isValid, _fixedStrValues),
+				"LaddereliminationEntity" => LaddereliminationEntity.GetEntity(isValid, _fixedStrValues),
+				"LadderwinlossEntity" => LadderwinlossEntity.GetEntity(isValid, _fixedStrValues),
+				"RoundEntity" => RoundEntity.GetEntity(isValid, _fixedStrValues),
 				"GameEntity" => GameEntity.GetEntity(isValid, _fixedStrValues),
+				"DivisionEntity" => DivisionEntity.GetEntity(isValid, _fixedStrValues),
+				"VenueEntity" => VenueEntity.GetEntity(isValid, _fixedStrValues),
+				"TeamEntity" => TeamEntity.GetEntity(isValid, _fixedStrValues),
+				"GamerefereeEntity" => GamerefereeEntity.GetEntity(isValid, _fixedStrValues),
+				"SeasonEntity" => SeasonEntity.GetEntity(isValid, _fixedStrValues),
+				"PersonEntity" => PersonEntity.GetEntity(isValid, _fixedStrValues),
+				"SystemuserEntity" => SystemuserEntity.GetEntity(isValid, _fixedStrValues),
 				"SportEntity" => SportEntity.GetEntity(isValid, _fixedStrValues),
 				"LeagueEntity" => LeagueEntity.GetEntity(isValid, _fixedStrValues),
-				"TeamEntity" => TeamEntity.GetEntity(isValid, _fixedStrValues),
-				"PersonEntity" => PersonEntity.GetEntity(isValid, _fixedStrValues),
 				"RosterEntity" => RosterEntity.GetEntity(isValid, _fixedStrValues),
 				"RosterassignmentEntity" => RosterassignmentEntity.GetEntity(isValid, _fixedStrValues),
-				"ScheduleSubmissionEntity" => ScheduleSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"SeasonSubmissionEntity" => SeasonSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"VenueSubmissionEntity" => VenueSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"GameSubmissionEntity" => GameSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"SportSubmissionEntity" => SportSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"LeagueSubmissionEntity" => LeagueSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"TeamSubmissionEntity" => TeamSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"PersonSubmissionEntity" => PersonSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"RosterSubmissionEntity" => RosterSubmissionEntity.GetEntity(isValid, _fixedStrValues),
-				"RosterassignmentSubmissionEntity" => RosterassignmentSubmissionEntity.GetEntity(isValid, _fixedStrValues),
 				"RosterTimelineEventsEntity" => RosterTimelineEventsEntity.GetEntity(isValid, _fixedStrValues),
 				_ => throw new Exception($"Cannot find entity type {_type}"),
 			};
@@ -106,6 +103,14 @@ namespace APITests.Factories
 		{
 			switch (_type)
 			{
+				case "LadderEntity":
+					switch (enumColumnName)
+					{
+						case "LadderType":
+							return ((LadderEntity)entity).Laddertype.ToString();
+						default:
+							return null;
+					}
 				case "ScheduleEntity":
 					switch (enumColumnName)
 					{

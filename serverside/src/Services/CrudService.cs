@@ -312,8 +312,8 @@ namespace Sportstats.Services
 			var updateFactory = Expression.Lambda<Func<T, T>>(replacer.Visit(updateMemberInitExpression), param);
 			await models.AddUpdateSecurityFiltering(_identityService, _userManager, _dbContext, _serviceProvider).UpdateAsync(updateFactory, cancellation);
 
-			// % protected region % [Do extra things after delete] off begin
-			// % protected region % [Do extra things after delete] end
+			// % protected region % [Do extra things after conditional update] off begin
+			// % protected region % [Do extra things after conditional update] end
 
 			var errors = await _securityService.CheckDbSecurityChanges(_identityService, _dbContext);
 			if (errors.Any())
@@ -407,8 +407,8 @@ namespace Sportstats.Services
 				throw new AggregateException(new InvalidOperationException(e.Message));
 			}
 
-			// % protected region % [Do extra things after delete] off begin
-			// % protected region % [Do extra things after delete] end
+			// % protected region % [Do extra things after conditional delete] off begin
+			// % protected region % [Do extra things after conditional delete] end
 
 			var errors = await _securityService.CheckDbSecurityChanges(_identityService, _dbContext);
 			if (errors.Any())

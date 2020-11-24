@@ -26,6 +26,7 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsRosterEntity } from 'Models/Security/Acl/VisitorsRosterEntity';
+import { SystemuserRosterEntity } from 'Models/Security/Acl/SystemuserRosterEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
@@ -53,6 +54,7 @@ export default class RosterTimelineEventsEntity extends Model implements IRoster
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsRosterEntity(),
+		new SystemuserRosterEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];

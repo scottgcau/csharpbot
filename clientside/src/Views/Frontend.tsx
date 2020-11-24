@@ -48,7 +48,13 @@ export default class Frontend extends React.Component<RouteComponentProps> {
 					{
 					// % protected region % [Modify Topbar] end
 					}
+					{
+					// % protected region % [Modify Frontend] off begin
+					}
 					<div className="frontend">
+					{
+					// % protected region % [Modify Frontend] end
+					}
 						{
 						// % protected region % [Add any header content here] off begin
 						}
@@ -78,6 +84,20 @@ export default class Frontend extends React.Component<RouteComponentProps> {
 								<Redirect exact={true} from={`/`} to={`${path}/home`} />
 								{
 								// % protected region % [customize the Home public routes] end
+								}
+								{
+								// % protected region % [customize the Sports public routes] off begin
+								}
+								<Route path={"/sports"} component={Pages.SportsPage} />
+								{
+								// % protected region % [customize the Sports public routes] end
+								}
+								{
+								// % protected region % [customize the Leagues public routes] off begin
+								}
+								<Route path={"/leagues"} component={Pages.LeaguesPage} />
+								{
+								// % protected region % [customize the Leagues public routes] end
 								}
 
 								<Route path={`${path}/404`} component={PageNotFound} />

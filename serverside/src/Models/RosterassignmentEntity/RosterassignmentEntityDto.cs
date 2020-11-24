@@ -30,7 +30,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class RosterassignmentEntityDto : ModelDto<RosterassignmentEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Datefrom here] off begin
 		/// <summary>
 		/// Date assigned to the roster
@@ -52,13 +51,13 @@ namespace Sportstats.Models
 		// % protected region % [Customise Roletype here] end
 
 
+		// % protected region % [Customise PersonId here] off begin
+		public Guid? PersonId { get; set; }
+		// % protected region % [Customise PersonId here] end
+
 		// % protected region % [Customise RosterId here] off begin
 		public Guid? RosterId { get; set; }
 		// % protected region % [Customise RosterId here] end
-
-		// % protected region % [Customise PersonId here] off begin
-		public Guid PersonId { get; set; }
-		// % protected region % [Customise PersonId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
 		// % protected region % [Add any extra attributes here] end
@@ -86,12 +85,11 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Datefrom = Datefrom,
 				Dateto = Dateto,
 				Roletype = Roletype,
-				RosterId  = RosterId,
 				PersonId  = PersonId,
+				RosterId  = RosterId,
 				// % protected region % [Add any extra model properties here] off begin
 				// % protected region % [Add any extra model properties here] end
 			};
@@ -102,12 +100,11 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Datefrom = model.Datefrom;
 			Dateto = model.Dateto;
 			Roletype = model.Roletype;
-			RosterId  = model.RosterId;
 			PersonId  = model.PersonId;
+			RosterId  = model.RosterId;
 
 			// % protected region % [Add any extra loading data logic here] off begin
 			// % protected region % [Add any extra loading data logic here] end

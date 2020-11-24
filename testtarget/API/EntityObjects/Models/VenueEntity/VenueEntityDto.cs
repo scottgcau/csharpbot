@@ -29,7 +29,6 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public String Fullname { get; set; }
 		public String Shortname { get; set; }
 		public String Address { get; set; }
@@ -43,7 +42,6 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
 			Address = model.Address;
@@ -57,7 +55,6 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
 			Address = model.Address;
@@ -73,7 +70,6 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Shortname = Shortname,
 				Address = Address,
@@ -90,7 +86,6 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Shortname = Shortname,
 				Address = Address,

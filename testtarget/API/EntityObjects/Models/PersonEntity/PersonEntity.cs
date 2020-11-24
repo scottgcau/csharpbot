@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class PersonEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// First name
 		public String Firstname { get; set; }
 		// Last name
@@ -49,17 +47,16 @@ namespace APITests.EntityObjects.Models
 		public ICollection<RosterassignmentEntity> Rosterassignmentss { get; set; }
 
 		/// <summary>
-		/// Incoming one to many reference
+		/// Incoming one to one reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.Game"/>
-		public Guid? GameId { get; set; }
+		/// <see cref="Sportstats.Models.Systemuser"/>
+		public Guid? SystemuserId { get; set; }
 
 		/// <summary>
-		/// Outgoing one to many reference
+		/// Incoming one to one reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<PersonEntityFormTileEntity> FormPages { get; set; }
+		/// <see cref="Sportstats.Models.Gamereferee"/>
+		public Guid? GamerefereeId { get; set; }
 
 
 		public PersonEntity()
@@ -105,11 +102,6 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Firstname",
 				IsRequired = true
 			});
@@ -139,12 +131,21 @@ namespace APITests.EntityObjects.Models
 		{
 			References.Add(new Reference
 			{
-				EntityName = "GameEntity",
-				OppositeName = "Game",
-				Name = "Referees",
+				EntityName = "SystemuserEntity",
+				OppositeName = "Systemuser",
+				Name = "Person",
 				Optional = true,
 				Type = ReferenceType.ONE,
-				OppositeType = ReferenceType.MANY
+				OppositeType = ReferenceType.ONE
+			});
+			References.Add(new Reference
+			{
+				EntityName = "GamerefereeEntity",
+				OppositeName = "Gamereferee",
+				Name = "Person",
+				Optional = true,
+				Type = ReferenceType.ONE,
+				OppositeType = ReferenceType.ONE
 			});
 		}
 
@@ -191,14 +192,24 @@ namespace APITests.EntityObjects.Models
 			}
 		}
 
-		private static string GetInvalidGameId(string validator)
+		private static string GetInvalidSystemuserId(string validator)
 		{
 			switch (validator)
 			{
 				case "Required":
 					return "";
 				default:
-					throw new Exception($"Cannot find validator {validator} for attribute Referees");
+					throw new Exception($"Cannot find validator {validator} for attribute Person");
+			}
+		}
+		private static string GetInvalidGamerefereeId(string validator)
+		{
+			switch (validator)
+			{
+				case "Required":
+					return "";
+				default:
+					throw new Exception($"Cannot find validator {validator} for attribute Person");
 			}
 		}
 
@@ -221,13 +232,13 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining firstname,
 						["lastname"] = Lastname,
 						["dateofbirth"] = Dateofbirth?.ToString("s"),
 						["height"] = Height.ToString(),
 						["weight"] = Weight.ToString(),
-						["gameId"] = GameId,
+						["systemuserId"] = SystemuserId,
+						["gamerefereeId"] = GamerefereeId,
 				}
 			),
 			(
@@ -239,13 +250,13 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining lastname,
 						["firstname"] = Firstname,
 						["dateofbirth"] = Dateofbirth?.ToString("s"),
 						["height"] = Height.ToString(),
 						["weight"] = Weight.ToString(),
-						["gameId"] = GameId,
+						["systemuserId"] = SystemuserId,
+						["gamerefereeId"] = GamerefereeId,
 				}
 			),
 
@@ -257,7 +268,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"firstname" , Firstname},
 				{"lastname" , Lastname},
 				{"dateofbirth" ,((DateTime)Dateofbirth).ToIsoString()},
@@ -265,9 +275,13 @@ namespace APITests.EntityObjects.Models
 				{"weight" , Weight.ToString()},
 			};
 
-			if (GameId != default)
+			if (SystemuserId != default)
 			{
-				entityVar["gameId"] = GameId.ToString();
+				entityVar["systemuserId"] = SystemuserId.ToString();
+			}
+			if (GamerefereeId != default)
+			{
+				entityVar["gamerefereeId"] = GamerefereeId.ToString();
 			}
 
 			return entityVar;
@@ -278,7 +292,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["firstname"] = Firstname.ToString(),
 				["lastname"] = Lastname.ToString(),
 				["dateofbirth"] = Dateofbirth?.ToString("s"),
@@ -297,8 +310,12 @@ namespace APITests.EntityObjects.Models
 			{
 				switch (key)
 				{
-					case "GameId":
-						ReferenceIdDictionary.Add("GameId", guidCollection.FirstOrDefault());
+					case "SystemuserId":
+						ReferenceIdDictionary.Add("SystemuserId", guidCollection.FirstOrDefault());
+						SetOneReference(key, guidCollection.FirstOrDefault());
+						break;
+					case "GamerefereeId":
+						ReferenceIdDictionary.Add("GamerefereeId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
 					default:
@@ -311,8 +328,11 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (key)
 			{
-				case "GameId":
-					GameId = guid;
+				case "SystemuserId":
+					SystemuserId = guid;
+					break;
+				case "GamerefereeId":
+					GamerefereeId = guid;
 					break;
 				default:
 					throw new Exception($"{key} not valid reference key");
@@ -348,7 +368,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Firstname
 			// not defining Lastname
 		}
@@ -392,7 +411,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Firstname = DataUtils.RandString();
 			Lastname = DataUtils.RandString();
 			Dateofbirth = DataUtils.RandDatetime();
@@ -408,7 +426,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var personEntity = new PersonEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Firstname = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 

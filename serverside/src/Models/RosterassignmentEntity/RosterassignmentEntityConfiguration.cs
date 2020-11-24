@@ -26,16 +26,12 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
+			// % protected region % [Override Person Rosterassignmentss configuration here] off begin
 			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
+				.HasOne(e => e.Person)
+				.WithMany(e => e.Rosterassignmentss)
 				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
+			// % protected region % [Override Person Rosterassignmentss configuration here] end
 
 			// % protected region % [Override Roster Rosterassignmentss configuration here] off begin
 			builder
@@ -43,24 +39,15 @@ namespace Sportstats.Models {
 				.WithMany(e => e.Rosterassignmentss)
 				.OnDelete(DeleteBehavior.Cascade);
 			// % protected region % [Override Roster Rosterassignmentss configuration here] end
-			// % protected region % [Override Person Rosterassignmentss configuration here] off begin
-			builder
-				.HasOne(e => e.Person)
-				.WithMany(e => e.Rosterassignmentss)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override Person Rosterassignmentss configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
-			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+
 			// % protected region % [Override Datefrom index configuration here] off begin
 			builder.HasIndex(e => e.Datefrom);
 			// % protected region % [Override Datefrom index configuration here] end
+
 			// % protected region % [Override Dateto index configuration here] off begin
 			builder.HasIndex(e => e.Dateto);
 			// % protected region % [Override Dateto index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

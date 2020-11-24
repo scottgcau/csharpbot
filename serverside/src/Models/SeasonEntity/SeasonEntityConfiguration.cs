@@ -26,16 +26,19 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
+			// % protected region % [Override Divisionss Season configuration here] off begin
 			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
+				.HasMany(e => e.Divisionss)
+				.WithOne(e => e.Season)
 				.OnDelete(DeleteBehavior.Cascade);
+			// % protected region % [Override Divisionss Season configuration here] end
+
+			// % protected region % [Override League Seasonss configuration here] off begin
 			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
+				.HasOne(e => e.League)
+				.WithMany(e => e.Seasonss)
+				.OnDelete(DeleteBehavior.Cascade);
+			// % protected region % [Override League Seasonss configuration here] end
 
 			// % protected region % [Override Rosterss Season configuration here] off begin
 			builder
@@ -43,36 +46,30 @@ namespace Sportstats.Models {
 				.WithOne(e => e.Season)
 				.OnDelete(DeleteBehavior.Restrict);
 			// % protected region % [Override Rosterss Season configuration here] end
+
 			// % protected region % [Override Scheduless Season configuration here] off begin
 			builder
 				.HasMany(e => e.Scheduless)
 				.WithOne(e => e.Season)
 				.OnDelete(DeleteBehavior.Cascade);
 			// % protected region % [Override Scheduless Season configuration here] end
-			// % protected region % [Override League Seasonss configuration here] off begin
-			builder
-				.HasOne(e => e.League)
-				.WithMany(e => e.Seasonss)
-				.OnDelete(DeleteBehavior.Cascade);
-			// % protected region % [Override League Seasonss configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
-			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+
 			// % protected region % [Override Startdate index configuration here] off begin
 			builder.HasIndex(e => e.Startdate);
 			// % protected region % [Override Startdate index configuration here] end
+
 			// % protected region % [Override Enddate index configuration here] off begin
 			builder.HasIndex(e => e.Enddate);
 			// % protected region % [Override Enddate index configuration here] end
+
 			// % protected region % [Override Fullname index configuration here] off begin
 			builder.HasIndex(e => e.Fullname);
 			// % protected region % [Override Fullname index configuration here] end
+
 			// % protected region % [Override Shortname index configuration here] off begin
 			builder.HasIndex(e => e.Shortname);
 			// % protected region % [Override Shortname index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

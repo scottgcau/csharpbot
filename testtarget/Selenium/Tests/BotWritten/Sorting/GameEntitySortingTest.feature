@@ -27,12 +27,20 @@ Feature: Sort GameEntity
 	Then I assert that DateStart in GameEntity of type DateTime is properly sorted in descending
 	When I sort GameEntity by DateStart
 	Then I assert that DateStart in GameEntity of type DateTime is properly sorted in ascending
+	When I sort GameEntity by HomePoints
+	Then I assert that HomePoints in GameEntity of type int is properly sorted in descending
+	When I sort GameEntity by HomePoints
+	Then I assert that HomePoints in GameEntity of type int is properly sorted in ascending
+	When I sort GameEntity by AwayPoints
+	Then I assert that AwayPoints in GameEntity of type int is properly sorted in descending
+	When I sort GameEntity by AwayPoints
+	Then I assert that AwayPoints in GameEntity of type int is properly sorted in ascending
 	When I sort GameEntity by HomeTeamId
-	Then I assert that HomeTeamId in GameEntity of type int is properly sorted in descending
+	Then I assert that HomeTeamId in GameEntity of type String is properly sorted in descending
 	When I sort GameEntity by HomeTeamId
-	Then I assert that HomeTeamId in GameEntity of type int is properly sorted in ascending
+	Then I assert that HomeTeamId in GameEntity of type String is properly sorted in ascending
 	When I sort GameEntity by AwayTeamId
-	Then I assert that AwayTeamId in GameEntity of type int is properly sorted in descending
+	Then I assert that AwayTeamId in GameEntity of type String is properly sorted in descending
 	When I sort GameEntity by AwayTeamId
-	Then I assert that AwayTeamId in GameEntity of type int is properly sorted in ascending
+	Then I assert that AwayTeamId in GameEntity of type String is properly sorted in ascending
 

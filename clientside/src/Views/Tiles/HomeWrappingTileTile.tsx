@@ -17,8 +17,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
-import * as Models from 'Models/Entities';
-import { FormSubmissionTile } from 'Forms/FormSubmissionTile';
+import SportsTile from 'Views/Tiles/SportsTile';
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
 
@@ -33,11 +32,13 @@ export default class HomeWrappingTileTile extends React.Component<RouteComponent
 	// % protected region % [Add class properties here] end
 
 	public render() {
+		// % protected region % [Customize default contents here] off begin
 		let contents = (
 			<>
-				<FormSubmissionTile modelType={Models.SportEntity} tileId="a10301b5-3e21-424a-9e30-7856f7b193d1" />
+				<SportsTile {...this.props} />
 			</>
 		);
+		// % protected region % [Customize default contents here] end
 
 		// % protected region % [Override contents here] off begin
 		// % protected region % [Override contents here] end

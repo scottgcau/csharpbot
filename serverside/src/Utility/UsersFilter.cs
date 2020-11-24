@@ -42,6 +42,7 @@ namespace Sportstats.Utility
 			return ExpressionHelper.OrExpressions(
 				new List<Expression<Func<User, bool>>>
 				{
+					UserFilter<SystemuserEntity>(user, groups, "SystemuserEntity", operation, serviceProvider),
 				}
 			);
 		}

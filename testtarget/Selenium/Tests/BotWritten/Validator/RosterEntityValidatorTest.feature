@@ -20,4 +20,3 @@ Feature: RosterEntity Validator
 Scenario: Violate RosterEntity validators
 Given I login to the site as a user
 And I navigate to the RosterEntity create page
-Then I verify the Required Validator for the SeasonId attribute for on-submit validation

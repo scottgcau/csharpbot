@@ -46,10 +46,6 @@ namespace Sportstats.Models {
 		public DateTime Modified { get; set; }
 
 		[Required]
-		[EntityAttribute]
-		public string Name { get; set; }
-
-		[Required]
 		// % protected region % [Customise Fullname here] off begin
 		[EntityAttribute]
 		public String Fullname { get; set; }
@@ -94,25 +90,11 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsVenueEntity(),
+			new SystemuserVenueEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
-
-		/// <summary>
-		/// Reference to the versions for this form
-		/// </summary>
-		/// <see cref="Sportstats.Models.VenueEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(VenueEntityFormVersion))]
-		public ICollection<VenueEntityFormVersion> FormVersions { get; set; }
-
-		/// <summary>
-		/// The current published version for the form
-		/// </summary>
-		/// <see cref="Sportstats.Models.VenueEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(VenueEntityFormVersion))]
-		public VenueEntityFormVersion PublishedVersion { get; set; }
 
 		// % protected region % [Customise Gamess here] off begin
 		/// <summary>
@@ -123,21 +105,15 @@ namespace Sportstats.Models {
 		public ICollection<GameEntity> Gamess { get; set; }
 		// % protected region % [Customise Gamess here] end
 
-		// % protected region % [Customise FormPages here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.VenueEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(VenueEntityFormTileEntity))]
-		public ICollection<VenueEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
-
 		public async Task BeforeSave(
 			EntityState operation,
 			SportstatsDBContext dbContext,
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -149,6 +125,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}

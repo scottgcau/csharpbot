@@ -1,4 +1,3 @@
-
 /*
  * @bot-written
  * 
@@ -16,6 +15,8 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 using System.Threading.Tasks;
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 namespace Sportstats.Services.Interfaces
 {
@@ -29,5 +30,8 @@ namespace Sportstats.Services.Interfaces
 		/// <returns>an sending email result true, or false</returns>
 		Task<bool> SendEmail(EmailEntity emailToSend);
 		// % protected region % [Customize SendEmailMethod here] end
+
+		// % protected region % [Add extra IEmailService methods here] off begin
+		// % protected region % [Add extra IEmailService methods here] end
 	}
 }

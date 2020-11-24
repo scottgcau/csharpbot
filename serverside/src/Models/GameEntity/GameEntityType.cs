@@ -40,20 +40,43 @@ namespace Sportstats.Models
 			Field(o => o.Created, type: typeof(DateTimeGraphType));
 			Field(o => o.Modified, type: typeof(DateTimeGraphType));
 			Field(o => o.Datestart, type: typeof(DateTimeGraphType));
-			Field(o => o.Hometeamid, type: typeof(IntGraphType));
-			Field(o => o.Awayteamid, type: typeof(IntGraphType));
-			Field(o => o.Name, type: typeof(StringGraphType));
-			Field(o => o.PublishedVersionId, type: typeof(IdGraphType));
+			Field(o => o.Homepoints, type: typeof(IntGraphType));
+			Field(o => o.Awaypoints, type: typeof(IntGraphType));
+			Field(o => o.Hometeamid, type: typeof(StringGraphType));
+			Field(o => o.Awayteamid, type: typeof(StringGraphType));
 			// % protected region % [Add any extra GraphQL fields here] off begin
 			// % protected region % [Add any extra GraphQL fields here] end
 
 			// Add entity references
-			AddNavigationListField("FormVersions", context => context.Source.FormVersions);
-			AddNavigationConnectionField("FormVersionConnection", context => context.Source.FormVersions);
-			AddNavigationField("PublishedVersion", context => context.Source.PublishedVersion);
-
+			Field(o => o.RoundId, type: typeof(IdGraphType));
 			Field(o => o.VenueId, type: typeof(IdGraphType));
-			Field(o => o.ScheduleId, type: typeof(IdGraphType));
+
+			// GraphQL reference to entity RoundEntity via reference Round
+			AddNavigationField("Round", context => {
+				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
+				var filter = SecurityService.CreateReadSecurityFilter<RoundEntity>(
+					graphQlContext.IdentityService,
+					graphQlContext.UserManager,
+					graphQlContext.DbContext,
+					graphQlContext.ServiceProvider);
+				var value = context.Source.Round;
+
+				if (value != null)
+				{
+					return new List<RoundEntity> {value}.All(filter.Compile()) ? value : null;
+				}
+				return null;
+			});
+
+			// GraphQL reference to entity GamerefereeEntity via reference Gamereferees
+			IEnumerable<GamerefereeEntity> GamerefereessResolveFunction(ResolveFieldContext<GameEntity> context)
+			{
+				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
+				var filter = SecurityService.CreateReadSecurityFilter<GamerefereeEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
+				return context.Source.Gamerefereess.Where(filter.Compile());
+			}
+			AddNavigationListField("Gamerefereess", (Func<ResolveFieldContext<GameEntity>, IEnumerable<GamerefereeEntity>>) GamerefereessResolveFunction);
+			AddNavigationConnectionField("GamerefereessConnection", GamerefereessResolveFunction);
 
 			// GraphQL reference to entity VenueEntity via reference Venue
 			AddNavigationField("Venue", context => {
@@ -71,43 +94,6 @@ namespace Sportstats.Models
 				}
 				return null;
 			});
-
-			// GraphQL reference to entity ScheduleEntity via reference Schedule
-			AddNavigationField("Schedule", context => {
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<ScheduleEntity>(
-					graphQlContext.IdentityService,
-					graphQlContext.UserManager,
-					graphQlContext.DbContext,
-					graphQlContext.ServiceProvider);
-				var value = context.Source.Schedule;
-
-				if (value != null)
-				{
-					return new List<ScheduleEntity> {value}.All(filter.Compile()) ? value : null;
-				}
-				return null;
-			});
-
-			// GraphQL reference to entity PersonEntity via reference Referees
-			IEnumerable<PersonEntity> RefereessResolveFunction(ResolveFieldContext<GameEntity> context)
-			{
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<PersonEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
-				return context.Source.Refereess.Where(filter.Compile());
-			}
-			AddNavigationListField("Refereess", (Func<ResolveFieldContext<GameEntity>, IEnumerable<PersonEntity>>) RefereessResolveFunction);
-			AddNavigationConnectionField("RefereessConnection", RefereessResolveFunction);
-
-			// GraphQL reference to entity GameEntityFormTileEntity via reference FormPage
-			IEnumerable<GameEntityFormTileEntity> FormPagesResolveFunction(ResolveFieldContext<GameEntity> context)
-			{
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<GameEntityFormTileEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
-				return context.Source.FormPages.Where(filter.Compile());
-			}
-			AddNavigationListField("FormPages", (Func<ResolveFieldContext<GameEntity>, IEnumerable<GameEntityFormTileEntity>>) FormPagesResolveFunction);
-			AddNavigationConnectionField("FormPagesConnection", FormPagesResolveFunction);
 
 			// % protected region % [Add any extra GraphQL references here] off begin
 			// % protected region % [Add any extra GraphQL references here] end
@@ -129,21 +115,19 @@ namespace Sportstats.Models
 			Field<DateTimeGraphType>("Created");
 			Field<DateTimeGraphType>("Modified");
 			Field<DateTimeGraphType>("Datestart");
-			Field<IntGraphType>("Hometeamid");
-			Field<IntGraphType>("Awayteamid");
-			Field<StringGraphType>("Name");
-			Field<IdGraphType>("PublishedVersionId").Description = "The current published version for the form";
-			Field<ListGraphType<GameEntityFormVersionInputType>>("FormVersions").Description = "The versions for this form";
+			Field<IntGraphType>("Homepoints");
+			Field<IntGraphType>("Awaypoints");
+			Field<StringGraphType>("Hometeamid");
+			Field<StringGraphType>("Awayteamid");
 
 			// Add entity references
+			Field<IdGraphType>("RoundId");
 			Field<IdGraphType>("VenueId");
-			Field<IdGraphType>("ScheduleId");
 
 			// Add references to foreign models to allow nested creation
+			Field<RoundEntityInputType>("Round");
+			Field<ListGraphType<GamerefereeEntityInputType>>("Gamerefereess");
 			Field<VenueEntityInputType>("Venue");
-			Field<ScheduleEntityInputType>("Schedule");
-			Field<ListGraphType<PersonEntityInputType>>("Refereess");
-			Field<ListGraphType<GameEntityFormTileEntityInputType>>("FormPages");
 
 			// % protected region % [Add any extra GraphQL input fields here] off begin
 			// % protected region % [Add any extra GraphQL input fields here] end

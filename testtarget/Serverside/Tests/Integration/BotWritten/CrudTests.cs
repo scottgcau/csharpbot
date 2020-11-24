@@ -63,6 +63,29 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		}
 
 
+		// % protected region % [Customise Ladder Entity crud tests here] off begin
+		[Fact]
+		public async void LadderEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<LadderEntityController>();
+			var entities = new EntityFactory<LadderEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise Ladder Entity crud tests here] end
+
 		// % protected region % [Customise Schedule Entity crud tests here] off begin
 		[Fact]
 		public async void ScheduleEntityControllerGetTest()
@@ -86,13 +109,13 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		}
 		// % protected region % [Customise Schedule Entity crud tests here] end
 
-		// % protected region % [Customise Season Entity crud tests here] off begin
+		// % protected region % [Customise LadderElimination Entity crud tests here] off begin
 		[Fact]
-		public async void SeasonEntityControllerGetTest()
+		public async void LaddereliminationEntityControllerGetTest()
 		{
 			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<SeasonEntityController>();
-			var entities = new EntityFactory<SeasonEntity>(10)
+			using var controller = _serviceProvider.GetRequiredService<LaddereliminationEntityController>();
+			var entities = new EntityFactory<LaddereliminationEntity>(10)
 				.UseAttributes()
 				.UseReferences()
 				.UseOwner(Guid.NewGuid())
@@ -107,7 +130,99 @@ namespace ServersideTests.Tests.Integration.BotWritten
 			// Assert
 			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
 		}
-		// % protected region % [Customise Season Entity crud tests here] end
+		// % protected region % [Customise LadderElimination Entity crud tests here] end
+
+		// % protected region % [Customise LadderWinLoss Entity crud tests here] off begin
+		[Fact]
+		public async void LadderwinlossEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<LadderwinlossEntityController>();
+			var entities = new EntityFactory<LadderwinlossEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise LadderWinLoss Entity crud tests here] end
+
+		// % protected region % [Customise Round Entity crud tests here] off begin
+		[Fact]
+		public async void RoundEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<RoundEntityController>();
+			var entities = new EntityFactory<RoundEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise Round Entity crud tests here] end
+
+		// % protected region % [Customise Game Entity crud tests here] off begin
+		[Fact]
+		public async void GameEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<GameEntityController>();
+			var entities = new EntityFactory<GameEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise Game Entity crud tests here] end
+
+		// % protected region % [Customise Division Entity crud tests here] off begin
+		[Fact]
+		public async void DivisionEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<DivisionEntityController>();
+			var entities = new EntityFactory<DivisionEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise Division Entity crud tests here] end
 
 		// % protected region % [Customise Venue Entity crud tests here] off begin
 		[Fact]
@@ -132,13 +247,13 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		}
 		// % protected region % [Customise Venue Entity crud tests here] end
 
-		// % protected region % [Customise Game Entity crud tests here] off begin
+		// % protected region % [Customise Team Entity crud tests here] off begin
 		[Fact]
-		public async void GameEntityControllerGetTest()
+		public async void TeamEntityControllerGetTest()
 		{
 			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<GameEntityController>();
-			var entities = new EntityFactory<GameEntity>(10)
+			using var controller = _serviceProvider.GetRequiredService<TeamEntityController>();
+			var entities = new EntityFactory<TeamEntity>(10)
 				.UseAttributes()
 				.UseReferences()
 				.UseOwner(Guid.NewGuid())
@@ -153,7 +268,99 @@ namespace ServersideTests.Tests.Integration.BotWritten
 			// Assert
 			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
 		}
-		// % protected region % [Customise Game Entity crud tests here] end
+		// % protected region % [Customise Team Entity crud tests here] end
+
+		// % protected region % [Customise GameReferee Entity crud tests here] off begin
+		[Fact]
+		public async void GamerefereeEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<GamerefereeEntityController>();
+			var entities = new EntityFactory<GamerefereeEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise GameReferee Entity crud tests here] end
+
+		// % protected region % [Customise Season Entity crud tests here] off begin
+		[Fact]
+		public async void SeasonEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<SeasonEntityController>();
+			var entities = new EntityFactory<SeasonEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise Season Entity crud tests here] end
+
+		// % protected region % [Customise Person Entity crud tests here] off begin
+		[Fact]
+		public async void PersonEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<PersonEntityController>();
+			var entities = new EntityFactory<PersonEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise Person Entity crud tests here] end
+
+		// % protected region % [Customise SystemUser Entity crud tests here] off begin
+		[Fact]
+		public async void SystemuserEntityControllerGetTest()
+		{
+			// Arrange
+			using var controller = _serviceProvider.GetRequiredService<SystemuserEntityController>();
+			var entities = new EntityFactory<SystemuserEntity>(10)
+				.UseAttributes()
+				.UseReferences()
+				.UseOwner(Guid.NewGuid())
+				.Generate()
+				.ToList();
+			_database.AddRange(entities);
+			await _database.SaveChangesAsync();
+
+			// Act
+			var data = await controller.Get(null, default);
+
+			// Assert
+			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
+		}
+		// % protected region % [Customise SystemUser Entity crud tests here] end
 
 		// % protected region % [Customise Sport Entity crud tests here] off begin
 		[Fact]
@@ -201,52 +408,6 @@ namespace ServersideTests.Tests.Integration.BotWritten
 		}
 		// % protected region % [Customise League Entity crud tests here] end
 
-		// % protected region % [Customise Team Entity crud tests here] off begin
-		[Fact]
-		public async void TeamEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<TeamEntityController>();
-			var entities = new EntityFactory<TeamEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Team Entity crud tests here] end
-
-		// % protected region % [Customise Person Entity crud tests here] off begin
-		[Fact]
-		public async void PersonEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<PersonEntityController>();
-			var entities = new EntityFactory<PersonEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Person Entity crud tests here] end
-
 		// % protected region % [Customise Roster Entity crud tests here] off begin
 		[Fact]
 		public async void RosterEntityControllerGetTest()
@@ -292,466 +453,6 @@ namespace ServersideTests.Tests.Integration.BotWritten
 			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
 		}
 		// % protected region % [Customise RosterAssignment Entity crud tests here] end
-
-		// % protected region % [Customise Schedule Submission Entity crud tests here] off begin
-		[Fact]
-		public async void ScheduleSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<ScheduleSubmissionEntityController>();
-			var entities = new EntityFactory<ScheduleSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Schedule Submission Entity crud tests here] end
-
-		// % protected region % [Customise Season Submission Entity crud tests here] off begin
-		[Fact]
-		public async void SeasonSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<SeasonSubmissionEntityController>();
-			var entities = new EntityFactory<SeasonSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Season Submission Entity crud tests here] end
-
-		// % protected region % [Customise Venue Submission Entity crud tests here] off begin
-		[Fact]
-		public async void VenueSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<VenueSubmissionEntityController>();
-			var entities = new EntityFactory<VenueSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Venue Submission Entity crud tests here] end
-
-		// % protected region % [Customise Game Submission Entity crud tests here] off begin
-		[Fact]
-		public async void GameSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<GameSubmissionEntityController>();
-			var entities = new EntityFactory<GameSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Game Submission Entity crud tests here] end
-
-		// % protected region % [Customise Sport Submission Entity crud tests here] off begin
-		[Fact]
-		public async void SportSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<SportSubmissionEntityController>();
-			var entities = new EntityFactory<SportSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Sport Submission Entity crud tests here] end
-
-		// % protected region % [Customise League Submission Entity crud tests here] off begin
-		[Fact]
-		public async void LeagueSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<LeagueSubmissionEntityController>();
-			var entities = new EntityFactory<LeagueSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise League Submission Entity crud tests here] end
-
-		// % protected region % [Customise Team Submission Entity crud tests here] off begin
-		[Fact]
-		public async void TeamSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<TeamSubmissionEntityController>();
-			var entities = new EntityFactory<TeamSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Team Submission Entity crud tests here] end
-
-		// % protected region % [Customise Person Submission Entity crud tests here] off begin
-		[Fact]
-		public async void PersonSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<PersonSubmissionEntityController>();
-			var entities = new EntityFactory<PersonSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Person Submission Entity crud tests here] end
-
-		// % protected region % [Customise Roster Submission Entity crud tests here] off begin
-		[Fact]
-		public async void RosterSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<RosterSubmissionEntityController>();
-			var entities = new EntityFactory<RosterSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Roster Submission Entity crud tests here] end
-
-		// % protected region % [Customise RosterAssignment Submission Entity crud tests here] off begin
-		[Fact]
-		public async void RosterassignmentSubmissionEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<RosterassignmentSubmissionEntityController>();
-			var entities = new EntityFactory<RosterassignmentSubmissionEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise RosterAssignment Submission Entity crud tests here] end
-
-		// % protected region % [Customise Schedule Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void ScheduleEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<ScheduleEntityFormTileEntityController>();
-			var entities = new EntityFactory<ScheduleEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Schedule Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Season Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void SeasonEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<SeasonEntityFormTileEntityController>();
-			var entities = new EntityFactory<SeasonEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Season Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Venue Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void VenueEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<VenueEntityFormTileEntityController>();
-			var entities = new EntityFactory<VenueEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Venue Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Game Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void GameEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<GameEntityFormTileEntityController>();
-			var entities = new EntityFactory<GameEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Game Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Sport Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void SportEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<SportEntityFormTileEntityController>();
-			var entities = new EntityFactory<SportEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Sport Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise League Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void LeagueEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<LeagueEntityFormTileEntityController>();
-			var entities = new EntityFactory<LeagueEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise League Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Team Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void TeamEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<TeamEntityFormTileEntityController>();
-			var entities = new EntityFactory<TeamEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Team Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Person Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void PersonEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<PersonEntityFormTileEntityController>();
-			var entities = new EntityFactory<PersonEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Person Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise Roster Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void RosterEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<RosterEntityFormTileEntityController>();
-			var entities = new EntityFactory<RosterEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise Roster Entity Form Tile Entity crud tests here] end
-
-		// % protected region % [Customise RosterAssignment Entity Form Tile Entity crud tests here] off begin
-		[Fact]
-		public async void RosterassignmentEntityFormTileEntityControllerGetTest()
-		{
-			// Arrange
-			using var controller = _serviceProvider.GetRequiredService<RosterassignmentEntityFormTileEntityController>();
-			var entities = new EntityFactory<RosterassignmentEntityFormTileEntity>(10)
-				.UseAttributes()
-				.UseReferences()
-				.UseOwner(Guid.NewGuid())
-				.Generate()
-				.ToList();
-			_database.AddRange(entities);
-			await _database.SaveChangesAsync();
-
-			// Act
-			var data = await controller.Get(null, default);
-
-			// Assert
-			data.Data.Select(d => d.Id).Should().Contain(entities.Select(d => d.Id));
-		}
-		// % protected region % [Customise RosterAssignment Entity Form Tile Entity crud tests here] end
 
 		// % protected region % [Customise Roster Timeline Events Entity crud tests here] off begin
 		[Fact]

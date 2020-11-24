@@ -26,35 +26,21 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
-			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
-
 			// % protected region % [Override Leaguess Sport configuration here] off begin
 			builder
 				.HasMany(e => e.Leaguess)
 				.WithOne(e => e.Sport)
 				.OnDelete(DeleteBehavior.Cascade);
 			// % protected region % [Override Leaguess Sport configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
-			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+
 			// % protected region % [Override Order index configuration here] off begin
 			builder.HasIndex(e => e.Order).IsUnique();
 			// % protected region % [Override Order index configuration here] end
+
 			// % protected region % [Override Fullname index configuration here] off begin
 			builder.HasIndex(e => e.Fullname);
 			// % protected region % [Override Fullname index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

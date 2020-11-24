@@ -28,8 +28,8 @@ namespace APITests.EntityObjects.Models
 {
 	public class RosterEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
+		// 
+		public String Fullname { get; set; }
 
 		/// <summary>
 		/// Outgoing one to many reference
@@ -41,21 +41,14 @@ namespace APITests.EntityObjects.Models
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.Season"/>
-		public Guid SeasonId { get; set; }
-
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
 		/// <see cref="Sportstats.Models.Team"/>
 		public Guid? TeamId { get; set; }
 
 		/// <summary>
-		/// Outgoing one to many reference
+		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<RosterEntityFormTileEntity> FormPages { get; set; }
+		/// <see cref="Sportstats.Models.Season"/>
+		public Guid? SeasonId { get; set; }
 
 		/// <summary>
 		/// Outgoing one to many reference
@@ -108,8 +101,8 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
+				Name = "Fullname",
+				IsRequired = false
 			});
 		}
 
@@ -117,17 +110,17 @@ namespace APITests.EntityObjects.Models
 		{
 			References.Add(new Reference
 			{
-				EntityName = "SeasonEntity",
-				OppositeName = "Season",
+				EntityName = "TeamEntity",
+				OppositeName = "Team",
 				Name = "Rosters",
-				Optional = false,
+				Optional = true,
 				Type = ReferenceType.ONE,
 				OppositeType = ReferenceType.MANY
 			});
 			References.Add(new Reference
 			{
-				EntityName = "TeamEntity",
-				OppositeName = "Team",
+				EntityName = "SeasonEntity",
+				OppositeName = "Season",
 				Name = "Rosters",
 				Optional = true,
 				Type = ReferenceType.ONE,
@@ -148,15 +141,13 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (attribute)
 			{
-				case "SeasonId":
-					return GetInvalidSeasonId(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
 		}
 
 
-		private static string GetInvalidSeasonId(string validator)
+		private static string GetInvalidTeamId(string validator)
 		{
 			switch (validator)
 			{
@@ -166,7 +157,7 @@ namespace APITests.EntityObjects.Models
 					throw new Exception($"Cannot find validator {validator} for attribute Rosters");
 			}
 		}
-		private static string GetInvalidTeamId(string validator)
+		private static string GetInvalidSeasonId(string validator)
 		{
 			switch (validator)
 			{
@@ -187,20 +178,6 @@ namespace APITests.EntityObjects.Models
 			return new List<(List<string> expectedError, RestSharp.JsonObject jsonObject)>
 			{
 
-			(
-				new List<string>
-				{
-					"violates foreign key constraint",
-				},
-
-				new RestSharp.JsonObject
-				{
-						["id"] = Id,
-						["name"] = Name,
-						// not defining SeasonId,
-						["teamId"] = TeamId,
-				}
-			),
 
 			};
 		}
@@ -210,16 +187,16 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
+				{"fullname" , Fullname},
 			};
 
-			if (SeasonId != default)
-			{
-				entityVar["seasonId"] = SeasonId.ToString();
-			}
 			if (TeamId != default)
 			{
 				entityVar["teamId"] = TeamId.ToString();
+			}
+			if (SeasonId != default)
+			{
+				entityVar["seasonId"] = SeasonId.ToString();
 			}
 
 			return entityVar;
@@ -230,18 +207,9 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
+				["fullname"] = Fullname.ToString(),
 			};
 
-			if (RosterassignmentsIds != default)
-			{
-				entityVar["rosterassignmentss"] = FormatManyToManyJsonList("rosterassignmentsId", RosterassignmentsIds);
-			}
-
-			if (SeasonId != default)
-			{
-				entityVar["seasonId"] = SeasonId.ToString();
-			}
 
 			return entityVar;
 		}
@@ -253,12 +221,12 @@ namespace APITests.EntityObjects.Models
 			{
 				switch (key)
 				{
-					case "SeasonId":
-						ReferenceIdDictionary.Add("SeasonId", guidCollection.FirstOrDefault());
-						SetOneReference(key, guidCollection.FirstOrDefault());
-						break;
 					case "TeamId":
 						ReferenceIdDictionary.Add("TeamId", guidCollection.FirstOrDefault());
+						SetOneReference(key, guidCollection.FirstOrDefault());
+						break;
+					case "SeasonId":
+						ReferenceIdDictionary.Add("SeasonId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
 					default:
@@ -271,11 +239,11 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (key)
 			{
-				case "SeasonId":
-					SeasonId = guid;
-					break;
 				case "TeamId":
 					TeamId = guid;
+					break;
+				case "SeasonId":
+					SeasonId = guid;
 					break;
 				default:
 					throw new Exception($"{key} not valid reference key");
@@ -311,7 +279,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 		}
 
 		/// <summary>
@@ -343,15 +310,6 @@ namespace APITests.EntityObjects.Models
 		/// </summary>
 		private void SetValidEntityAssociations()
 		{
-			var rosterassignmentss =  new RosterassignmentEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES);
-			rosterassignmentss.Save();
-
-			Rosterassignmentss = new List<RosterassignmentEntity>{ rosterassignmentss };
-			RosterassignmentsIds = new List<Guid>{ rosterassignmentss.Id };
-
-
-			SeasonId = new SeasonEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES).Save();
-
 		}
 
 		/// <summary>
@@ -360,7 +318,7 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
+			Fullname = DataUtils.RandString();
 			// % protected region % [Override generated entity attributes here] end
 		}
 
@@ -371,7 +329,8 @@ namespace APITests.EntityObjects.Models
 		{
 			var rosterEntity = new RosterEntity
 			{
-				Name = Guid.NewGuid().ToString(),
+
+				Fullname = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 			};
 
 			// % protected region % [Customize valid entity before return here] off begin

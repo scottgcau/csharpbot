@@ -40,10 +40,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private readonly ContextConfiguration _contextConfiguration;
 
 		// reference elements
-		private static By RosterIdElementBy => By.XPath("//*[contains(@class, 'roster')]//div[contains(@class, 'dropdown__container')]");
-		private static By RosterIdInputElementBy => By.XPath("//*[contains(@class, 'roster')]/div/input");
 		private static By PersonIdElementBy => By.XPath("//*[contains(@class, 'person')]//div[contains(@class, 'dropdown__container')]");
 		private static By PersonIdInputElementBy => By.XPath("//*[contains(@class, 'person')]/div/input");
+		private static By RosterIdElementBy => By.XPath("//*[contains(@class, 'roster')]//div[contains(@class, 'dropdown__container')]");
+		private static By RosterIdInputElementBy => By.XPath("//*[contains(@class, 'roster')]/div/input");
 
 		//FlatPickr Elements
 		private DateTimePickerComponent DatefromElement => new DateTimePickerComponent(_contextConfiguration, "datefrom");
@@ -56,7 +56,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private IWebElement DatefromHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='DateFrom']"));
 		private IWebElement DatetoHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='DateTo']"));
 		private IWebElement RoletypeHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='RoleType']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -82,11 +81,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			selectorDict.Add("RoletypeElement", (selector: "//div[contains(@class, 'roletype')]//input", type: SelectorType.XPath));
 
 			// Reference web elements
-			selectorDict.Add("RosterElement", (selector: ".input-group__dropdown.rosterId > .dropdown.dropdown__container", type: SelectorType.CSS));
 			selectorDict.Add("PersonElement", (selector: ".input-group__dropdown.personId > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
+			selectorDict.Add("RosterElement", (selector: ".input-group__dropdown.rosterId > .dropdown.dropdown__container", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -95,13 +91,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 		//outgoing Reference web elements
 		//get the input path as set by the selector library
-		private IWebElement RosterElement => FindElementExt("RosterElement");
-		//get the input path as set by the selector library
 		private IWebElement PersonElement => FindElementExt("PersonElement");
+		//get the input path as set by the selector library
+		private IWebElement RosterElement => FindElementExt("RosterElement");
 
 		//Attribute web Elements
 		private IWebElement RoletypeElement => FindElementExt("RoletypeElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -111,7 +106,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				"DateFrom" => DatefromHeaderTitle,
 				"DateTo" => DatetoHeaderTitle,
 				"RoleType" => RoletypeHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -121,16 +115,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "DateFrom":
 					return DatefromElement.DateTimePickerElement;
 				case "DateTo":
 					return DatetoElement.DateTimePickerElement;
 				case "RoleType":
 					return RoletypeElement;
-				case "PersonId":
-					return PersonElement;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -140,9 +130,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "DateFrom":
 					SetDatefrom(Convert.ToDateTime(value));
 					break;
@@ -151,9 +138,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 					break;
 				case "RoleType":
 					SetRoletype((Roletype)Enum.Parse(typeof(Roletype), value));
-					break;
-				case "PersonId":
-					SetPersonId(value);
 					break;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
@@ -164,11 +148,9 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"DateFrom" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.datefrom > div > p"),
 				"DateTo" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.dateto > div > p"),
 				"RoleType" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.roletype > div > p"),
-				"PersonId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.personId > div > p"),
 				_ => throw new Exception($"No such attribute {attribute}"),
 			};
 		}
@@ -187,13 +169,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_rosterassignmentEntity.Name);
 			SetDatefrom(_rosterassignmentEntity.Datefrom);
 			SetDateto(_rosterassignmentEntity.Dateto);
 			SetRoletype(_rosterassignmentEntity.Roletype);
 
+			SetPersonId(_rosterassignmentEntity.PersonId?.ToString());
 			SetRosterId(_rosterassignmentEntity.RosterId?.ToString());
-			SetPersonId(_rosterassignmentEntity.PersonId.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -201,16 +182,30 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (referenceName)
 			{
-				case "roster":
-					return new List<Guid>() {GetRosterId()};
 				case "person":
 					return new List<Guid>() {GetPersonId()};
+				case "roster":
+					return new List<Guid>() {GetRosterId()};
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
 		}
 
 		// set associations
+		private void SetPersonId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, PersonIdInputElementBy, ElementState.VISIBLE);
+			var personIdInputElement = _driver.FindElementExt(PersonIdInputElementBy);
+
+			if (id != null)
+			{
+				personIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				personIdInputElement.SendKeys(Keys.Return);
+			}
+		}
 		private void SetRosterId(string id)
 		{
 			if (id == "") { return; }
@@ -225,30 +220,19 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				rosterIdInputElement.SendKeys(Keys.Return);
 			}
 		}
-		private void SetPersonId(string id)
-		{
-			if (id == "") { return; }
-			WaitUtils.elementState(_driverWait, PersonIdInputElementBy, ElementState.VISIBLE);
-			var personIdInputElement = _driver.FindElementExt(PersonIdInputElementBy);
-
-			personIdInputElement.SendKeys(id);
-			WaitForDropdownOptions();
-			WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option'][@data-id='{id}']"), ElementState.EXISTS);
-			personIdInputElement.SendKeys(Keys.Return);
-		}
 
 		// get associations
-		private Guid GetRosterId()
-		{
-			WaitUtils.elementState(_driverWait, RosterIdElementBy, ElementState.VISIBLE);
-			var rosterIdElement = _driver.FindElementExt(RosterIdElementBy);
-			return new Guid(rosterIdElement.GetAttribute("data-id"));
-		}
 		private Guid GetPersonId()
 		{
 			WaitUtils.elementState(_driverWait, PersonIdElementBy, ElementState.VISIBLE);
 			var personIdElement = _driver.FindElementExt(PersonIdElementBy);
 			return new Guid(personIdElement.GetAttribute("data-id"));
+		}
+		private Guid GetRosterId()
+		{
+			WaitUtils.elementState(_driverWait, RosterIdElementBy, ElementState.VISIBLE);
+			var rosterIdElement = _driver.FindElementExt(RosterIdElementBy);
+			return new Guid(rosterIdElement.GetAttribute("data-id"));
 		}
 
 		// wait for dropdown to be displaying options
@@ -288,14 +272,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			(Roletype)Enum.Parse(typeof(Roletype), RoletypeElement.Text);
 			
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

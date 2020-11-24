@@ -16,6 +16,9 @@
  */
 import { IModelType, Model } from 'Models/Model';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 export class EntityFactory<T extends Model> {
 	
 	private _useAttributes: boolean = true;
@@ -40,9 +43,15 @@ export class EntityFactory<T extends Model> {
 		return this;
 	};
 	
-	public Generate = () : Array<T> => {
-		const something = new this.model();
-		let dlkfjsdl = something.attributeTypes;
-		return [something]
-	}
+	public Generate = (): T[] => [ new this.model() ];
 }
+
+// Add placeholder test so yarn test doesn't throw empty test file exception
+describe('Place Holder', function () {
+	it('placeholder', () => {
+		expect(1).toEqual(1);
+	})
+});
+
+// % protected region % [Add extra methods here] off begin
+// % protected region % [Add extra methods here] end

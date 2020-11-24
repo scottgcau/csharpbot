@@ -20,3 +20,4 @@ Feature: SportEntity Validator
 Scenario: Violate SportEntity validators
 Given I login to the site as a user
 And I navigate to the SportEntity create page
+Then I verify the Required Validator for the FullName attribute for on-submit validation

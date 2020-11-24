@@ -26,44 +26,39 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
-			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
-
 			// % protected region % [Override Rosterassignmentss Person configuration here] off begin
 			builder
 				.HasMany(e => e.Rosterassignmentss)
 				.WithOne(e => e.Person)
 				.OnDelete(DeleteBehavior.Restrict);
 			// % protected region % [Override Rosterassignmentss Person configuration here] end
-			// % protected region % [Override Game Refereess configuration here] off begin
+
+			// % protected region % [Override Systemuser Person configuration here] off begin
 			builder
-				.HasOne(e => e.Game)
-				.WithMany(e => e.Refereess)
+				.HasOne(e => e.Systemuser)
+				.WithOne(e => e.Person)
 				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override Game Refereess configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
+			// % protected region % [Override Systemuser Person configuration here] end
+
+			// % protected region % [Override Gamereferee Person configuration here] off begin
 			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
+				.HasOne(e => e.Gamereferee)
+				.WithOne(e => e.Person)
 				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+			// % protected region % [Override Gamereferee Person configuration here] end
+
 			// % protected region % [Override Firstname index configuration here] off begin
 			builder.HasIndex(e => e.Firstname);
 			// % protected region % [Override Firstname index configuration here] end
+
 			// % protected region % [Override Lastname index configuration here] off begin
 			builder.HasIndex(e => e.Lastname);
 			// % protected region % [Override Lastname index configuration here] end
+
 			// % protected region % [Override Dateofbirth index configuration here] off begin
 			builder.HasIndex(e => e.Dateofbirth);
 			// % protected region % [Override Dateofbirth index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

@@ -39,10 +39,14 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private readonly ContextConfiguration _contextConfiguration;
 
 		// reference elements
+		private static By LadderwinlossessElementBy => By.XPath("//*[contains(@class, 'ladderwinlosses')]//div[contains(@class, 'dropdown__container')]/a");
+		private static By LadderwinlossessInputElementBy => By.XPath("//*[contains(@class, 'ladderwinlosses')]/div/input");
+		private static By DivisionIdElementBy => By.XPath("//*[contains(@class, 'division')]//div[contains(@class, 'dropdown__container')]");
+		private static By DivisionIdInputElementBy => By.XPath("//*[contains(@class, 'division')]/div/input");
+		private static By LaddereliminationssElementBy => By.XPath("//*[contains(@class, 'laddereliminations')]//div[contains(@class, 'dropdown__container')]/a");
+		private static By LaddereliminationssInputElementBy => By.XPath("//*[contains(@class, 'laddereliminations')]/div/input");
 		private static By RosterssElementBy => By.XPath("//*[contains(@class, 'rosters')]//div[contains(@class, 'dropdown__container')]/a");
 		private static By RosterssInputElementBy => By.XPath("//*[contains(@class, 'rosters')]/div/input");
-		private static By LeagueIdElementBy => By.XPath("//*[contains(@class, 'league')]//div[contains(@class, 'dropdown__container')]");
-		private static By LeagueIdInputElementBy => By.XPath("//*[contains(@class, 'league')]/div/input");
 
 		//FlatPickr Elements
 
@@ -53,7 +57,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private IWebElement RepresentsHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Represents']"));
 		private IWebElement FullnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='FullName']"));
 		private IWebElement ShortnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='ShortName']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -81,11 +84,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			selectorDict.Add("ShortnameElement", (selector: "//div[contains(@class, 'shortname')]//input", type: SelectorType.XPath));
 
 			// Reference web elements
+			selectorDict.Add("LadderwinlossesElement", (selector: ".input-group__dropdown.ladderwinlossess > .dropdown.dropdown__container", type: SelectorType.CSS));
+			selectorDict.Add("DivisionElement", (selector: ".input-group__dropdown.divisionId > .dropdown.dropdown__container", type: SelectorType.CSS));
+			selectorDict.Add("LaddereliminationsElement", (selector: ".input-group__dropdown.laddereliminationss > .dropdown.dropdown__container", type: SelectorType.CSS));
 			selectorDict.Add("RostersElement", (selector: ".input-group__dropdown.rosterss > .dropdown.dropdown__container", type: SelectorType.CSS));
-			selectorDict.Add("LeagueElement", (selector: ".input-group__dropdown.leagueId > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -94,13 +96,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 		//outgoing Reference web elements
 		//get the input path as set by the selector library
-		private IWebElement LeagueElement => FindElementExt("LeagueElement");
+		private IWebElement DivisionElement => FindElementExt("DivisionElement");
 
 		//Attribute web Elements
 		private IWebElement RepresentsElement => FindElementExt("RepresentsElement");
 		private IWebElement FullnameElement => FindElementExt("FullnameElement");
 		private IWebElement ShortnameElement => FindElementExt("ShortnameElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -110,7 +111,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				"Represents" => RepresentsHeaderTitle,
 				"FullName" => FullnameHeaderTitle,
 				"ShortName" => ShortnameHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -120,8 +120,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "Represents":
 					return RepresentsElement;
 				case "FullName":
@@ -137,9 +135,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "Represents":
 					SetRepresents(value);
 					break;
@@ -158,7 +153,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"Represents" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.represents > div > p"),
 				"FullName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.fullname > div > p"),
 				"ShortName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.shortname > div > p"),
@@ -180,16 +174,23 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_teamEntity.Name);
 			SetRepresents(_teamEntity.Represents);
 			SetFullname(_teamEntity.Fullname);
 			SetShortname(_teamEntity.Shortname);
 
+			if (_teamEntity.LadderwinlossesIds != null)
+			{
+				SetLadderwinlossess(_teamEntity.LadderwinlossesIds.Select(x => x.ToString()));
+			}
+			SetDivisionId(_teamEntity.DivisionId?.ToString());
+			if (_teamEntity.LaddereliminationsIds != null)
+			{
+				SetLaddereliminationss(_teamEntity.LaddereliminationsIds.Select(x => x.ToString()));
+			}
 			if (_teamEntity.RostersIds != null)
 			{
 				SetRosterss(_teamEntity.RostersIds.Select(x => x.ToString()));
 			}
-			SetLeagueId(_teamEntity.LeagueId?.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -197,16 +198,60 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (referenceName)
 			{
+				case "ladderwinlosses":
+					return GetLadderwinlossess();
+				case "division":
+					return new List<Guid>() {GetDivisionId()};
+				case "laddereliminations":
+					return GetLaddereliminationss();
 				case "rosters":
 					return GetRosterss();
-				case "league":
-					return new List<Guid>() {GetLeagueId()};
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
 		}
 
 		// set associations
+		private void SetLadderwinlossess(IEnumerable<string> ids)
+		{
+			WaitUtils.elementState(_driverWait, LadderwinlossessInputElementBy, ElementState.VISIBLE);
+			var ladderwinlossessInputElement = _driver.FindElementExt(LadderwinlossessInputElementBy);
+
+			foreach(var id in ids)
+			{
+				ladderwinlossessInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				ladderwinlossessInputElement.SendKeys(Keys.Return);
+			}
+		}
+
+		private void SetDivisionId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, DivisionIdInputElementBy, ElementState.VISIBLE);
+			var divisionIdInputElement = _driver.FindElementExt(DivisionIdInputElementBy);
+
+			if (id != null)
+			{
+				divisionIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				divisionIdInputElement.SendKeys(Keys.Return);
+			}
+		}
+		private void SetLaddereliminationss(IEnumerable<string> ids)
+		{
+			WaitUtils.elementState(_driverWait, LaddereliminationssInputElementBy, ElementState.VISIBLE);
+			var laddereliminationssInputElement = _driver.FindElementExt(LaddereliminationssInputElementBy);
+
+			foreach(var id in ids)
+			{
+				laddereliminationssInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				laddereliminationssInputElement.SendKeys(Keys.Return);
+			}
+		}
+
 		private void SetRosterss(IEnumerable<string> ids)
 		{
 			WaitUtils.elementState(_driverWait, RosterssInputElementBy, ElementState.VISIBLE);
@@ -220,22 +265,38 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			}
 		}
 
-		private void SetLeagueId(string id)
-		{
-			if (id == "") { return; }
-			WaitUtils.elementState(_driverWait, LeagueIdInputElementBy, ElementState.VISIBLE);
-			var leagueIdInputElement = _driver.FindElementExt(LeagueIdInputElementBy);
-
-			if (id != null)
-			{
-				leagueIdInputElement.SendKeys(id);
-				WaitForDropdownOptions();
-				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
-				leagueIdInputElement.SendKeys(Keys.Return);
-			}
-		}
 
 		// get associations
+		private List<Guid> GetLadderwinlossess()
+		{
+			var guids = new List<Guid>();
+			WaitUtils.elementState(_driverWait, LadderwinlossessElementBy, ElementState.VISIBLE);
+			var ladderwinlossessElement = _driver.FindElements(LadderwinlossessElementBy);
+
+			foreach(var element in ladderwinlossessElement)
+			{
+				guids.Add(new Guid (element.GetAttribute("data-id")));
+			}
+			return guids;
+		}
+		private Guid GetDivisionId()
+		{
+			WaitUtils.elementState(_driverWait, DivisionIdElementBy, ElementState.VISIBLE);
+			var divisionIdElement = _driver.FindElementExt(DivisionIdElementBy);
+			return new Guid(divisionIdElement.GetAttribute("data-id"));
+		}
+		private List<Guid> GetLaddereliminationss()
+		{
+			var guids = new List<Guid>();
+			WaitUtils.elementState(_driverWait, LaddereliminationssElementBy, ElementState.VISIBLE);
+			var laddereliminationssElement = _driver.FindElements(LaddereliminationssElementBy);
+
+			foreach(var element in laddereliminationssElement)
+			{
+				guids.Add(new Guid (element.GetAttribute("data-id")));
+			}
+			return guids;
+		}
 		private List<Guid> GetRosterss()
 		{
 			var guids = new List<Guid>();
@@ -247,12 +308,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				guids.Add(new Guid (element.GetAttribute("data-id")));
 			}
 			return guids;
-		}
-		private Guid GetLeagueId()
-		{
-			WaitUtils.elementState(_driverWait, LeagueIdElementBy, ElementState.VISIBLE);
-			var leagueIdElement = _driver.FindElementExt(LeagueIdElementBy);
-			return new Guid(leagueIdElement.GetAttribute("data-id"));
 		}
 
 		// wait for dropdown to be displaying options
@@ -294,14 +349,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			ShortnameElement.Text;
 
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

@@ -32,6 +32,9 @@ import { IEntityContextMenuActions } from '../EntityContextMenu/EntityContextMen
 import { ICollectionFilterPanelProps } from './CollectionFilterPanel';
 import { IOrderByCondition } from '../ModelCollection/ModelQuery';
 
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
+
 export type actionFn<T> = (model: T, event: React.MouseEvent<Element, MouseEvent>) => void;
 export type bulkActionFn<T> = (models: T[], event: React.MouseEvent<Element, MouseEvent>) => void;
 export type expandFn<T> = (model: T) => React.ReactNode | string;
@@ -58,6 +61,8 @@ export interface ICollectionActionProps<T> {
 	 * Using this will override any and all presentation level options also provided
 	 */
 	customButton?: (model: T) => React.ReactNode;
+	// % protected region % [Add any extra ICollectionActionProps fields here] off begin
+	// % protected region % [Add any extra ICollectionActionProps fields here] end
 }
 
 export interface ICollectionItemActionProps<T> extends ICollectionActionProps<T> {
@@ -123,6 +128,8 @@ export interface ICollectionListProps<T> {
 	dataFields?: (row: T) => {[key: string]: string};
 	/** The default order by condition */
 	orderBy?: IOrderByCondition<T> | undefined;
+	// % protected region % [Add any extra ICollectionListProps fields here] off begin
+	// % protected region % [Add any extra ICollectionListProps fields here] end
 }
 
 export interface ICollectionProps<T> extends ICollectionListProps<T> {
@@ -135,6 +142,8 @@ export interface ICollectionProps<T> extends ICollectionListProps<T> {
 	/** Function to call on page change */
 	onPageChange?: () => void;
 	filterOrientationRow?: boolean;
+	// % protected region % [Add any extra ICollectionProps fields here] off begin
+	// % protected region % [Add any extra ICollectionProps fields here] end
 }
 
 /**
@@ -210,6 +219,7 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 		return this.allChecked && this.totalItems > this.selectedItemsCount;
 	};
 
+	// % protected region % [Override render method of Collection here] off begin
 	public render() {
 		return (
 			<section
@@ -238,6 +248,8 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 			</section>
 		);
 	}
+	// % protected region % [Override render method of Collection here] end
+
 
 	/**
 	 * The collection pagination component
@@ -275,6 +287,8 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 			</section>
 		);
 	}
+
+	// % protected region % [Override method row of Collection here] off begin
 	/**
 	 * The table row component
 	 * @param props Contains the id of the row
@@ -305,7 +319,9 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 			</>
 		);
 	}
+	// % protected region % [Override method row of Collection here] end
 
+	// % protected region % [Override method header of Collection here] off begin
 	/**
 	 * The header row component
 	 */
@@ -322,6 +338,7 @@ export default class Collection<T> extends React.Component<ICollectionProps<T>, 
 			</If>
 		);
 	}
+	// % protected region % [Override method header of Collection here] end
 
 	/**
 	 * Selects or deselects items from the collection

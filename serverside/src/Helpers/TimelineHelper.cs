@@ -231,5 +231,8 @@ namespace Sportstats.Helpers
 				.Select(x => new DateTime(x.Year, x.Month, 1).AddDays(x.StartOfWeek - 1));
 		}
 		// % protected region % [Override GetDistinctCreatedWeeks here] end
+
+		// % protected region % [Add any extra TimelineHelper static methods here] off begin
+		// % protected region % [Add any extra TimelineHelper static methods here] end
 	}
 }

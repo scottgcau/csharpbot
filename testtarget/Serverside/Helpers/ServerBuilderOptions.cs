@@ -43,7 +43,7 @@ namespace ServersideTests.Helpers
 			Guid.NewGuid(),
 			"super@example.com",
 			"super@example.com",
-			new [] {"Visitors", "Super Administrators"});
+			new [] {"Visitors", "Systemuser", "Super Administrators"});
 
 		/// <summary>
 		/// Configuration function for the database for the tests

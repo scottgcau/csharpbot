@@ -37,6 +37,14 @@ interface AdminLink extends IIconProps {
 
 const getPageLinks = (): AdminLink[] => [
 	{
+		// % protected region % [Override navigation link for LadderEntity here] off begin
+		path: '/admin/ladderentity',
+		label: getModelDisplayName(Models.LadderEntity),
+		entity: Models.LadderEntity,
+		isMember: false
+		// % protected region % [Override navigation link for LadderEntity here] end
+	},
+	{
 		// % protected region % [Override navigation link for ScheduleEntity here] off begin
 		path: '/admin/scheduleentity',
 		label: getModelDisplayName(Models.ScheduleEntity),
@@ -45,12 +53,44 @@ const getPageLinks = (): AdminLink[] => [
 		// % protected region % [Override navigation link for ScheduleEntity here] end
 	},
 	{
-		// % protected region % [Override navigation link for SeasonEntity here] off begin
-		path: '/admin/seasonentity',
-		label: getModelDisplayName(Models.SeasonEntity),
-		entity: Models.SeasonEntity,
+		// % protected region % [Override navigation link for LaddereliminationEntity here] off begin
+		path: '/admin/laddereliminationentity',
+		label: getModelDisplayName(Models.LaddereliminationEntity),
+		entity: Models.LaddereliminationEntity,
 		isMember: false
-		// % protected region % [Override navigation link for SeasonEntity here] end
+		// % protected region % [Override navigation link for LaddereliminationEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for LadderwinlossEntity here] off begin
+		path: '/admin/ladderwinlossentity',
+		label: getModelDisplayName(Models.LadderwinlossEntity),
+		entity: Models.LadderwinlossEntity,
+		isMember: false
+		// % protected region % [Override navigation link for LadderwinlossEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for RoundEntity here] off begin
+		path: '/admin/roundentity',
+		label: getModelDisplayName(Models.RoundEntity),
+		entity: Models.RoundEntity,
+		isMember: false
+		// % protected region % [Override navigation link for RoundEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for GameEntity here] off begin
+		path: '/admin/gameentity',
+		label: getModelDisplayName(Models.GameEntity),
+		entity: Models.GameEntity,
+		isMember: false
+		// % protected region % [Override navigation link for GameEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for DivisionEntity here] off begin
+		path: '/admin/divisionentity',
+		label: getModelDisplayName(Models.DivisionEntity),
+		entity: Models.DivisionEntity,
+		isMember: false
+		// % protected region % [Override navigation link for DivisionEntity here] end
 	},
 	{
 		// % protected region % [Override navigation link for VenueEntity here] off begin
@@ -61,12 +101,44 @@ const getPageLinks = (): AdminLink[] => [
 		// % protected region % [Override navigation link for VenueEntity here] end
 	},
 	{
-		// % protected region % [Override navigation link for GameEntity here] off begin
-		path: '/admin/gameentity',
-		label: getModelDisplayName(Models.GameEntity),
-		entity: Models.GameEntity,
+		// % protected region % [Override navigation link for TeamEntity here] off begin
+		path: '/admin/teamentity',
+		label: getModelDisplayName(Models.TeamEntity),
+		entity: Models.TeamEntity,
 		isMember: false
-		// % protected region % [Override navigation link for GameEntity here] end
+		// % protected region % [Override navigation link for TeamEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for GamerefereeEntity here] off begin
+		path: '/admin/gamerefereeentity',
+		label: getModelDisplayName(Models.GamerefereeEntity),
+		entity: Models.GamerefereeEntity,
+		isMember: false
+		// % protected region % [Override navigation link for GamerefereeEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for SeasonEntity here] off begin
+		path: '/admin/seasonentity',
+		label: getModelDisplayName(Models.SeasonEntity),
+		entity: Models.SeasonEntity,
+		isMember: false
+		// % protected region % [Override navigation link for SeasonEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for PersonEntity here] off begin
+		path: '/admin/personentity',
+		label: getModelDisplayName(Models.PersonEntity),
+		entity: Models.PersonEntity,
+		isMember: false
+		// % protected region % [Override navigation link for PersonEntity here] end
+	},
+	{
+		// % protected region % [Override navigation link for SystemuserEntity here] off begin
+		path: '/admin/systemuserentity',
+		label: getModelDisplayName(Models.SystemuserEntity),
+		entity: Models.SystemuserEntity,
+		isMember: true
+		// % protected region % [Override navigation link for SystemuserEntity here] end
 	},
 	{
 		// % protected region % [Override navigation link for SportEntity here] off begin
@@ -85,22 +157,6 @@ const getPageLinks = (): AdminLink[] => [
 		// % protected region % [Override navigation link for LeagueEntity here] end
 	},
 	{
-		// % protected region % [Override navigation link for TeamEntity here] off begin
-		path: '/admin/teamentity',
-		label: getModelDisplayName(Models.TeamEntity),
-		entity: Models.TeamEntity,
-		isMember: false
-		// % protected region % [Override navigation link for TeamEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for PersonEntity here] off begin
-		path: '/admin/personentity',
-		label: getModelDisplayName(Models.PersonEntity),
-		entity: Models.PersonEntity,
-		isMember: false
-		// % protected region % [Override navigation link for PersonEntity here] end
-	},
-	{
 		// % protected region % [Override navigation link for RosterEntity here] off begin
 		path: '/admin/rosterentity',
 		label: getModelDisplayName(Models.RosterEntity),
@@ -115,94 +171,6 @@ const getPageLinks = (): AdminLink[] => [
 		entity: Models.RosterassignmentEntity,
 		isMember: false
 		// % protected region % [Override navigation link for RosterassignmentEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for ScheduleSubmissionEntity here] off begin
-		path: '/admin/schedulesubmissionentity',
-		label: getModelDisplayName(Models.ScheduleSubmissionEntity),
-		entity: Models.ScheduleSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for ScheduleSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for SeasonSubmissionEntity here] off begin
-		path: '/admin/seasonsubmissionentity',
-		label: getModelDisplayName(Models.SeasonSubmissionEntity),
-		entity: Models.SeasonSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for SeasonSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for VenueSubmissionEntity here] off begin
-		path: '/admin/venuesubmissionentity',
-		label: getModelDisplayName(Models.VenueSubmissionEntity),
-		entity: Models.VenueSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for VenueSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for GameSubmissionEntity here] off begin
-		path: '/admin/gamesubmissionentity',
-		label: getModelDisplayName(Models.GameSubmissionEntity),
-		entity: Models.GameSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for GameSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for SportSubmissionEntity here] off begin
-		path: '/admin/sportsubmissionentity',
-		label: getModelDisplayName(Models.SportSubmissionEntity),
-		entity: Models.SportSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for SportSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for LeagueSubmissionEntity here] off begin
-		path: '/admin/leaguesubmissionentity',
-		label: getModelDisplayName(Models.LeagueSubmissionEntity),
-		entity: Models.LeagueSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for LeagueSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for TeamSubmissionEntity here] off begin
-		path: '/admin/teamsubmissionentity',
-		label: getModelDisplayName(Models.TeamSubmissionEntity),
-		entity: Models.TeamSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for TeamSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for PersonSubmissionEntity here] off begin
-		path: '/admin/personsubmissionentity',
-		label: getModelDisplayName(Models.PersonSubmissionEntity),
-		entity: Models.PersonSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for PersonSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for RosterSubmissionEntity here] off begin
-		path: '/admin/rostersubmissionentity',
-		label: getModelDisplayName(Models.RosterSubmissionEntity),
-		entity: Models.RosterSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for RosterSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for RosterassignmentSubmissionEntity here] off begin
-		path: '/admin/rosterassignmentsubmissionentity',
-		label: getModelDisplayName(Models.RosterassignmentSubmissionEntity),
-		entity: Models.RosterassignmentSubmissionEntity,
-		isMember: false
-		// % protected region % [Override navigation link for RosterassignmentSubmissionEntity here] end
-	},
-	{
-		// % protected region % [Override navigation link for SportEntityFormTileEntity here] off begin
-		path: '/admin/sportentityformtileentity',
-		label: getModelDisplayName(Models.SportEntityFormTileEntity),
-		entity: Models.SportEntityFormTileEntity,
-		isMember: false
-		// % protected region % [Override navigation link for SportEntityFormTileEntity here] end
 	},
 	{
 		// % protected region % [Override navigation link for RosterTimelineEventsEntity here] off begin
@@ -291,10 +259,6 @@ export default class PageLinks extends React.Component<RouteComponentProps> {
 		const otherlinkGroup: ILink[] = [];
 		//otherlinkGroup.push({ path: '/admin/dashboards', label: 'Dashboards', icon: 'dashboard', iconPos: 'icon-left', isDisabled: true });
 		//otherlinkGroup.push({ path: '/admin/timelines', label: 'Timelines', icon: 'timeline', iconPos: 'icon-left', isDisabled: true });
-		const formsGroups: string[] = ['Visitors'];
-		if (store.userGroups.some(ug => formsGroups.some(fg => fg === ug.name))){
-			otherlinkGroup.push({ path: '/admin/forms', label: 'Forms', icon: 'forms', iconPos: 'icon-left', isDisabled: false });
-		}
 		otherlinkGroup.push({ path: '/admin/timelines', label: 'Timelines', icon: 'timeline', iconPos: 'icon-left', isDisabled: false });
 		if (otherlinkGroup.length > 0) {
 			linkGroups.push(otherlinkGroup);

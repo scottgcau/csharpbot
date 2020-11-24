@@ -100,7 +100,7 @@ export default class ListViewList extends React.Component<IListViewListProps> {
 		this.disposerFilter();
 		// % protected region % [Override componentWillUnmount here] end
 	}
-	
+
 	private updateComponent = () => {
 		// % protected region % [Override updateComponent here] off begin
 		if (this.loadingState == 'Loading'){
@@ -239,7 +239,7 @@ export default class ListViewList extends React.Component<IListViewListProps> {
 		return undefined;
 		// % protected region % [Override getQuickJumpTargetEvents here] end
 	};
-	
+
 	private quickJumpToDate = (date: Moment) => {
 		// % protected region % [Override quickJumpToDate here] off begin
 		this.getQuickJumpTargetEvents(date)?.then(action((events) => {
@@ -386,7 +386,7 @@ export default class ListViewList extends React.Component<IListViewListProps> {
 		}
 		// % protected region % [Override processInfiniteScrollUpwardsResults here] end
 	};
-	
+
 	private onClickViewItem = (entity: string, id: string) => {
 		// % protected region % [Override onClickViewItem here] off begin
 		if (this.props.onClickViewItem) {
@@ -407,12 +407,12 @@ export default class ListViewList extends React.Component<IListViewListProps> {
 		this.eventComponentsRefs = this.timelineEvents.map(event => createRef<HTMLLIElement>());
 		this.listHeadingRefs = Object.keys(GroupEventsByDate(this.timelineEvents)).map(key => createRef<HTMLHeadingElement>());
 		return (
-			<ListViewItems 
-				timelineEvents={this.timelineEvents} 
-				onScrollToExtreme={this.onScrollToExtreme} 
-				onClickViewItem={(id: string) => this.onClickViewItem(this.props.timelineFilter.selectedTimelineEntity.name, id)}
-				scrollSectionRef={this.scrollSectionRef} 
-				eventComponentsRefs={this.eventComponentsRefs} 
+			<ListViewItems
+				timelineEvents={this.timelineEvents}
+				onScrollToExtreme={this.onScrollToExtreme}
+				onClickViewItem={(id: string) => this.onClickViewItem(getModelName(this.props.timelineFilter.selectedTimelineEntity), id)}
+				scrollSectionRef={this.scrollSectionRef}
+				eventComponentsRefs={this.eventComponentsRefs}
 				listHeadingRefs={this.listHeadingRefs} />
 		);
 		// % protected region % [Override render here] end

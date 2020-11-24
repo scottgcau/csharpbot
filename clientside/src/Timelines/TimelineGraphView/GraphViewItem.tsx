@@ -58,12 +58,8 @@ export default class GraphViewItem extends React.Component<IGraphViewEntryProps>
 		const dateItemInformation = () => {
 			const windowTicks = this.props.graphWindowLimits.endDate.diff(this.props.graphWindowLimits.startDate);
 			const itemTicks = this.props.graphWindowLimits.endDate.diff(this.props.graphViewEntry.dateTimeGroup.startDate);
-			
-			let positionalClassName = 'left';
-			
-			if (itemTicks < windowTicks/2){
-				positionalClassName = 'right';
-			}
+
+			let positionalClassName = itemTicks < windowTicks/2 ? 'right' : 'left';
 			
 			const zoomToViewMoreComponent = (
 				<a onClick={() => this.props.onClickZoom( this.props.graphViewEntry.dateTimeGroup)}>
@@ -110,9 +106,7 @@ export default class GraphViewItem extends React.Component<IGraphViewEntryProps>
 		if (!this.props.graphViewEntry.firstResult) {
 			return (
 				<section className={classNames("date__item", !this.props.showDate ? "date__middle" : null)}>
-					<span className={'date'}>
-						{dateComponent}
-					</span>
+					{this.horizontalAxisDateItem(dateComponent)}
 				</section>
 			)
 		}
@@ -131,11 +125,11 @@ export default class GraphViewItem extends React.Component<IGraphViewEntryProps>
 					<span className="item-line"> </span>
 					<span className="bottom-circle"> </span>
 				</div>
-					<span className={'date'}>
-						{dateComponent}
-					</span>
+				{this.horizontalAxisDateItem(dateComponent)}
 			</section>
 		);
 		// % protected region % [Override render return here] end
 	}
+
+	private horizontalAxisDateItem = (dateString: string | null) => <span className={'date'}>{dateString}</span>
 }

@@ -26,16 +26,12 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
+			// % protected region % [Override Sport Leaguess configuration here] off begin
 			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
+				.HasOne(e => e.Sport)
+				.WithMany(e => e.Leaguess)
 				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
+			// % protected region % [Override Sport Leaguess configuration here] end
 
 			// % protected region % [Override Seasonss League configuration here] off begin
 			builder
@@ -43,30 +39,15 @@ namespace Sportstats.Models {
 				.WithOne(e => e.League)
 				.OnDelete(DeleteBehavior.Cascade);
 			// % protected region % [Override Seasonss League configuration here] end
-			// % protected region % [Override Teamss League configuration here] off begin
-			builder
-				.HasMany(e => e.Teamss)
-				.WithOne(e => e.League)
-				.OnDelete(DeleteBehavior.Cascade);
-			// % protected region % [Override Teamss League configuration here] end
-			// % protected region % [Override Sport Leaguess configuration here] off begin
-			builder
-				.HasOne(e => e.Sport)
-				.WithMany(e => e.Leaguess)
-				.OnDelete(DeleteBehavior.Cascade);
-			// % protected region % [Override Sport Leaguess configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
-			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+
 			// % protected region % [Override Fullname index configuration here] off begin
 			builder.HasIndex(e => e.Fullname);
 			// % protected region % [Override Fullname index configuration here] end
+
 			// % protected region % [Override Shortname index configuration here] off begin
 			builder.HasIndex(e => e.Shortname);
 			// % protected region % [Override Shortname index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

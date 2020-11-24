@@ -45,10 +45,6 @@ namespace Sportstats.Models {
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
 
-		[Required]
-		[EntityAttribute]
-		public string Name { get; set; }
-
 		/// <summary>
 		/// City or area represented
 		/// </summary>
@@ -94,25 +90,39 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsTeamEntity(),
+			new SystemuserTeamEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
 
+		// % protected region % [Customise Ladderwinlossess here] off begin
 		/// <summary>
-		/// Reference to the versions for this form
+		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.TeamEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(TeamEntityFormVersion))]
-		public ICollection<TeamEntityFormVersion> FormVersions { get; set; }
+		/// <see cref="Sportstats.Models.LadderwinlossEntity"/>
+		[EntityForeignKey("Ladderwinlossess", "Team", false, typeof(LadderwinlossEntity))]
+		public ICollection<LadderwinlossEntity> Ladderwinlossess { get; set; }
+		// % protected region % [Customise Ladderwinlossess here] end
 
+		// % protected region % [Customise Division here] off begin
 		/// <summary>
-		/// The current published version for the form
+		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.TeamEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(TeamEntityFormVersion))]
-		public TeamEntityFormVersion PublishedVersion { get; set; }
+		/// <see cref="Sportstats.Models.DivisionEntity"/>
+		public Guid? DivisionId { get; set; }
+		[EntityForeignKey("Division", "Teamss", false, typeof(DivisionEntity))]
+		public DivisionEntity Division { get; set; }
+		// % protected region % [Customise Division here] end
+
+		// % protected region % [Customise Laddereliminationss here] off begin
+		/// <summary>
+		/// Incoming one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.LaddereliminationEntity"/>
+		[EntityForeignKey("Laddereliminationss", "Team", false, typeof(LaddereliminationEntity))]
+		public ICollection<LaddereliminationEntity> Laddereliminationss { get; set; }
+		// % protected region % [Customise Laddereliminationss here] end
 
 		// % protected region % [Customise Rosterss here] off begin
 		/// <summary>
@@ -123,31 +133,15 @@ namespace Sportstats.Models {
 		public ICollection<RosterEntity> Rosterss { get; set; }
 		// % protected region % [Customise Rosterss here] end
 
-		// % protected region % [Customise League here] off begin
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.LeagueEntity"/>
-		public Guid? LeagueId { get; set; }
-		[EntityForeignKey("League", "Teamss", false, typeof(LeagueEntity))]
-		public LeagueEntity League { get; set; }
-		// % protected region % [Customise League here] end
-
-		// % protected region % [Customise FormPages here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.TeamEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(TeamEntityFormTileEntity))]
-		public ICollection<TeamEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
-
 		public async Task BeforeSave(
 			EntityState operation,
 			SportstatsDBContext dbContext,
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -159,6 +153,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}
@@ -175,6 +172,34 @@ namespace Sportstats.Models {
 
 			switch (reference)
 			{
+				case "Ladderwinlossess":
+					var ladderwinlossesIds = modelList.SelectMany(x => x.Ladderwinlossess.Select(m => m.Id)).ToList();
+					var oldladderwinlosses = await dbContext.LadderwinlossEntity
+						.Where(m => m.TeamId.HasValue && ids.Contains(m.TeamId.Value))
+						.Where(m => !ladderwinlossesIds.Contains(m.Id))
+						.ToListAsync(cancellation);
+
+					foreach (var ladderwinlosses in oldladderwinlosses)
+					{
+						ladderwinlosses.TeamId = null;
+					}
+
+					dbContext.LadderwinlossEntity.UpdateRange(oldladderwinlosses);
+					return oldladderwinlosses.Count;
+				case "Laddereliminationss":
+					var laddereliminationsIds = modelList.SelectMany(x => x.Laddereliminationss.Select(m => m.Id)).ToList();
+					var oldladdereliminations = await dbContext.LaddereliminationEntity
+						.Where(m => m.TeamId.HasValue && ids.Contains(m.TeamId.Value))
+						.Where(m => !laddereliminationsIds.Contains(m.Id))
+						.ToListAsync(cancellation);
+
+					foreach (var laddereliminations in oldladdereliminations)
+					{
+						laddereliminations.TeamId = null;
+					}
+
+					dbContext.LaddereliminationEntity.UpdateRange(oldladdereliminations);
+					return oldladdereliminations.Count;
 				case "Rosterss":
 					var rostersIds = modelList.SelectMany(x => x.Rosterss.Select(m => m.Id)).ToList();
 					var oldrosters = await dbContext.RosterEntity

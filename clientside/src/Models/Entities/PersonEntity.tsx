@@ -26,19 +26,16 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsPersonEntity } from 'Models/Security/Acl/VisitorsPersonEntity';
+import { SystemuserPersonEntity } from 'Models/Security/Acl/SystemuserPersonEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface IPersonEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface IPersonEntityAttributes extends IModelAttributes {
 	firstname: string;
 	lastname: string;
 	dateofbirth: Date;
@@ -46,9 +43,10 @@ export interface IPersonEntityAttributes extends IModelAttributes, FormEntityDat
 	weight: number;
 
 	rosterassignmentss: Array<Models.RosterassignmentEntity | Models.IRosterassignmentEntityAttributes>;
-	gameId?: string;
-	game?: Models.GameEntity | Models.IGameEntityAttributes;
-	formPages: Array<Models.PersonEntityFormTileEntity | Models.IPersonEntityFormTileEntityAttributes>;
+	systemuserId?: string;
+	systemuser?: Models.SystemuserEntity | Models.ISystemuserEntityAttributes;
+	gamerefereeId?: string;
+	gamereferee?: Models.GamerefereeEntity | Models.IGamerefereeEntityAttributes;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -56,10 +54,11 @@ export interface IPersonEntityAttributes extends IModelAttributes, FormEntityDat
 // % protected region % [Customise your entity metadata here] off begin
 @entity('PersonEntity', 'Person')
 // % protected region % [Customise your entity metadata here] end
-export default class PersonEntity extends Model implements IPersonEntityAttributes, FormEntityData  {
+export default class PersonEntity extends Model implements IPersonEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsPersonEntity(),
+		new SystemuserPersonEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -80,22 +79,6 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'FirstName'] off begin
 	/**
 	 * First name
@@ -106,7 +89,7 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	@CRUD({
 		name: 'FirstName',
 		displayType: 'textfield',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -125,7 +108,7 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	@CRUD({
 		name: 'LastName',
 		displayType: 'textfield',
-		order: 30,
+		order: 20,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -143,7 +126,7 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	@CRUD({
 		name: 'DateOfBirth',
 		displayType: 'datepicker',
-		order: 40,
+		order: 30,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -162,7 +145,7 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	@CRUD({
 		name: 'Height',
 		displayType: 'textfield',
-		order: 50,
+		order: 40,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -181,7 +164,7 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	@CRUD({
 		name: 'Weight',
 		displayType: 'textfield',
-		order: 60,
+		order: 50,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -189,18 +172,6 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	})
 	public weight: number;
 	// % protected region % [Modify props to the crud options here for attribute 'Weight'] end
-
-	@observable
-	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
-
-	@observable
-	@attribute()
-	public publishedVersionId?: string;
-
-	@observable
-	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
 
 	/**
 	 * Roster assignments
@@ -211,9 +182,8 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'RosterAssignments'] off begin
 		name: "RosterAssignmentss",
 		displayType: 'reference-multicombobox',
-		order: 70,
+		order: 60,
 		referenceTypeFunc: () => Models.RosterassignmentEntity,
-		disableDefaultOptionRemoval: true,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'rosterassignmentss',
 			oppositeEntity: () => Models.RosterassignmentEntity,
@@ -225,34 +195,32 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	@observable
 	@attribute()
 	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Game'] off begin
-		name: 'Game',
+		// % protected region % [Modify props to the crud options here for reference 'SystemUser'] off begin
+		name: 'SystemUser',
 		displayType: 'reference-combobox',
-		order: 80,
-		referenceTypeFunc: () => Models.GameEntity,
-		// % protected region % [Modify props to the crud options here for reference 'Game'] end
+		order: 70,
+		referenceTypeFunc: () => Models.SystemuserEntity,
+		// % protected region % [Modify props to the crud options here for reference 'SystemUser'] end
 	})
-	public gameId?: string;
+	public systemuserId?: string;
 	@observable
 	@attribute({isReference: true})
-	public game: Models.GameEntity;
+	public systemuser: Models.SystemuserEntity;
 
 	@observable
-	@attribute({isReference: true})
+	@attribute()
 	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 90,
-		referenceTypeFunc: () => Models.PersonEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.PersonEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
+		// % protected region % [Modify props to the crud options here for reference 'GameReferee'] off begin
+		name: 'GameReferee',
+		displayType: 'reference-combobox',
+		order: 80,
+		referenceTypeFunc: () => Models.GamerefereeEntity,
+		// % protected region % [Modify props to the crud options here for reference 'GameReferee'] end
 	})
-	public formPages: Models.PersonEntityFormTileEntity[] = [];
+	public gamerefereeId?: string;
+	@observable
+	@attribute({isReference: true})
+	public gamereferee: Models.GamerefereeEntity;
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -293,21 +261,6 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 			if (attributes.weight) {
 				this.weight = attributes.weight;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
-				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
-			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
-			}
 			if (attributes.rosterassignmentss) {
 				for (const model of attributes.rosterassignmentss) {
 					if (model instanceof Models.RosterassignmentEntity) {
@@ -317,25 +270,27 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 					}
 				}
 			}
-			if (attributes.game) {
-				if (attributes.game instanceof Models.GameEntity) {
-					this.game = attributes.game;
-					this.gameId = attributes.game.id;
+			if (attributes.systemuser) {
+				if (attributes.systemuser instanceof Models.SystemuserEntity) {
+					this.systemuser = attributes.systemuser;
+					this.systemuserId = attributes.systemuser.id;
 				} else {
-					this.game = new Models.GameEntity(attributes.game);
-					this.gameId = this.game.id;
+					this.systemuser = new Models.SystemuserEntity(attributes.systemuser);
+					this.systemuserId = this.systemuser.id;
 				}
-			} else if (attributes.gameId !== undefined) {
-				this.gameId = attributes.gameId;
+			} else if (attributes.systemuserId !== undefined) {
+				this.systemuserId = attributes.systemuserId;
 			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.PersonEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.PersonEntityFormTileEntity(model));
-					}
+			if (attributes.gamereferee) {
+				if (attributes.gamereferee instanceof Models.GamerefereeEntity) {
+					this.gamereferee = attributes.gamereferee;
+					this.gamerefereeId = attributes.gamereferee.id;
+				} else {
+					this.gamereferee = new Models.GamerefereeEntity(attributes.gamereferee);
+					this.gamerefereeId = this.gamereferee.id;
 				}
+			} else if (attributes.gamerefereeId !== undefined) {
+				this.gamerefereeId = attributes.gamerefereeId;
 			}
 			// % protected region % [Override assign attributes here] end
 
@@ -350,20 +305,14 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
-		}
 		rosterassignmentss {
 			${Models.RosterassignmentEntity.getAttributes().join('\n')}
 		}
-		game {
-			${Models.GameEntity.getAttributes().join('\n')}
+		systemuser {
+			${Models.SystemuserEntity.getAttributes().join('\n')}
 		}
-		formPages {
-			${Models.PersonEntityFormTileEntity.getAttributes().join('\n')}
+		gamereferee {
+			${Models.GamerefereeEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -375,7 +324,6 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
 			rosterassignmentss: {},
-			formPages: {},
 		};
 		return this.save(
 			relationPath,
@@ -385,6 +333,9 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 						key: 'mergeReferences',
 						graphQlType: '[String]',
 						value: [
+							'rosterassignmentss',
+							'systemuser',
+							'gamereferee',
 						]
 					},
 				],
@@ -398,43 +349,8 @@ export default class PersonEntity extends Model implements IPersonEntityAttribut
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.PersonSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 

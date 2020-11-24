@@ -26,27 +26,24 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsRosterEntity } from 'Models/Security/Acl/VisitorsRosterEntity';
+import { SystemuserRosterEntity } from 'Models/Security/Acl/SystemuserRosterEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
 import { TimelineModel } from 'Timelines/TimelineModel';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface IRosterEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface IRosterEntityAttributes extends IModelAttributes {
+	fullname: string;
 
 	rosterassignmentss: Array<Models.RosterassignmentEntity | Models.IRosterassignmentEntityAttributes>;
-	seasonId: string;
-	season: Models.SeasonEntity | Models.ISeasonEntityAttributes;
 	teamId?: string;
 	team?: Models.TeamEntity | Models.ITeamEntityAttributes;
-	formPages: Array<Models.RosterEntityFormTileEntity | Models.IRosterEntityFormTileEntityAttributes>;
+	seasonId?: string;
+	season?: Models.SeasonEntity | Models.ISeasonEntityAttributes;
 	loggedEvents: Array<Models.RosterTimelineEventsEntity | Models.IRosterTimelineEventsEntityAttributes>;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
@@ -55,10 +52,11 @@ export interface IRosterEntityAttributes extends IModelAttributes, FormEntityDat
 // % protected region % [Customise your entity metadata here] off begin
 @entity('RosterEntity', 'Roster')
 // % protected region % [Customise your entity metadata here] end
-export default class RosterEntity extends Model implements IRosterEntityAttributes, FormEntityData , TimelineModel  {
+export default class RosterEntity extends Model implements IRosterEntityAttributes, TimelineModel  {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsRosterEntity(),
+		new SystemuserRosterEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -79,12 +77,11 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
+	// % protected region % [Modify props to the crud options here for attribute 'FullName'] off begin
 	@observable
 	@attribute()
 	@CRUD({
-		name: 'Name',
+		name: 'FullName',
 		displayType: 'textfield',
 		order: 10,
 		headerColumn: true,
@@ -92,26 +89,12 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 		searchFunction: 'like',
 		searchTransform: AttrUtils.standardiseString,
 	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
-	@observable
-	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
-
-	@observable
-	@attribute()
-	public publishedVersionId?: string;
-
-	@observable
-	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
+	public fullname: string;
+	// % protected region % [Modify props to the crud options here for attribute 'FullName'] end
 
 	/**
 	 * Roster assignments
 	 */
-	@Validators.Length(1)
-	@Validators.Required()
 	@observable
 	@attribute({isReference: true})
 	@CRUD({
@@ -129,25 +112,6 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 	public rosterassignmentss: Models.RosterassignmentEntity[] = [];
 
 	/**
-	 * Team rosters for season
-	 */
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Season'] off begin
-		name: 'Season',
-		displayType: 'reference-combobox',
-		order: 30,
-		referenceTypeFunc: () => Models.SeasonEntity,
-		// % protected region % [Modify props to the crud options here for reference 'Season'] end
-	})
-	public seasonId: string;
-	@observable
-	@attribute({isReference: true})
-	public season: Models.SeasonEntity;
-
-	/**
 	 * Team rosters
 	 */
 	@observable
@@ -156,7 +120,7 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'Team'] off begin
 		name: 'Team',
 		displayType: 'reference-combobox',
-		order: 40,
+		order: 30,
 		referenceTypeFunc: () => Models.TeamEntity,
 		// % protected region % [Modify props to the crud options here for reference 'Team'] end
 	})
@@ -165,22 +129,23 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 	@attribute({isReference: true})
 	public team: Models.TeamEntity;
 
+	/**
+	 * Team rosters for season
+	 */
+	@observable
+	@attribute()
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'Season'] off begin
+		name: 'Season',
+		displayType: 'reference-combobox',
+		order: 40,
+		referenceTypeFunc: () => Models.SeasonEntity,
+		// % protected region % [Modify props to the crud options here for reference 'Season'] end
+	})
+	public seasonId?: string;
 	@observable
 	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 50,
-		referenceTypeFunc: () => Models.RosterEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.RosterEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
-	})
-	public formPages: Models.RosterEntityFormTileEntity[] = [];
+	public season: Models.SeasonEntity;
 
 	@observable
 	@attribute({isReference: true})
@@ -188,7 +153,7 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'Logged Event'] off begin
 		name: "Logged Events",
 		displayType: 'hidden',
-		order: 60,
+		order: 50,
 		referenceTypeFunc: () => Models.RosterTimelineEventsEntity,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'loggedEvents',
@@ -222,20 +187,8 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 		super.assignAttributes(attributes);
 
 		if (attributes) {
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
-				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
-			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
+			if (attributes.fullname) {
+				this.fullname = attributes.fullname;
 			}
 			if (attributes.rosterassignmentss) {
 				for (const model of attributes.rosterassignmentss) {
@@ -245,17 +198,6 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 						this.rosterassignmentss.push(new Models.RosterassignmentEntity(model));
 					}
 				}
-			}
-			if (attributes.season) {
-				if (attributes.season instanceof Models.SeasonEntity) {
-					this.season = attributes.season;
-					this.seasonId = attributes.season.id;
-				} else {
-					this.season = new Models.SeasonEntity(attributes.season);
-					this.seasonId = this.season.id;
-				}
-			} else if (attributes.seasonId !== undefined) {
-				this.seasonId = attributes.seasonId;
 			}
 			if (attributes.team) {
 				if (attributes.team instanceof Models.TeamEntity) {
@@ -268,14 +210,16 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 			} else if (attributes.teamId !== undefined) {
 				this.teamId = attributes.teamId;
 			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.RosterEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.RosterEntityFormTileEntity(model));
-					}
+			if (attributes.season) {
+				if (attributes.season instanceof Models.SeasonEntity) {
+					this.season = attributes.season;
+					this.seasonId = attributes.season.id;
+				} else {
+					this.season = new Models.SeasonEntity(attributes.season);
+					this.seasonId = this.season.id;
 				}
+			} else if (attributes.seasonId !== undefined) {
+				this.seasonId = attributes.seasonId;
 			}
 			if (attributes.loggedEvents) {
 				for (const model of attributes.loggedEvents) {
@@ -299,23 +243,14 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
-		}
 		rosterassignmentss {
 			${Models.RosterassignmentEntity.getAttributes().join('\n')}
-		}
-		season {
-			${Models.SeasonEntity.getAttributes().join('\n')}
 		}
 		team {
 			${Models.TeamEntity.getAttributes().join('\n')}
 		}
-		formPages {
-			${Models.RosterEntityFormTileEntity.getAttributes().join('\n')}
+		season {
+			${Models.SeasonEntity.getAttributes().join('\n')}
 		}
 		loggedEvents {
 			${Models.RosterTimelineEventsEntity.getAttributes().join('\n')}
@@ -330,7 +265,6 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
 			rosterassignmentss: {},
-			formPages: {},
 			loggedEvents: {},
 		};
 		return this.save(
@@ -356,43 +290,8 @@ export default class RosterEntity extends Model implements IRosterEntityAttribut
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.RosterSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 	/**

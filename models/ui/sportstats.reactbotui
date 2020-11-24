@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <reactbotUi:UserInterfaceModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reactbotUi="http://codebots.com/emf/reactbot/ui" Uuid="40cbec04-3be5-11ea-c0e9-6d6f75736579" TargetProject="sportstats">
   <Pages xsi:type="reactbotUi:Page" Uuid="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Name="Home" Title="Home" Description="Home" IsHomePage="true"/>
-  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="233ea225-9765-4178-ea84-28c5c9f901aa" Name="Home Wrapping Tile" IsDefaultTile="true">
-    <ViewElements xsi:type="reactbotUi:View" Uuid="120966e9-8ae6-4393-849c-f25c0a75c088" Name="Home Wrapping View" DefaultView="true"/>
+  <Pages xsi:type="reactbotUi:Page" Uuid="e52ef8c6-a187-4eef-9dba-f17393bec013" Name="Sports" Title="Sports"/>
+  <Pages xsi:type="reactbotUi:Page" Uuid="9d26c728-28e6-4611-93ff-ca231cf4a097" Name="Leagues" Title="Leagues"/>
+  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="f6bb8a6c-3dcd-40b1-e69d-1a4f9bd36649" Name="Home Wrapping Tile" IsDefaultTile="true">
+    <ViewElements xsi:type="reactbotUi:View" Uuid="02cbf94e-3995-444c-9745-f395902b054c" Name="Home Wrapping View" DefaultView="true"/>
   </Tiles>
-  <Tiles xsi:type="reactbotUi:TileForm" Uuid="a10301b5-3e21-424a-9e30-7856f7b193d1" Name="SportForm">
+  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="1391898d-a75e-4b2c-ae81-02672cb21350" Name="Sports"/>
+  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="4b371f4d-f721-4d51-b3de-e9c156bf88cb" Name="Sports Wrapping Tile" IsDefaultTile="true">
+    <ViewElements xsi:type="reactbotUi:View" Uuid="238a5515-21e7-4998-93a0-5388224686c0" Name="Sports Wrapping View" DefaultView="true"/>
+  </Tiles>
+  <Tiles xsi:type="reactbotUi:TileCrud" Uuid="8fc11ced-1544-41e9-8ceb-33e05695e89d" Name="SportsCRUD">
     <Entity href="../entity/sportstats.csharpbotentity#d469786e-3d85-4cc1-ad6f-36f959703fd7"/>
   </Tiles>
-  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="92af2eef-6329-401f-9197-c0c44ac05867" DisplayIndex="1" Source="120966e9-8ae6-4393-849c-f25c0a75c088" Target="a10301b5-3e21-424a-9e30-7856f7b193d1"/>
-  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="0f2c49e6-17d0-48e7-98da-bbf3759b7605" Source="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Target="233ea225-9765-4178-ea84-28c5c9f901aa"/>
+  <Tiles xsi:type="reactbotUi:TileCustom" Uuid="32b0c0d0-ddfd-4e4f-957b-eb624a93a0ee" Name="Leagues Wrapping Tile" IsDefaultTile="true">
+    <ViewElements xsi:type="reactbotUi:View" Uuid="79329ccc-15a7-4131-9c0c-14a7e6699beb" Name="Leagues Wrapping View" DefaultView="true"/>
+  </Tiles>
+  <Tiles xsi:type="reactbotUi:TileCrud" Uuid="cb9abf0b-5713-4439-9fe7-7ab7880ac46e" Name="LeaguesCRUD">
+    <Entity href="../entity/sportstats.csharpbotentity#c53f04bd-2a20-487f-883a-4452e35e3bda"/>
+  </Tiles>
+  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="024c9752-c64b-4f3a-b927-d12db0a2552f" DisplayIndex="1" Source="02cbf94e-3995-444c-9745-f395902b054c" Target="1391898d-a75e-4b2c-ae81-02672cb21350"/>
+  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="8ef36a4f-9544-443d-adef-11e7b67aeb90" DisplayIndex="1" Source="238a5515-21e7-4998-93a0-5388224686c0" Target="8fc11ced-1544-41e9-8ceb-33e05695e89d"/>
+  <ReferenceViewViewElements xsi:type="reactbotUi:ReferenceViewTile" Uuid="034daf86-3005-4d46-ba4b-9253d9b04b74" DisplayIndex="1" Source="79329ccc-15a7-4131-9c0c-14a7e6699beb" Target="cb9abf0b-5713-4439-9fe7-7ab7880ac46e"/>
+  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="b189677a-bcb1-4ba9-99ad-3bfa28603436" Source="4d754dc1-54d6-4c5a-b725-c19d55b435bd" Target="f6bb8a6c-3dcd-40b1-e69d-1a4f9bd36649"/>
+  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="107c5792-9a9a-498d-9476-c3a862077fd3" Source="e52ef8c6-a187-4eef-9dba-f17393bec013" Target="4b371f4d-f721-4d51-b3de-e9c156bf88cb"/>
+  <ReferencePageTiles xsi:type="reactbotUi:ReferencePageTile" Uuid="01b85d5a-0551-43cf-8412-185e8ada0162" Source="9d26c728-28e6-4611-93ff-ca231cf4a097" Target="32b0c0d0-ddfd-4e4f-957b-eb624a93a0ee"/>
 </reactbotUi:UserInterfaceModel>

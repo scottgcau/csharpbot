@@ -28,12 +28,16 @@ namespace APITests.EntityObjects.Models
 {
 	public class LeagueEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// League name
 		public String Fullname { get; set; }
 		// Short name / abbreviation for the league
 		public String Shortname { get; set; }
+
+		/// <summary>
+		/// Incoming one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.Sport"/>
+		public Guid? SportId { get; set; }
 
 		/// <summary>
 		/// Outgoing one to many reference
@@ -41,26 +45,6 @@ namespace APITests.EntityObjects.Models
 		/// <see cref="Sportstats.Models.Seasons"/>
 		public List<Guid> SeasonsIds { get; set; }
 		public ICollection<SeasonEntity> Seasonss { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.Teams"/>
-		public List<Guid> TeamsIds { get; set; }
-		public ICollection<TeamEntity> Teamss { get; set; }
-
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.Sport"/>
-		public Guid SportId { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<LeagueEntityFormTileEntity> FormPages { get; set; }
 
 
 		public LeagueEntity()
@@ -106,11 +90,6 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Fullname",
 				IsRequired = true
 			});
@@ -128,7 +107,7 @@ namespace APITests.EntityObjects.Models
 				EntityName = "SportEntity",
 				OppositeName = "Sport",
 				Name = "Leagues",
-				Optional = false,
+				Optional = true,
 				Type = ReferenceType.ONE,
 				OppositeType = ReferenceType.MANY
 			});
@@ -151,8 +130,6 @@ namespace APITests.EntityObjects.Models
 					return GetInvalidFullname(validator);
 				case "ShortName":
 					return GetInvalidShortname(validator);
-				case "SportId":
-					return GetInvalidSportId(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -209,7 +186,6 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining fullname,
 						["shortname"] = Shortname,
 						["sportId"] = SportId,
@@ -224,25 +200,9 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining shortname,
 						["fullname"] = Fullname,
 						["sportId"] = SportId,
-				}
-			),
-			(
-				new List<string>
-				{
-					"violates foreign key constraint",
-				},
-
-				new RestSharp.JsonObject
-				{
-						["id"] = Id,
-						["name"] = Name,
-						// not defining SportId,
-						["fullname"] = Fullname,
-						["shortname"] = Shortname,
 				}
 			),
 
@@ -254,7 +214,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"fullname" , Fullname},
 				{"shortname" , Shortname},
 			};
@@ -272,15 +231,10 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["fullname"] = Fullname.ToString(),
 				["shortname"] = Shortname.ToString(),
 			};
 
-			if (SportId != default)
-			{
-				entityVar["sportId"] = SportId.ToString();
-			}
 
 			return entityVar;
 		}
@@ -343,7 +297,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Fullname
 			// not defining Shortname
 		}
@@ -379,9 +332,6 @@ namespace APITests.EntityObjects.Models
 		/// </summary>
 		private void SetValidEntityAssociations()
 		{
-
-			SportId = new SportEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES).Save();
-
 		}
 
 		/// <summary>
@@ -390,7 +340,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Fullname = DataUtils.RandString();
 			Shortname = DataUtils.RandString();
 			// % protected region % [Override generated entity attributes here] end
@@ -403,7 +352,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var leagueEntity = new LeagueEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Fullname = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 

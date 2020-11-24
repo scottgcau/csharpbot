@@ -25,26 +25,23 @@ namespace APITests.TheoryData.BotWritten
 		public EntityNamePluralizedTheoryData()
 		{
 			// % protected region % [Modify EntityNamePluralizedTheoryData entities here] off begin
+			Add("ladderEntitys");
 			Add("scheduleEntitys");
-			Add("seasonEntitys");
-			Add("venueEntitys");
+			Add("laddereliminationEntitys");
+			Add("ladderwinlossEntitys");
+			Add("roundEntitys");
 			Add("gameEntitys");
+			Add("divisionEntitys");
+			Add("venueEntitys");
+			Add("teamEntitys");
+			Add("gamerefereeEntitys");
+			Add("seasonEntitys");
+			Add("personEntitys");
+			Add("systemuserEntitys");
 			Add("sportEntitys");
 			Add("leagueEntitys");
-			Add("teamEntitys");
-			Add("personEntitys");
 			Add("rosterEntitys");
 			Add("rosterassignmentEntitys");
-			Add("scheduleSubmissionEntitys");
-			Add("seasonSubmissionEntitys");
-			Add("venueSubmissionEntitys");
-			Add("gameSubmissionEntitys");
-			Add("sportSubmissionEntitys");
-			Add("leagueSubmissionEntitys");
-			Add("teamSubmissionEntitys");
-			Add("personSubmissionEntitys");
-			Add("rosterSubmissionEntitys");
-			Add("rosterassignmentSubmissionEntitys");
 			Add("rosterTimelineEventsEntitys");
 			// % protected region % [Modify EntityNamePluralizedTheoryData entities here] end
 		}
@@ -56,26 +53,23 @@ namespace APITests.TheoryData.BotWritten
 		public EntityNameTheoryData()
 		{
 			// % protected region % [Modify EntityNameTheoryData entities here] off begin
+			Add("ladderEntity");
 			Add("scheduleEntity");
-			Add("seasonEntity");
-			Add("venueEntity");
+			Add("laddereliminationEntity");
+			Add("ladderwinlossEntity");
+			Add("roundEntity");
 			Add("gameEntity");
+			Add("divisionEntity");
+			Add("venueEntity");
+			Add("teamEntity");
+			Add("gamerefereeEntity");
+			Add("seasonEntity");
+			Add("personEntity");
+			Add("systemuserEntity");
 			Add("sportEntity");
 			Add("leagueEntity");
-			Add("teamEntity");
-			Add("personEntity");
 			Add("rosterEntity");
 			Add("rosterassignmentEntity");
-			Add("scheduleSubmissionEntity");
-			Add("seasonSubmissionEntity");
-			Add("venueSubmissionEntity");
-			Add("gameSubmissionEntity");
-			Add("sportSubmissionEntity");
-			Add("leagueSubmissionEntity");
-			Add("teamSubmissionEntity");
-			Add("personSubmissionEntity");
-			Add("rosterSubmissionEntity");
-			Add("rosterassignmentSubmissionEntity");
 			Add("rosterTimelineEventsEntity");
 			// % protected region % [Modify EntityNameTheoryData entities here] end
 		}

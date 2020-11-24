@@ -29,29 +29,29 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public DateTime? Startdate { get; set; }
 		public DateTime? Enddate { get; set; }
 		public String Fullname { get; set; }
 		public String Shortname { get; set; }
 
+		public ICollection<DivisionEntity> Divisionss { get; set; }
+		public Guid? LeagueId { get; set; }
 		public ICollection<RosterEntity> Rosterss { get; set; }
 		public ICollection<ScheduleEntity> Scheduless { get; set; }
-		public Guid LeagueId { get; set; }
 
 		public SeasonEntityDto(SeasonEntity model)
 		{
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Startdate = model.Startdate;
 			Enddate = model.Enddate;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
+			Divisionss = model.Divisionss;
+			LeagueId = model.LeagueId;
 			Rosterss = model.Rosterss;
 			Scheduless = model.Scheduless;
-			LeagueId = model.LeagueId;
 		}
 
 		public SeasonEntityDto(ServersideSeasonEntity model)
@@ -59,14 +59,14 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Startdate = model.Startdate;
 			Enddate = model.Enddate;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
+			Divisionss = model.Divisionss.Select(DivisionEntityDto.Convert).ToList();
+			LeagueId = model.LeagueId;
 			Rosterss = model.Rosterss.Select(RosterEntityDto.Convert).ToList();
 			Scheduless = model.Scheduless.Select(ScheduleEntityDto.Convert).ToList();
-			LeagueId = model.LeagueId;
 		}
 
 		public SeasonEntity GetTesttargetSeasonEntity()
@@ -76,14 +76,14 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Startdate = Startdate,
 				Enddate = Enddate,
 				Fullname = Fullname,
 				Shortname = Shortname,
+				Divisionss = Divisionss,
+				LeagueId = LeagueId,
 				Rosterss = Rosterss,
 				Scheduless = Scheduless,
-				LeagueId = LeagueId,
 			};
 		}
 
@@ -94,14 +94,14 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Startdate = Startdate,
 				Enddate = Enddate,
 				Fullname = Fullname,
 				Shortname = Shortname,
+				Divisionss = Divisionss?.Select(DivisionEntityDto.Convert).ToList(),
+				LeagueId = LeagueId,
 				Rosterss = Rosterss?.Select(RosterEntityDto.Convert).ToList(),
 				Scheduless = Scheduless?.Select(ScheduleEntityDto.Convert).ToList(),
-				LeagueId = LeagueId,
 			};
 		}
 

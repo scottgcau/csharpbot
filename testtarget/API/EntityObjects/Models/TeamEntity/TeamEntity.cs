@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class TeamEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// City or area represented
 		public String Represents { get; set; }
 		// Name of the team (sans city / area)
@@ -40,22 +38,29 @@ namespace APITests.EntityObjects.Models
 		/// <summary>
 		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.Rosters"/>
-		public List<Guid> RostersIds { get; set; }
-		public ICollection<RosterEntity> Rosterss { get; set; }
+		/// <see cref="Sportstats.Models.Ladderwinlosses"/>
+		public List<Guid> LadderwinlossesIds { get; set; }
+		public ICollection<LadderwinlossEntity> Ladderwinlossess { get; set; }
 
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.League"/>
-		public Guid? LeagueId { get; set; }
+		/// <see cref="Sportstats.Models.Division"/>
+		public Guid? DivisionId { get; set; }
 
 		/// <summary>
 		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<TeamEntityFormTileEntity> FormPages { get; set; }
+		/// <see cref="Sportstats.Models.Laddereliminations"/>
+		public List<Guid> LaddereliminationsIds { get; set; }
+		public ICollection<LaddereliminationEntity> Laddereliminationss { get; set; }
+
+		/// <summary>
+		/// Outgoing one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.Rosters"/>
+		public List<Guid> RostersIds { get; set; }
+		public ICollection<RosterEntity> Rosterss { get; set; }
 
 
 		public TeamEntity()
@@ -101,11 +106,6 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Represents",
 				IsRequired = true
 			});
@@ -125,8 +125,8 @@ namespace APITests.EntityObjects.Models
 		{
 			References.Add(new Reference
 			{
-				EntityName = "LeagueEntity",
-				OppositeName = "League",
+				EntityName = "DivisionEntity",
+				OppositeName = "Division",
 				Name = "Teams",
 				Optional = true,
 				Type = ReferenceType.ONE,
@@ -189,7 +189,7 @@ namespace APITests.EntityObjects.Models
 			}
 		}
 
-		private static string GetInvalidLeagueId(string validator)
+		private static string GetInvalidDivisionId(string validator)
 		{
 			switch (validator)
 			{
@@ -219,11 +219,10 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining represents,
 						["fullname"] = Fullname,
 						["shortname"] = Shortname,
-						["leagueId"] = LeagueId,
+						["divisionId"] = DivisionId,
 				}
 			),
 			(
@@ -235,11 +234,10 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining fullname,
 						["represents"] = Represents,
 						["shortname"] = Shortname,
-						["leagueId"] = LeagueId,
+						["divisionId"] = DivisionId,
 				}
 			),
 			(
@@ -251,11 +249,10 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining shortname,
 						["represents"] = Represents,
 						["fullname"] = Fullname,
-						["leagueId"] = LeagueId,
+						["divisionId"] = DivisionId,
 				}
 			),
 
@@ -267,15 +264,14 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"represents" , Represents},
 				{"fullname" , Fullname},
 				{"shortname" , Shortname},
 			};
 
-			if (LeagueId != default)
+			if (DivisionId != default)
 			{
-				entityVar["leagueId"] = LeagueId.ToString();
+				entityVar["divisionId"] = DivisionId.ToString();
 			}
 
 			return entityVar;
@@ -286,7 +282,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["represents"] = Represents.ToString(),
 				["fullname"] = Fullname.ToString(),
 				["shortname"] = Shortname.ToString(),
@@ -303,8 +298,8 @@ namespace APITests.EntityObjects.Models
 			{
 				switch (key)
 				{
-					case "LeagueId":
-						ReferenceIdDictionary.Add("LeagueId", guidCollection.FirstOrDefault());
+					case "DivisionId":
+						ReferenceIdDictionary.Add("DivisionId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
 					default:
@@ -317,8 +312,8 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (key)
 			{
-				case "LeagueId":
-					LeagueId = guid;
+				case "DivisionId":
+					DivisionId = guid;
 					break;
 				default:
 					throw new Exception($"{key} not valid reference key");
@@ -354,7 +349,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Represents
 			// not defining Fullname
 			// not defining Shortname
@@ -400,7 +394,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Represents = DataUtils.RandString();
 			Fullname = DataUtils.RandString();
 			Shortname = DataUtils.RandString();
@@ -414,7 +407,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var teamEntity = new TeamEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Represents = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 

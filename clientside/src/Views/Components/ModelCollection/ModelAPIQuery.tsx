@@ -70,7 +70,7 @@ export interface IModelAPIQueryProps<T extends Model, TData = any> {
 	children: (result: QueryResult) => React.ReactNode;
 	model: { new(json?: {}): T };
 	conditions?: Array<IWhereCondition<T>> | Array<Array<IWhereCondition<T>>>;
-	moreParams?: ApiQueryParams
+	moreParams?: ApiQueryParams;
 	ids?: string[];
 	searchStr?: string;
 	orderBy?: IOrderByCondition<T>;
@@ -149,7 +149,7 @@ class ModelAPIQuery<T extends Model, TData = any> extends React.Component<IModel
 			loading: this.requestState === 'loading',
 			success: this.requestState === 'done',
 			error: this.requestError,
-			refetch: action(() => this.requestState === 'loading'),
+			refetch: this.makeQuery,
 			data: {
 				[`${lowerCaseFirst(modelName)}s`]: this.requestData ? this.requestData.data : [],
 				[`count${modelName}s`]: { number: this.requestData ? this.requestData.totalCount : 0 }
@@ -168,7 +168,7 @@ class ModelAPIQuery<T extends Model, TData = any> extends React.Component<IModel
 		}
 
 		return {
-			pageNo: (!isNaN(page) && page >= 0) ? (page + 1) : undefined,  // mathcing the backend pagination which starts from page 1
+			pageNo: (!isNaN(page) && page >= 0) ? (page + 1) : undefined,  // matching the backend pagination which starts from page 1
 			pageSize: perPage || undefined,
 			searchStr: this.props.searchStr || undefined,
 			orderBy: orderBy.path || undefined,

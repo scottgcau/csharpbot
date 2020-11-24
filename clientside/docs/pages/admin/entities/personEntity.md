@@ -39,7 +39,8 @@ Details regarding a given PersonEntity.
 ## Security
 | Group  | Create | Read | Update | Delete |
 | ---- | :----: | :----:  | :----:  | :----:  |
-| Visitors | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
+| Visitors | <i class="fa fa-times"> | <i class="fa fa-check"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Systemuser | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
 
 ## List of Records
 

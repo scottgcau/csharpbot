@@ -31,6 +31,7 @@ See the sections below for each of these for more detail on the specific behavio
 | Name | Description | Default |
 |:---: | :----: | :----: |
 | Visitors | Anonymous users who have not been authenticated | false |
+| SystemUser | Users who have been created as a SystemUser entity | false |
 
 ---
 
@@ -44,36 +45,50 @@ Anonymous users who have not been authenticated
 
 | Entity Name | Create | Read | Update | Delete |
 | :------: | :------: | :------: | :------: | :------: |
+| Ladder Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | Schedule Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Season Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Venue Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| LadderElimination Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| LadderWinLoss Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Round Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | Game Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Division Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Venue Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Team Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| GameReferee Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Season Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Person Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| SystemUser Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | Sport Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | League Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Team Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Person Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | Roster Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | RosterAssignment Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Schedule Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Season Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Venue Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Game Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Sport Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| League Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Team Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Person Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Roster Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| RosterAssignment Submission Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Schedule Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Season Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Venue Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Game Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Sport Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| League Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Team Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Person Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| Roster Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
-| RosterAssignment Entity Form Tile Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Roster Timeline Events Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+
+---
+
+### SystemUser Group 
+Users who have been created as a SystemUser entity
+
+
+| Entity Name | Create | Read | Update | Delete |
+| :------: | :------: | :------: | :------: | :------: |
+| Ladder Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Schedule Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| LadderElimination Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| LadderWinLoss Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Round Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Game Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Division Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Venue Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Team Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| GameReferee Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Season Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Person Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| SystemUser Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Sport Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| League Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Roster Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| RosterAssignment Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 | Roster Timeline Events Entity | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
 
 ---

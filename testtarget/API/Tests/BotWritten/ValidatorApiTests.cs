@@ -48,12 +48,17 @@ namespace APITests.Tests.BotWritten
 			return new TheoryData<EntityFactory>
 			{
 				new EntityFactory("ScheduleEntity"),
-				new EntityFactory("SeasonEntity"),
-				new EntityFactory("VenueEntity"),
+				new EntityFactory("LaddereliminationEntity"),
+				new EntityFactory("LadderwinlossEntity"),
+				new EntityFactory("RoundEntity"),
 				new EntityFactory("GameEntity"),
-				new EntityFactory("LeagueEntity"),
+				new EntityFactory("DivisionEntity"),
+				new EntityFactory("VenueEntity"),
 				new EntityFactory("TeamEntity"),
+				new EntityFactory("SeasonEntity"),
 				new EntityFactory("PersonEntity"),
+				new EntityFactory("SportEntity"),
+				new EntityFactory("LeagueEntity"),
 				new EntityFactory("RosterassignmentEntity"),
 				new EntityFactory("RosterTimelineEventsEntity"),
 			};

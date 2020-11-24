@@ -27,7 +27,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class TeamEntityDto : ModelDto<TeamEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Represents here] off begin
 		/// <summary>
 		/// City or area represented
@@ -50,9 +49,9 @@ namespace Sportstats.Models
 		// % protected region % [Customise Shortname here] end
 
 
-		// % protected region % [Customise LeagueId here] off begin
-		public Guid? LeagueId { get; set; }
-		// % protected region % [Customise LeagueId here] end
+		// % protected region % [Customise DivisionId here] off begin
+		public Guid? DivisionId { get; set; }
+		// % protected region % [Customise DivisionId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
 		// % protected region % [Add any extra attributes here] end
@@ -80,11 +79,10 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Represents = Represents,
 				Fullname = Fullname,
 				Shortname = Shortname,
-				LeagueId  = LeagueId,
+				DivisionId  = DivisionId,
 				// % protected region % [Add any extra model properties here] off begin
 				// % protected region % [Add any extra model properties here] end
 			};
@@ -95,11 +93,10 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Represents = model.Represents;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
-			LeagueId  = model.LeagueId;
+			DivisionId  = model.DivisionId;
 
 			// % protected region % [Add any extra loading data logic here] off begin
 			// % protected region % [Add any extra loading data logic here] end

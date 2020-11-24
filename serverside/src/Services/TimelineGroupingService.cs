@@ -114,6 +114,10 @@ namespace Sportstats.Services
 				{
 					lastTwoEntries.Last().DateTimeGroup.EndDate = lastTwoEntries.First().DateTimeGroup.EndDate;
 					lastTwoEntries.Last().NumberOfResults += lastTwoEntries.First().NumberOfResults;
+					if (lastTwoEntries.First().FirstResult != null)
+					{
+						lastTwoEntries.Last().FirstResult = lastTwoEntries.First().FirstResult;
+					}
 					timelineGroupDateQueryResults.Remove(lastTwoEntries.First());
 				}
 			}
@@ -155,43 +159,51 @@ namespace Sportstats.Services
 					break;
 				case var _ when daysDifference > 0.5 && daysDifference <= 1:
 					dateIncrementingFunc = x => x.AddHours(2);
-					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 2);
 					startDate = startDate.AddHours(-(startDate.Hour % 2));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 2);
 					break;
 				case var _ when daysDifference > 1 && daysDifference <= 2:
 					dateIncrementingFunc = x => x.AddHours(4);
-					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 4);
 					startDate = startDate.AddHours(-(startDate.Hour % 4));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 4);
 					break;
 				case var _ when daysDifference > 2 && daysDifference <= 4:
 					dateIncrementingFunc = x => x.AddHours(8);
-					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 8);
 					startDate = startDate.AddHours(-(startDate.Hour % 8));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 8);
 					break;
 				case var _ when daysDifference > 4 && daysDifference <= 6:
 					dateIncrementingFunc = x => x.AddHours(12);
-					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 12);
 					startDate = startDate.AddHours(-(startDate.Hour % 12));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await HourlyGroupingQuery<T>(timelineFilter, 12);
 					break;
 				case var _ when daysDifference > 6 && daysDifference <= 12:
 					dateIncrementingFunc = x => x.AddHours(24);
-					queryResult = await DailyGroupingQuery<T>(timelineFilter, 1);
 					startDate = startDate.AddHours(-startDate.Hour);
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await DailyGroupingQuery<T>(timelineFilter, 1);
 					break;
 				case var _ when daysDifference > 12 && daysDifference <= 24:
 					dateIncrementingFunc = x => x.AddHours(48);
-					queryResult = await DailyGroupingQuery<T>(timelineFilter, 2);
 					startDate = startDate.AddDays(-((startDate.Day + 1) % 2));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await DailyGroupingQuery<T>(timelineFilter, 2);
 					break;
 				case var _ when daysDifference > 24 && daysDifference <= 40:
 					dateIncrementingFunc = x => x.AddHours(96);
-					queryResult = await DailyGroupingQuery<T>(timelineFilter, 4);
 					startDate = startDate.AddDays(-((startDate.Day + 1) % 4));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await DailyGroupingQuery<T>(timelineFilter, 4);
 					break;
 				case var _ when daysDifference > 40 && daysDifference <= 200:
 					dateIncrementingFunc = x => x.AddDays(17);
-					queryResult = await DailyGroupingQuery<T>(timelineFilter, 17);
 					startDate = startDate.AddDays(-((startDate.Day + 1) % 17));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await DailyGroupingQuery<T>(timelineFilter, 17);
 					break;
 				case var _ when daysDifference > 200 && daysDifference <= 400:
 					dateIncrementingFunc = x => x.AddMonths(1);
@@ -199,13 +211,15 @@ namespace Sportstats.Services
 					break;
 				case var _ when daysDifference > 400 && daysDifference <= 900:
 					dateIncrementingFunc = x => x.AddMonths(3);
-					queryResult = await MonthlyGroupingQuery<T>(timelineFilter, 3);
 					startDate = startDate.AddMonths(-((startDate.Month + 1) % 3));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await MonthlyGroupingQuery<T>(timelineFilter, 3);
 					break;
 				case var _ when daysDifference > 900:
 					dateIncrementingFunc = x => x.AddMonths(6);
-					queryResult = await MonthlyGroupingQuery<T>(timelineFilter, 6);
 					startDate = startDate.AddMonths(-((startDate.Month + 1) % 6));
+					timelineFilter.DateRange.StartDate = startDate;
+					queryResult = await MonthlyGroupingQuery<T>(timelineFilter, 6);
 					break;
 				default:
 					dateIncrementingFunc = x => x.AddHours(1);

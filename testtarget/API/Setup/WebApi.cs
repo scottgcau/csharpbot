@@ -54,7 +54,7 @@ namespace APITests.Setup
 		}
 
 		/// <summary>
-		/// Sets the most common headers shared by enpoints of the application.
+		/// Sets the most common headers shared by endpoints of the application.
 		/// </summary>
 		public void SetDefaultHeaders()
 		{
@@ -89,8 +89,8 @@ namespace APITests.Setup
 		/// <param name="dataFormat">XML or JSon Body</param>
 		/// <returns>The Requests Response</returns>
 		public IRestResponse Get(
-			string url, 
-			Dictionary<string,string> param = null, 
+			string url,
+			Dictionary<string,string> param = null,
 			Dictionary<string, string> headers = null,
 			DataFormat dataFormat = DataFormat.Json)
 		{
@@ -134,7 +134,7 @@ namespace APITests.Setup
 		{
 			return RequestEndpoint(Method.POST, url, body, headers, dataFormat, files);
 		}
-		
+
 		/// <summary>
 		/// Post to an end point with the specified parameters and headers.
 		/// </summary>
@@ -215,10 +215,10 @@ namespace APITests.Setup
 		/// <param name="dataFormat">XML or JSon Body</param>
 		/// <param name="files">Files to attatch to the request</param>
 		public IRestResponse RequestEndpoint(
-			Method method, 
-			string url, 
-			object param = null, 
-			Dictionary<string, string> headers = null, 
+			Method method,
+			string url,
+			object param = null,
+			Dictionary<string, string> headers = null,
 			DataFormat dataFormat= DataFormat.Json,
 			IEnumerable<FileData> files = null
 		)
@@ -234,7 +234,7 @@ namespace APITests.Setup
 			{
 				Method = method,
 			};
-		
+
 			// Merge the two dictionaries together
 			var requestHeaders = new Dictionary<string, string>();
 			if (headers != null)
@@ -280,7 +280,7 @@ namespace APITests.Setup
 						break;
 				}
 			}
-			
+
 			if (files != null)
 			{
 				if (param is Dictionary<string, object> paramDictionary)
@@ -300,7 +300,7 @@ namespace APITests.Setup
 					request.AddFile(file.Id.ToString(), file.Data, file.Filename);
 				}
 			}
-			
+
 			// Execute the request
 			var response = client.Execute(request);
 

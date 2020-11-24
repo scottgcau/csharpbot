@@ -19,7 +19,6 @@ import { crudOptions as crudOptions } from 'Symbols';
 import { Model } from './Model';
 import { Comparators } from "Views/Components/ModelCollection/ModelQuery";
 import { transformFunction } from 'Util/AttributeUtils';
-import { IFormTile } from "Views/Components/CRUD/Attributes/AttributeFormTile";
 
 export type displayType =
 	'hidden' |
@@ -66,9 +65,6 @@ export interface ICRUDOptions {
 	displayFunction?: (attribute: any, that: Model) => React.ReactNode;
 	onAfterChange?: (model: Model) => void;
 
-	// Form tile dropdown specific
-	formTileFilterFn?: (option: IFormTile) => boolean;
-
 	fileAttribute?: string;
 
 	// Reference Dropdown specific
@@ -111,7 +107,6 @@ export class AttributeCRUDOptions implements ICRUDOptions {
 	public isJoinEntity?: boolean = false;
 	public displayFunction?: (attribute: any, that: Model) => React.ReactNode;
 	public onAfterChange?: (model: Model) => void;
-	public formTileFilterFn?: (option: IFormTile) => boolean;
 
 	public fileAttribute?: string;
 
@@ -157,7 +152,6 @@ export class AttributeCRUDOptions implements ICRUDOptions {
 		this.updateFieldType = options.updateFieldType || options.displayType;
 		this.groupId = options.groupId;
 		this.order = options.order;
-		this.formTileFilterFn = options.formTileFilterFn;
 		this.fileAttribute = options.fileAttribute;
 		// % protected region % [Add more Attribute CRUD Option constructor operations here] off begin
 		// % protected region % [Add more Attribute CRUD Option constructor operations here] end

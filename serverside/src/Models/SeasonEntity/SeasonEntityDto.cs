@@ -27,7 +27,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class SeasonEntityDto : ModelDto<SeasonEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Startdate here] off begin
 		public DateTime? Startdate { get; set; }
 		// % protected region % [Customise Startdate here] end
@@ -52,7 +51,7 @@ namespace Sportstats.Models
 
 
 		// % protected region % [Customise LeagueId here] off begin
-		public Guid LeagueId { get; set; }
+		public Guid? LeagueId { get; set; }
 		// % protected region % [Customise LeagueId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
@@ -81,7 +80,6 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Startdate = Startdate,
 				Enddate = Enddate,
 				Fullname = Fullname,
@@ -97,7 +95,6 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Startdate = model.Startdate;
 			Enddate = model.Enddate;
 			Fullname = model.Fullname;

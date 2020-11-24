@@ -39,12 +39,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private readonly ContextConfiguration _contextConfiguration;
 
 		// reference elements
+		private static By RoundIdElementBy => By.XPath("//*[contains(@class, 'round')]//div[contains(@class, 'dropdown__container')]");
+		private static By RoundIdInputElementBy => By.XPath("//*[contains(@class, 'round')]/div/input");
+		private static By GamerefereessElementBy => By.XPath("//*[contains(@class, 'gamereferees')]//div[contains(@class, 'dropdown__container')]/a");
+		private static By GamerefereessInputElementBy => By.XPath("//*[contains(@class, 'gamereferees')]/div/input");
 		private static By VenueIdElementBy => By.XPath("//*[contains(@class, 'venue')]//div[contains(@class, 'dropdown__container')]");
 		private static By VenueIdInputElementBy => By.XPath("//*[contains(@class, 'venue')]/div/input");
-		private static By ScheduleIdElementBy => By.XPath("//*[contains(@class, 'schedule')]//div[contains(@class, 'dropdown__container')]");
-		private static By ScheduleIdInputElementBy => By.XPath("//*[contains(@class, 'schedule')]/div/input");
-		private static By RefereessElementBy => By.XPath("//*[contains(@class, 'referees')]//div[contains(@class, 'dropdown__container')]/a");
-		private static By RefereessInputElementBy => By.XPath("//*[contains(@class, 'referees')]/div/input");
 
 		//FlatPickr Elements
 		private DateTimePickerComponent DatestartElement => new DateTimePickerComponent(_contextConfiguration, "datestart");
@@ -54,9 +54,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 		//Attribute Header Titles
 		private IWebElement DatestartHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='DateStart']"));
+		private IWebElement HomepointsHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='HomePoints']"));
+		private IWebElement AwaypointsHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='AwayPoints']"));
 		private IWebElement HometeamidHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='HomeTeamId']"));
 		private IWebElement AwayteamidHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='AwayTeamId']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -79,16 +80,15 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private void InitializeSelectors()
 		{
 			// Attribute web elements
+			selectorDict.Add("HomepointsElement", (selector: "//div[contains(@class, 'homepoints')]//input", type: SelectorType.XPath));
+			selectorDict.Add("AwaypointsElement", (selector: "//div[contains(@class, 'awaypoints')]//input", type: SelectorType.XPath));
 			selectorDict.Add("HometeamidElement", (selector: "//div[contains(@class, 'hometeamid')]//input", type: SelectorType.XPath));
 			selectorDict.Add("AwayteamidElement", (selector: "//div[contains(@class, 'awayteamid')]//input", type: SelectorType.XPath));
 
 			// Reference web elements
+			selectorDict.Add("RoundElement", (selector: ".input-group__dropdown.roundId > .dropdown.dropdown__container", type: SelectorType.CSS));
+			selectorDict.Add("GamerefereesElement", (selector: ".input-group__dropdown.gamerefereess > .dropdown.dropdown__container", type: SelectorType.CSS));
 			selectorDict.Add("VenueElement", (selector: ".input-group__dropdown.venueId > .dropdown.dropdown__container", type: SelectorType.CSS));
-			selectorDict.Add("ScheduleElement", (selector: ".input-group__dropdown.scheduleId > .dropdown.dropdown__container", type: SelectorType.CSS));
-			selectorDict.Add("RefereesElement", (selector: ".input-group__dropdown.refereess > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -97,14 +97,15 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 		//outgoing Reference web elements
 		//get the input path as set by the selector library
-		private IWebElement VenueElement => FindElementExt("VenueElement");
+		private IWebElement RoundElement => FindElementExt("RoundElement");
 		//get the input path as set by the selector library
-		private IWebElement ScheduleElement => FindElementExt("ScheduleElement");
+		private IWebElement VenueElement => FindElementExt("VenueElement");
 
 		//Attribute web Elements
+		private IWebElement HomepointsElement => FindElementExt("HomepointsElement");
+		private IWebElement AwaypointsElement => FindElementExt("AwaypointsElement");
 		private IWebElement HometeamidElement => FindElementExt("HometeamidElement");
 		private IWebElement AwayteamidElement => FindElementExt("AwayteamidElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -112,9 +113,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			return attribute switch
 			{
 				"DateStart" => DatestartHeaderTitle,
+				"HomePoints" => HomepointsHeaderTitle,
+				"AwayPoints" => AwaypointsHeaderTitle,
 				"HomeTeamId" => HometeamidHeaderTitle,
 				"AwayTeamId" => AwayteamidHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -124,16 +126,16 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "DateStart":
 					return DatestartElement.DateTimePickerElement;
+				case "HomePoints":
+					return HomepointsElement;
+				case "AwayPoints":
+					return AwaypointsElement;
 				case "HomeTeamId":
 					return HometeamidElement;
 				case "AwayTeamId":
 					return AwayteamidElement;
-				case "ScheduleId":
-					return ScheduleElement;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -143,30 +145,30 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "DateStart":
 					SetDatestart(Convert.ToDateTime(value));
 					break;
-				case "HomeTeamId":
-					int? hometeamid = null;
-					if (int.TryParse(value, out var intHometeamid))
+				case "HomePoints":
+					int? homepoints = null;
+					if (int.TryParse(value, out var intHomepoints))
 					{
-						hometeamid = intHometeamid;
+						homepoints = intHomepoints;
 					}
-					SetHometeamid(hometeamid);
+					SetHomepoints(homepoints);
+					break;
+				case "AwayPoints":
+					int? awaypoints = null;
+					if (int.TryParse(value, out var intAwaypoints))
+					{
+						awaypoints = intAwaypoints;
+					}
+					SetAwaypoints(awaypoints);
+					break;
+				case "HomeTeamId":
+					SetHometeamid(value);
 					break;
 				case "AwayTeamId":
-					int? awayteamid = null;
-					if (int.TryParse(value, out var intAwayteamid))
-					{
-						awayteamid = intAwayteamid;
-					}
-					SetAwayteamid(awayteamid);
-					break;
-				case "ScheduleId":
-					SetScheduleId(value);
+					SetAwayteamid(value);
 					break;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
@@ -177,11 +179,11 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"DateStart" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.datestart > div > p"),
+				"HomePoints" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.homepoints > div > p"),
+				"AwayPoints" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.awaypoints > div > p"),
 				"HomeTeamId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.hometeamid > div > p"),
 				"AwayTeamId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.awayteamid > div > p"),
-				"ScheduleId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.scheduleId > div > p"),
 				_ => throw new Exception($"No such attribute {attribute}"),
 			};
 		}
@@ -200,17 +202,18 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_gameEntity.Name);
 			SetDatestart(_gameEntity.Datestart);
+			SetHomepoints(_gameEntity.Homepoints);
+			SetAwaypoints(_gameEntity.Awaypoints);
 			SetHometeamid(_gameEntity.Hometeamid);
 			SetAwayteamid(_gameEntity.Awayteamid);
 
-			SetVenueId(_gameEntity.VenueId?.ToString());
-			SetScheduleId(_gameEntity.ScheduleId.ToString());
-			if (_gameEntity.RefereesIds != null)
+			SetRoundId(_gameEntity.RoundId?.ToString());
+			if (_gameEntity.GamerefereesIds != null)
 			{
-				SetRefereess(_gameEntity.RefereesIds.Select(x => x.ToString()));
+				SetGamerefereess(_gameEntity.GamerefereesIds.Select(x => x.ToString()));
 			}
+			SetVenueId(_gameEntity.VenueId?.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -218,18 +221,45 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (referenceName)
 			{
+				case "round":
+					return new List<Guid>() {GetRoundId()};
+				case "gamereferees":
+					return GetGamerefereess();
 				case "venue":
 					return new List<Guid>() {GetVenueId()};
-				case "schedule":
-					return new List<Guid>() {GetScheduleId()};
-				case "referees":
-					return GetRefereess();
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
 		}
 
 		// set associations
+		private void SetRoundId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, RoundIdInputElementBy, ElementState.VISIBLE);
+			var roundIdInputElement = _driver.FindElementExt(RoundIdInputElementBy);
+
+			if (id != null)
+			{
+				roundIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				roundIdInputElement.SendKeys(Keys.Return);
+			}
+		}
+		private void SetGamerefereess(IEnumerable<string> ids)
+		{
+			WaitUtils.elementState(_driverWait, GamerefereessInputElementBy, ElementState.VISIBLE);
+			var gamerefereessInputElement = _driver.FindElementExt(GamerefereessInputElementBy);
+
+			foreach(var id in ids)
+			{
+				gamerefereessInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				gamerefereessInputElement.SendKeys(Keys.Return);
+			}
+		}
+
 		private void SetVenueId(string id)
 		{
 			if (id == "") { return; }
@@ -244,55 +274,31 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				venueIdInputElement.SendKeys(Keys.Return);
 			}
 		}
-		private void SetScheduleId(string id)
-		{
-			if (id == "") { return; }
-			WaitUtils.elementState(_driverWait, ScheduleIdInputElementBy, ElementState.VISIBLE);
-			var scheduleIdInputElement = _driver.FindElementExt(ScheduleIdInputElementBy);
-
-			scheduleIdInputElement.SendKeys(id);
-			WaitForDropdownOptions();
-			WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option'][@data-id='{id}']"), ElementState.EXISTS);
-			scheduleIdInputElement.SendKeys(Keys.Return);
-		}
-		private void SetRefereess(IEnumerable<string> ids)
-		{
-			WaitUtils.elementState(_driverWait, RefereessInputElementBy, ElementState.VISIBLE);
-			var refereessInputElement = _driver.FindElementExt(RefereessInputElementBy);
-
-			foreach(var id in ids)
-			{
-				refereessInputElement.SendKeys(id);
-				WaitForDropdownOptions();
-				refereessInputElement.SendKeys(Keys.Return);
-			}
-		}
-
 
 		// get associations
+		private Guid GetRoundId()
+		{
+			WaitUtils.elementState(_driverWait, RoundIdElementBy, ElementState.VISIBLE);
+			var roundIdElement = _driver.FindElementExt(RoundIdElementBy);
+			return new Guid(roundIdElement.GetAttribute("data-id"));
+		}
+		private List<Guid> GetGamerefereess()
+		{
+			var guids = new List<Guid>();
+			WaitUtils.elementState(_driverWait, GamerefereessElementBy, ElementState.VISIBLE);
+			var gamerefereessElement = _driver.FindElements(GamerefereessElementBy);
+
+			foreach(var element in gamerefereessElement)
+			{
+				guids.Add(new Guid (element.GetAttribute("data-id")));
+			}
+			return guids;
+		}
 		private Guid GetVenueId()
 		{
 			WaitUtils.elementState(_driverWait, VenueIdElementBy, ElementState.VISIBLE);
 			var venueIdElement = _driver.FindElementExt(VenueIdElementBy);
 			return new Guid(venueIdElement.GetAttribute("data-id"));
-		}
-		private Guid GetScheduleId()
-		{
-			WaitUtils.elementState(_driverWait, ScheduleIdElementBy, ElementState.VISIBLE);
-			var scheduleIdElement = _driver.FindElementExt(ScheduleIdElementBy);
-			return new Guid(scheduleIdElement.GetAttribute("data-id"));
-		}
-		private List<Guid> GetRefereess()
-		{
-			var guids = new List<Guid>();
-			WaitUtils.elementState(_driverWait, RefereessElementBy, ElementState.VISIBLE);
-			var refereessElement = _driver.FindElements(RefereessElementBy);
-
-			foreach(var element in refereessElement)
-			{
-				guids.Add(new Guid (element.GetAttribute("data-id")));
-			}
-			return guids;
 		}
 
 		// wait for dropdown to be displaying options
@@ -313,37 +319,49 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 		private DateTime? GetDatestart =>
 			Convert.ToDateTime(DatestartElement.DateTimePickerElement.Text);
-		private void SetHometeamid (int? value)
+		private void SetHomepoints (int? value)
 		{
 			if (value is int intValue)
 			{
-				TypingUtils.InputEntityAttributeByClass(_driver, "hometeamid", intValue.ToString(), _isFastText);
+				TypingUtils.InputEntityAttributeByClass(_driver, "homepoints", intValue.ToString(), _isFastText);
 			}
 		}
 
-		private int? GetHometeamid =>
-			int.Parse(HometeamidElement.Text);
+		private int? GetHomepoints =>
+			int.Parse(HomepointsElement.Text);
 
-		private void SetAwayteamid (int? value)
+		private void SetAwaypoints (int? value)
 		{
 			if (value is int intValue)
 			{
-				TypingUtils.InputEntityAttributeByClass(_driver, "awayteamid", intValue.ToString(), _isFastText);
+				TypingUtils.InputEntityAttributeByClass(_driver, "awaypoints", intValue.ToString(), _isFastText);
 			}
 		}
 
-		private int? GetAwayteamid =>
-			int.Parse(AwayteamidElement.Text);
+		private int? GetAwaypoints =>
+			int.Parse(AwaypointsElement.Text);
 
-
-		// Set Name for form entity
-		private void SetName (String value)
+		private void SetHometeamid (String value)
 		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
+			TypingUtils.InputEntityAttributeByClass(_driver, "hometeamid", value, _isFastText);
+			HometeamidElement.SendKeys(Keys.Tab);
+			HometeamidElement.SendKeys(Keys.Escape);
 		}
 
-		private String GetName => NameElement.Text;
+		private String GetHometeamid =>
+			HometeamidElement.Text;
+
+		private void SetAwayteamid (String value)
+		{
+			TypingUtils.InputEntityAttributeByClass(_driver, "awayteamid", value, _isFastText);
+			AwayteamidElement.SendKeys(Keys.Tab);
+			AwayteamidElement.SendKeys(Keys.Escape);
+		}
+
+		private String GetAwayteamid =>
+			AwayteamidElement.Text;
+
+
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

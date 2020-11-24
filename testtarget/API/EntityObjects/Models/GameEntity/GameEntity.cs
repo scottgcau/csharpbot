@@ -28,40 +28,35 @@ namespace APITests.EntityObjects.Models
 {
 	public class GameEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// 
 		public DateTime? Datestart { get; set; }
 		// 
-		public int? Hometeamid { get; set; }
+		public int? Homepoints { get; set; }
 		// 
-		public int? Awayteamid { get; set; }
+		public int? Awaypoints { get; set; }
+		// 
+		public String Hometeamid { get; set; }
+		// 
+		public String Awayteamid { get; set; }
+
+		/// <summary>
+		/// Incoming one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.Round"/>
+		public Guid? RoundId { get; set; }
+
+		/// <summary>
+		/// Outgoing one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.Gamereferees"/>
+		public List<Guid> GamerefereesIds { get; set; }
+		public ICollection<GamerefereeEntity> Gamerefereess { get; set; }
 
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
 		/// <see cref="Sportstats.Models.Venue"/>
 		public Guid? VenueId { get; set; }
-
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.Schedule"/>
-		public Guid ScheduleId { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.Referees"/>
-		public List<Guid> RefereesIds { get; set; }
-		public ICollection<PersonEntity> Refereess { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<GameEntityFormTileEntity> FormPages { get; set; }
 
 
 		public GameEntity()
@@ -107,18 +102,23 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
+				Name = "Datestart",
 				IsRequired = true
 			});
 			Attributes.Add(new Attribute
 			{
-				Name = "Datestart",
+				Name = "Homepoints",
+				IsRequired = false
+			});
+			Attributes.Add(new Attribute
+			{
+				Name = "Awaypoints",
 				IsRequired = false
 			});
 			Attributes.Add(new Attribute
 			{
 				Name = "Hometeamid",
-				IsRequired = true
+				IsRequired = false
 			});
 			Attributes.Add(new Attribute
 			{
@@ -131,8 +131,8 @@ namespace APITests.EntityObjects.Models
 		{
 			References.Add(new Reference
 			{
-				EntityName = "VenueEntity",
-				OppositeName = "Venue",
+				EntityName = "RoundEntity",
+				OppositeName = "Round",
 				Name = "Games",
 				Optional = true,
 				Type = ReferenceType.ONE,
@@ -140,10 +140,10 @@ namespace APITests.EntityObjects.Models
 			});
 			References.Add(new Reference
 			{
-				EntityName = "ScheduleEntity",
-				OppositeName = "Schedule",
+				EntityName = "VenueEntity",
+				OppositeName = "Venue",
 				Name = "Games",
-				Optional = false,
+				Optional = true,
 				Type = ReferenceType.ONE,
 				OppositeType = ReferenceType.MANY
 			});
@@ -162,27 +162,25 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (attribute)
 			{
-				case "HomeTeamId":
-					return GetInvalidHometeamid(validator);
-				case "ScheduleId":
-					return GetInvalidScheduleId(validator);
+				case "DateStart":
+					return GetInvalidDatestart(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
 		}
 
-		private static string GetInvalidHometeamid(string validator)
+		private static string GetInvalidDatestart(string validator)
 		{
 			switch (validator)
 			{
 					case "Required":
 						return "";
 				default:
-					throw new Exception($"Cannot find validator {validator} for attribute Hometeamid");
+					throw new Exception($"Cannot find validator {validator} for attribute Datestart");
 			}
 		}
 
-		private static string GetInvalidVenueId(string validator)
+		private static string GetInvalidRoundId(string validator)
 		{
 			switch (validator)
 			{
@@ -192,7 +190,7 @@ namespace APITests.EntityObjects.Models
 					throw new Exception($"Cannot find validator {validator} for attribute Games");
 			}
 		}
-		private static string GetInvalidScheduleId(string validator)
+		private static string GetInvalidVenueId(string validator)
 		{
 			switch (validator)
 			{
@@ -216,34 +214,18 @@ namespace APITests.EntityObjects.Models
 			(
 				new List<string>
 				{
-					"The Hometeamid field is required.",
+					"The Datestart field is required.",
 				},
 
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
-						// not defining hometeamid,
-						["datestart"] = Datestart?.ToString("s"),
-						["awayteamid"] = Awayteamid.ToString(),
-						["venueId"] = VenueId,
-						["scheduleId"] = ScheduleId,
-				}
-			),
-			(
-				new List<string>
-				{
-					"violates foreign key constraint",
-				},
-
-				new RestSharp.JsonObject
-				{
-						["id"] = Id,
-						["name"] = Name,
-						// not defining ScheduleId,
-						["datestart"] = Datestart?.ToString("s"),
-						["hometeamid"] = Hometeamid.ToString(),
-						["awayteamid"] = Awayteamid.ToString(),
+						// not defining datestart,
+						["homepoints"] = Homepoints.ToString(),
+						["awaypoints"] = Awaypoints.ToString(),
+						["hometeamid"] = Hometeamid,
+						["awayteamid"] = Awayteamid,
+						["roundId"] = RoundId,
 						["venueId"] = VenueId,
 				}
 			),
@@ -256,19 +238,20 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"datestart" ,((DateTime)Datestart).ToIsoString()},
-				{"hometeamid" , Hometeamid.ToString()},
-				{"awayteamid" , Awayteamid.ToString()},
+				{"homepoints" , Homepoints.ToString()},
+				{"awaypoints" , Awaypoints.ToString()},
+				{"hometeamid" , Hometeamid},
+				{"awayteamid" , Awayteamid},
 			};
 
+			if (RoundId != default)
+			{
+				entityVar["roundId"] = RoundId.ToString();
+			}
 			if (VenueId != default)
 			{
 				entityVar["venueId"] = VenueId.ToString();
-			}
-			if (ScheduleId != default)
-			{
-				entityVar["scheduleId"] = ScheduleId.ToString();
 			}
 
 			return entityVar;
@@ -279,16 +262,13 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["datestart"] = Datestart?.ToString("s"),
-				["hometeamid"] = Hometeamid,
-				["awayteamid"] = Awayteamid,
+				["homepoints"] = Homepoints,
+				["awaypoints"] = Awaypoints,
+				["hometeamid"] = Hometeamid.ToString(),
+				["awayteamid"] = Awayteamid.ToString(),
 			};
 
-			if (ScheduleId != default)
-			{
-				entityVar["scheduleId"] = ScheduleId.ToString();
-			}
 
 			return entityVar;
 		}
@@ -300,12 +280,12 @@ namespace APITests.EntityObjects.Models
 			{
 				switch (key)
 				{
-					case "VenueId":
-						ReferenceIdDictionary.Add("VenueId", guidCollection.FirstOrDefault());
+					case "RoundId":
+						ReferenceIdDictionary.Add("RoundId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
-					case "ScheduleId":
-						ReferenceIdDictionary.Add("ScheduleId", guidCollection.FirstOrDefault());
+					case "VenueId":
+						ReferenceIdDictionary.Add("VenueId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
 					default:
@@ -318,11 +298,11 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (key)
 			{
+				case "RoundId":
+					RoundId = guid;
+					break;
 				case "VenueId":
 					VenueId = guid;
-					break;
-				case "ScheduleId":
-					ScheduleId = guid;
 					break;
 				default:
 					throw new Exception($"{key} not valid reference key");
@@ -358,8 +338,7 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
-			// not defining Hometeamid
+			// not defining Datestart
 		}
 
 		/// <summary>
@@ -381,7 +360,7 @@ namespace APITests.EntityObjects.Models
 		{
 			var gameEntity = new GameEntity
 			{
-				// not defining Hometeamid
+				// not defining Datestart
 			};
 			return gameEntity;
 		}
@@ -392,9 +371,6 @@ namespace APITests.EntityObjects.Models
 		/// </summary>
 		private void SetValidEntityAssociations()
 		{
-
-			ScheduleId = new ScheduleEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES).Save();
-
 		}
 
 		/// <summary>
@@ -403,10 +379,11 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Datestart = DataUtils.RandDatetime();
-			Hometeamid = DataUtils.RandInt();
-			Awayteamid = DataUtils.RandInt();
+			Homepoints = DataUtils.RandInt();
+			Awaypoints = DataUtils.RandInt();
+			Hometeamid = DataUtils.RandString();
+			Awayteamid = DataUtils.RandString();
 			// % protected region % [Override generated entity attributes here] end
 		}
 
@@ -417,13 +394,16 @@ namespace APITests.EntityObjects.Models
 		{
 			var gameEntity = new GameEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Datestart = DataUtils.RandDatetime(),
 
-				Hometeamid = DataUtils.RandInt(),
+				Homepoints = DataUtils.RandInt(),
 
-				Awayteamid = DataUtils.RandInt(),
+				Awaypoints = DataUtils.RandInt(),
+
+				Hometeamid = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
+
+				Awayteamid = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 			};
 
 			// % protected region % [Customize valid entity before return here] off begin

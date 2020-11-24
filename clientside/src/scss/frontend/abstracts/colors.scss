@@ -36,12 +36,12 @@ $color-brand-02: rgb(213, 213, 213); // #D5D5D5; // Grey
 $color-brand-03: rgb(244, 244, 244); //#F4F4F4 // Light grey
 
 // Accent Colours
-$color-support-red: rgba(232, 77, 56, 1); // #E84D38 // Support color red
-$color-support-green: rgba(56, 204, 150, 1); // #38CC7D // Support color green
-$color-support-blue: rgba(0, 159, 221, 1); // #009FDD // Support color blue
-$color-support-yellow: rgba(251, 194, 0, 1); // #FBC200 // Support color yellow
-$color-support-orange: rgba(251, 164, 65, 1); // #F27600 // Support color orange
-$color-support-purple: rgba(134, 35, 223, 1); // #8623DF // Support color purple
+$color-support-red: rgba(246, 70, 79, 1) !default; // #E84D38 // Support color red
+$color-support-green: rgba(35, 215, 158, 1) !default; // #38CC7D // Support color green
+$color-support-blue: rgba(76, 98, 240, 1) !default; // #009FDD // Support color blue
+$color-support-yellow: rgba(244, 220, 62, 1) !default; // #FBC200 // Support color yellow
+$color-support-orange: rgba(251, 164, 65, 1) !default; // #F27600 // Support color orange
+$color-support-purple: rgba(91, 15, 211, 1) !default; // #8623DF // Support color purple
 
 //Greyscale
 $black: rgb(34, 34, 34); // #000000

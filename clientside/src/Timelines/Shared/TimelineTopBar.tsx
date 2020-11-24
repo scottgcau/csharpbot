@@ -132,20 +132,25 @@ export default class TimelineTopBar extends React.Component<ITimelineTopBarProps
 			return null;
 		}
 		let entityOptionsDropDown = null;
-		if (this.timelineFilterClone.timelineEntityOptions) {
+
+		// Display entity selector if more than 1 option or explicitly specified
+		if (this.timelineFilterClone.timelineEntityOptions 
+				&& (this.timelineFilterClone.timelineEntityOptions.length > 1 
+				|| this.timelineFilterClone.canChangeTimelineEntity == true)) {
+			
 			entityOptionsDropDown = (
 				<Combobox
-				model={this.timelineEntityConfiguration}
-				label={'Entity'}
-				options={this.timelineFilterClone.timelineEntityOptions.map(x => {
-					return {
-						display: getModelDisplayName(x),
-						value: getModelDisplayName(x)
-					}
-				})}
-				onAfterChange={this.onChangeEntity}
-				modelProperty={'selectedTimelineEntityName'}/>
-				)
+					model={this.timelineEntityConfiguration}
+					label={'Entity'}
+					options={this.timelineFilterClone.timelineEntityOptions.map(x => {
+						return {
+							display: getModelDisplayName(x),
+							value: getModelDisplayName(x)
+						}
+					})}
+					onAfterChange={this.onChangeEntity}
+					modelProperty={'selectedTimelineEntityName'}/>
+			)
 		}
 
 		return (

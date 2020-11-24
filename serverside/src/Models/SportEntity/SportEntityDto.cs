@@ -27,7 +27,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class SportEntityDto : ModelDto<SportEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Order here] off begin
 		/// <summary>
 		/// Order
@@ -66,7 +65,6 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Order = Order,
 				Fullname = Fullname,
 				// % protected region % [Add any extra model properties here] off begin
@@ -79,7 +77,6 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Order = model.Order;
 			Fullname = model.Fullname;
 

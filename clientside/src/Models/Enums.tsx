@@ -15,6 +15,19 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 
+export type laddertype =
+	// % protected region % [Override laddertype keys here] off begin
+	'WINLOSS' |
+		'ELIMINATION';
+	// % protected region % [Override laddertype keys here] end
+
+export const laddertypeOptions: { [key in laddertype]: string } = {
+	// % protected region % [Override laddertype display fields here] off begin
+	WINLOSS: 'WinLoss',
+	ELIMINATION: 'Elimination',
+	// % protected region % [Override laddertype display fields here] end
+};
+
 export type scheduletype =
 	// % protected region % [Override scheduletype keys here] off begin
 	'PRESEASON' |

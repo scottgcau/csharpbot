@@ -26,7 +26,6 @@ import classNames from 'classnames';
 import * as moment from 'moment';
 import If from '../If/If';
 import { EntityContextMenu, IEntityContextMenuActions } from '../EntityContextMenu/EntityContextMenu';
-
 // % protected region % [Add extra imports here] off begin
 // % protected region % [Add extra imports here] end
 
@@ -69,15 +68,12 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 	@computed
 	private get expandDom() {
 		// % protected region % [Customize expandDom computed field here] off begin
-		if (this.props.expandAction) {
+		if (this.props.expandAction && this.expanded) {
 			// The magic number is since we have an extra column for the checkbox and another for the actions
 			const colSpanOffset = this.props.selectableItems ? 2 : 1;
 			return (
-				<tr className={
-					classNames("collection__item",
-						"collection__item--is-expanded-child",
-						(this.expanded ? '' : ' hide'))
-				}
+				<tr className={classNames("collection__item",
+						"collection__item--is-expanded-child", (this.expanded ? '' : ' hide'))}
 				>
 					<td colSpan={this.props.headers.length + colSpanOffset}>
 						{this.props.expandAction(this.props.item)}
@@ -252,6 +248,8 @@ class CollectionRow<T> extends React.Component<ICollectionRowProps<T>, any> {
 		);
 		// % protected region % [Customize render logic here] end
 	}
+	// % protected region % [Add extra methods here] off begin
+	// % protected region % [Add extra methods here] end
 }
 
 export default CollectionRow;

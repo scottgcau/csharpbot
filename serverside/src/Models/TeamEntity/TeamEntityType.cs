@@ -42,17 +42,48 @@ namespace Sportstats.Models
 			Field(o => o.Represents, type: typeof(StringGraphType)).Description(@"City or area represented");
 			Field(o => o.Fullname, type: typeof(StringGraphType)).Description(@"Name of the team (sans city / area)");
 			Field(o => o.Shortname, type: typeof(StringGraphType)).Description(@"Short name / abbreviation for the team");
-			Field(o => o.Name, type: typeof(StringGraphType));
-			Field(o => o.PublishedVersionId, type: typeof(IdGraphType));
 			// % protected region % [Add any extra GraphQL fields here] off begin
 			// % protected region % [Add any extra GraphQL fields here] end
 
 			// Add entity references
-			AddNavigationListField("FormVersions", context => context.Source.FormVersions);
-			AddNavigationConnectionField("FormVersionConnection", context => context.Source.FormVersions);
-			AddNavigationField("PublishedVersion", context => context.Source.PublishedVersion);
+			Field(o => o.DivisionId, type: typeof(IdGraphType));
 
-			Field(o => o.LeagueId, type: typeof(IdGraphType));
+			// GraphQL reference to entity LadderwinlossEntity via reference Ladderwinlosses
+			IEnumerable<LadderwinlossEntity> LadderwinlossessResolveFunction(ResolveFieldContext<TeamEntity> context)
+			{
+				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
+				var filter = SecurityService.CreateReadSecurityFilter<LadderwinlossEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
+				return context.Source.Ladderwinlossess.Where(filter.Compile());
+			}
+			AddNavigationListField("Ladderwinlossess", (Func<ResolveFieldContext<TeamEntity>, IEnumerable<LadderwinlossEntity>>) LadderwinlossessResolveFunction);
+			AddNavigationConnectionField("LadderwinlossessConnection", LadderwinlossessResolveFunction);
+
+			// GraphQL reference to entity DivisionEntity via reference Division
+			AddNavigationField("Division", context => {
+				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
+				var filter = SecurityService.CreateReadSecurityFilter<DivisionEntity>(
+					graphQlContext.IdentityService,
+					graphQlContext.UserManager,
+					graphQlContext.DbContext,
+					graphQlContext.ServiceProvider);
+				var value = context.Source.Division;
+
+				if (value != null)
+				{
+					return new List<DivisionEntity> {value}.All(filter.Compile()) ? value : null;
+				}
+				return null;
+			});
+
+			// GraphQL reference to entity LaddereliminationEntity via reference Laddereliminations
+			IEnumerable<LaddereliminationEntity> LaddereliminationssResolveFunction(ResolveFieldContext<TeamEntity> context)
+			{
+				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
+				var filter = SecurityService.CreateReadSecurityFilter<LaddereliminationEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
+				return context.Source.Laddereliminationss.Where(filter.Compile());
+			}
+			AddNavigationListField("Laddereliminationss", (Func<ResolveFieldContext<TeamEntity>, IEnumerable<LaddereliminationEntity>>) LaddereliminationssResolveFunction);
+			AddNavigationConnectionField("LaddereliminationssConnection", LaddereliminationssResolveFunction);
 
 			// GraphQL reference to entity RosterEntity via reference Rosters
 			IEnumerable<RosterEntity> RosterssResolveFunction(ResolveFieldContext<TeamEntity> context)
@@ -63,33 +94,6 @@ namespace Sportstats.Models
 			}
 			AddNavigationListField("Rosterss", (Func<ResolveFieldContext<TeamEntity>, IEnumerable<RosterEntity>>) RosterssResolveFunction);
 			AddNavigationConnectionField("RosterssConnection", RosterssResolveFunction);
-
-			// GraphQL reference to entity LeagueEntity via reference League
-			AddNavigationField("League", context => {
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<LeagueEntity>(
-					graphQlContext.IdentityService,
-					graphQlContext.UserManager,
-					graphQlContext.DbContext,
-					graphQlContext.ServiceProvider);
-				var value = context.Source.League;
-
-				if (value != null)
-				{
-					return new List<LeagueEntity> {value}.All(filter.Compile()) ? value : null;
-				}
-				return null;
-			});
-
-			// GraphQL reference to entity TeamEntityFormTileEntity via reference FormPage
-			IEnumerable<TeamEntityFormTileEntity> FormPagesResolveFunction(ResolveFieldContext<TeamEntity> context)
-			{
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<TeamEntityFormTileEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
-				return context.Source.FormPages.Where(filter.Compile());
-			}
-			AddNavigationListField("FormPages", (Func<ResolveFieldContext<TeamEntity>, IEnumerable<TeamEntityFormTileEntity>>) FormPagesResolveFunction);
-			AddNavigationConnectionField("FormPagesConnection", FormPagesResolveFunction);
 
 			// % protected region % [Add any extra GraphQL references here] off begin
 			// % protected region % [Add any extra GraphQL references here] end
@@ -113,17 +117,15 @@ namespace Sportstats.Models
 			Field<StringGraphType>("Represents").Description = @"City or area represented";
 			Field<StringGraphType>("Fullname").Description = @"Name of the team (sans city / area)";
 			Field<StringGraphType>("Shortname").Description = @"Short name / abbreviation for the team";
-			Field<StringGraphType>("Name");
-			Field<IdGraphType>("PublishedVersionId").Description = "The current published version for the form";
-			Field<ListGraphType<TeamEntityFormVersionInputType>>("FormVersions").Description = "The versions for this form";
 
 			// Add entity references
-			Field<IdGraphType>("LeagueId");
+			Field<IdGraphType>("DivisionId");
 
 			// Add references to foreign models to allow nested creation
+			Field<ListGraphType<LadderwinlossEntityInputType>>("Ladderwinlossess");
+			Field<DivisionEntityInputType>("Division");
+			Field<ListGraphType<LaddereliminationEntityInputType>>("Laddereliminationss");
 			Field<ListGraphType<RosterEntityInputType>>("Rosterss");
-			Field<LeagueEntityInputType>("League");
-			Field<ListGraphType<TeamEntityFormTileEntityInputType>>("FormPages");
 
 			// % protected region % [Add any extra GraphQL input fields here] off begin
 			// % protected region % [Add any extra GraphQL input fields here] end

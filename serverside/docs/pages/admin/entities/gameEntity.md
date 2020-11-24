@@ -29,15 +29,18 @@ Details regarding a given GameEntity.
 ## Attributes
 | Name | Type | Example | Required | Rules | Description |
 | ---- | :----: | :--------: | :-----: | ----- | ----- |
-| Datestart | DATE | Timestamp | <i class="fa fa-times"> | <ul></ul> |  | 
-| Hometeamid | NUMBER | 42 | <i class="fa fa-check"> | <ul><li>Attribute must be entered.</li></ul> |  | 
-| Awayteamid | NUMBER | 42 | <i class="fa fa-times"> | <ul></ul> |  | 
+| Datestart | DATE | Timestamp | <i class="fa fa-check"> | <ul><li>Attribute must be entered.</li></ul> |  | 
+| Homepoints | NUMBER | 42 | <i class="fa fa-times"> | <ul></ul> |  | 
+| Awaypoints | NUMBER | 42 | <i class="fa fa-times"> | <ul></ul> |  | 
+| Hometeamid | STRING | Sally | <i class="fa fa-times"> | <ul></ul> |  | 
+| Awayteamid | STRING | Sally | <i class="fa fa-times"> | <ul></ul> |  | 
 
 
 ## Security
 | Group  | Create | Read | Update | Delete |
 | ---- | :----: | :----:  | :----:  | :----:  |
-| Visitors | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
+| Visitors | <i class="fa fa-times"> | <i class="fa fa-check"> | <i class="fa fa-times"> | <i class="fa fa-times"> |
+| Systemuser | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> | <i class="fa fa-check"> |
 
 ## List of Records
 

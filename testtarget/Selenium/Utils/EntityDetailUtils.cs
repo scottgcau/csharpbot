@@ -28,46 +28,40 @@ namespace SeleniumTests.Utils
 		{
 			switch (entityName)
 			{
+				case "LadderEntity":
+					return new LadderEntityDetailSection(contextConfiguration);
 				case "ScheduleEntity":
 					return new ScheduleEntityDetailSection(contextConfiguration);
-				case "SeasonEntity":
-					return new SeasonEntityDetailSection(contextConfiguration);
-				case "VenueEntity":
-					return new VenueEntityDetailSection(contextConfiguration);
+				case "LaddereliminationEntity":
+					return new LaddereliminationEntityDetailSection(contextConfiguration);
+				case "LadderwinlossEntity":
+					return new LadderwinlossEntityDetailSection(contextConfiguration);
+				case "RoundEntity":
+					return new RoundEntityDetailSection(contextConfiguration);
 				case "GameEntity":
 					return new GameEntityDetailSection(contextConfiguration);
+				case "DivisionEntity":
+					return new DivisionEntityDetailSection(contextConfiguration);
+				case "VenueEntity":
+					return new VenueEntityDetailSection(contextConfiguration);
+				case "TeamEntity":
+					return new TeamEntityDetailSection(contextConfiguration);
+				case "GamerefereeEntity":
+					return new GamerefereeEntityDetailSection(contextConfiguration);
+				case "SeasonEntity":
+					return new SeasonEntityDetailSection(contextConfiguration);
+				case "PersonEntity":
+					return new PersonEntityDetailSection(contextConfiguration);
+				case "SystemuserEntity":
+					return new SystemuserEntityDetailSection(contextConfiguration);
 				case "SportEntity":
 					return new SportEntityDetailSection(contextConfiguration);
 				case "LeagueEntity":
 					return new LeagueEntityDetailSection(contextConfiguration);
-				case "TeamEntity":
-					return new TeamEntityDetailSection(contextConfiguration);
-				case "PersonEntity":
-					return new PersonEntityDetailSection(contextConfiguration);
 				case "RosterEntity":
 					return new RosterEntityDetailSection(contextConfiguration);
 				case "RosterassignmentEntity":
 					return new RosterassignmentEntityDetailSection(contextConfiguration);
-				case "ScheduleSubmissionEntity":
-					return new ScheduleSubmissionEntityDetailSection(contextConfiguration);
-				case "SeasonSubmissionEntity":
-					return new SeasonSubmissionEntityDetailSection(contextConfiguration);
-				case "VenueSubmissionEntity":
-					return new VenueSubmissionEntityDetailSection(contextConfiguration);
-				case "GameSubmissionEntity":
-					return new GameSubmissionEntityDetailSection(contextConfiguration);
-				case "SportSubmissionEntity":
-					return new SportSubmissionEntityDetailSection(contextConfiguration);
-				case "LeagueSubmissionEntity":
-					return new LeagueSubmissionEntityDetailSection(contextConfiguration);
-				case "TeamSubmissionEntity":
-					return new TeamSubmissionEntityDetailSection(contextConfiguration);
-				case "PersonSubmissionEntity":
-					return new PersonSubmissionEntityDetailSection(contextConfiguration);
-				case "RosterSubmissionEntity":
-					return new RosterSubmissionEntityDetailSection(contextConfiguration);
-				case "RosterassignmentSubmissionEntity":
-					return new RosterassignmentSubmissionEntityDetailSection(contextConfiguration);
 				case "RosterTimelineEventsEntity":
 					return new RosterTimelineEventsEntityDetailSection(contextConfiguration);
 				default:

@@ -98,6 +98,7 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsRosterEntity(),
+			new SystemuserRosterEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
@@ -119,6 +120,9 @@ namespace Sportstats.Models {
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -130,6 +134,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}

@@ -29,7 +29,6 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public int? Order { get; set; }
 		public String Fullname { get; set; }
 
@@ -40,7 +39,6 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Order = model.Order;
 			Fullname = model.Fullname;
 			Leaguess = model.Leaguess;
@@ -51,7 +49,6 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Order = model.Order;
 			Fullname = model.Fullname;
 			Leaguess = model.Leaguess.Select(LeagueEntityDto.Convert).ToList();
@@ -64,7 +61,6 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Order = Order,
 				Fullname = Fullname,
 				Leaguess = Leaguess,
@@ -78,7 +74,6 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Order = Order,
 				Fullname = Fullname,
 				Leaguess = Leaguess?.Select(LeagueEntityDto.Convert).ToList(),

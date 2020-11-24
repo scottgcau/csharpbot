@@ -107,8 +107,8 @@ export default class TimelineGraphView extends React.Component<ITimelineGraphVie
 	private onPanLeft = () => {
 		// % protected region % [Override onPanLeft here] off begin
 		const ticks = this.graphWindowLimits.endDate.diff(this.graphWindowLimits.startDate);
-		const endDate = cloneDeep(this.graphWindowLimits.startDate);
-		const startDate = this.graphWindowLimits.startDate.add(-ticks, "ms");
+		const endDate = cloneDeep(this.graphWindowLimits.startDate)
+		const startDate = this.graphWindowLimits.startDate.add(-ticks, "ms")
 		this.graphWindowLimits = {startDate: startDate, endDate: endDate};
 		this.animationClassName = this.animationClassName ===  'view-left' ? 'left-view' : 'view-left';
 		// % protected region % [Override onPanLeft here] end

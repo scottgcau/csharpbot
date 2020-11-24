@@ -46,23 +46,29 @@ namespace Sportstats.Models {
 		public DateTime Modified { get; set; }
 
 		[Required]
-		[EntityAttribute]
-		public string Name { get; set; }
-
 		// % protected region % [Customise Datestart here] off begin
 		[EntityAttribute]
 		public DateTime? Datestart { get; set; }
 		// % protected region % [Customise Datestart here] end
 
-		[Required]
+		// % protected region % [Customise Homepoints here] off begin
+		[EntityAttribute]
+		public int? Homepoints { get; set; }
+		// % protected region % [Customise Homepoints here] end
+
+		// % protected region % [Customise Awaypoints here] off begin
+		[EntityAttribute]
+		public int? Awaypoints { get; set; }
+		// % protected region % [Customise Awaypoints here] end
+
 		// % protected region % [Customise Hometeamid here] off begin
 		[EntityAttribute]
-		public int? Hometeamid { get; set; }
+		public String Hometeamid { get; set; }
 		// % protected region % [Customise Hometeamid here] end
 
 		// % protected region % [Customise Awayteamid here] off begin
 		[EntityAttribute]
-		public int? Awayteamid { get; set; }
+		public String Awayteamid { get; set; }
 		// % protected region % [Customise Awayteamid here] end
 
 		// % protected region % [Add any further attributes here] off begin
@@ -83,25 +89,30 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsGameEntity(),
+			new SystemuserGameEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
 
+		// % protected region % [Customise Round here] off begin
 		/// <summary>
-		/// Reference to the versions for this form
+		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.GameEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(GameEntityFormVersion))]
-		public ICollection<GameEntityFormVersion> FormVersions { get; set; }
+		/// <see cref="Sportstats.Models.RoundEntity"/>
+		public Guid? RoundId { get; set; }
+		[EntityForeignKey("Round", "Gamess", false, typeof(RoundEntity))]
+		public RoundEntity Round { get; set; }
+		// % protected region % [Customise Round here] end
 
+		// % protected region % [Customise Gamerefereess here] off begin
 		/// <summary>
-		/// The current published version for the form
+		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.GameEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(GameEntityFormVersion))]
-		public GameEntityFormVersion PublishedVersion { get; set; }
+		/// <see cref="Sportstats.Models.GamerefereeEntity"/>
+		[EntityForeignKey("Gamerefereess", "Game", false, typeof(GamerefereeEntity))]
+		public ICollection<GamerefereeEntity> Gamerefereess { get; set; }
+		// % protected region % [Customise Gamerefereess here] end
 
 		// % protected region % [Customise Venue here] off begin
 		/// <summary>
@@ -113,40 +124,15 @@ namespace Sportstats.Models {
 		public VenueEntity Venue { get; set; }
 		// % protected region % [Customise Venue here] end
 
-		// % protected region % [Customise Schedule here] off begin
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.ScheduleEntity"/>
-		public Guid ScheduleId { get; set; }
-		[EntityForeignKey("Schedule", "Gamess", true, typeof(ScheduleEntity))]
-		public ScheduleEntity Schedule { get; set; }
-		// % protected region % [Customise Schedule here] end
-
-		// % protected region % [Customise Refereess here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.PersonEntity"/>
-		[EntityForeignKey("Refereess", "Game", false, typeof(PersonEntity))]
-		public ICollection<PersonEntity> Refereess { get; set; }
-		// % protected region % [Customise Refereess here] end
-
-		// % protected region % [Customise FormPages here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.GameEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(GameEntityFormTileEntity))]
-		public ICollection<GameEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
-
 		public async Task BeforeSave(
 			EntityState operation,
 			SportstatsDBContext dbContext,
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -158,6 +144,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}
@@ -174,20 +163,20 @@ namespace Sportstats.Models {
 
 			switch (reference)
 			{
-				case "Refereess":
-					var refereesIds = modelList.SelectMany(x => x.Refereess.Select(m => m.Id)).ToList();
-					var oldreferees = await dbContext.PersonEntity
+				case "Gamerefereess":
+					var gamerefereesIds = modelList.SelectMany(x => x.Gamerefereess.Select(m => m.Id)).ToList();
+					var oldgamereferees = await dbContext.GamerefereeEntity
 						.Where(m => m.GameId.HasValue && ids.Contains(m.GameId.Value))
-						.Where(m => !refereesIds.Contains(m.Id))
+						.Where(m => !gamerefereesIds.Contains(m.Id))
 						.ToListAsync(cancellation);
 
-					foreach (var referees in oldreferees)
+					foreach (var gamereferees in oldgamereferees)
 					{
-						referees.GameId = null;
+						gamereferees.GameId = null;
 					}
 
-					dbContext.PersonEntity.UpdateRange(oldreferees);
-					return oldreferees.Count;
+					dbContext.GamerefereeEntity.UpdateRange(oldgamereferees);
+					return oldgamereferees.Count;
 				// % protected region % [Add any extra clean reference logic here] off begin
 				// % protected region % [Add any extra clean reference logic here] end
 				default:

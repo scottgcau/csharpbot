@@ -45,7 +45,7 @@ export default class PersonEntityPage extends React.Component<RouteComponentProp
 		// % protected region % [Override contents here] end
 
 		return (
-			<SecuredPage groups={["Super Administrators", "Visitors"]}>
+			<SecuredPage groups={["Super Administrators", "Visitors","Systemuser"]}>
 				{contents}
 			</SecuredPage>
 		);

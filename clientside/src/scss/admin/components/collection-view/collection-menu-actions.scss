@@ -36,6 +36,12 @@ Top section of collection - Search bar, filter buttons, grid buttons
 		display: flex;
 		width: 100%;
 
+		.collection-list {
+			display: flex;
+			justify-content: flex-end;
+			margin-left: auto;
+		}
+
 		.btn {
 			width: auto;
 			min-width: 4rem;
@@ -47,6 +53,19 @@ Top section of collection - Search bar, filter buttons, grid buttons
 
 			&:before {
 				margin: .5rem auto;
+			}
+
+			&.icon-import {
+				display: flex;
+				padding: $admin-space-xs $admin-space-lg;
+				min-height: $admin-space-xxl;
+			}
+
+			&.icon-export {
+				display: flex;
+				padding: $admin-space-xs $admin-space-lg;
+				margin-right: $admin-space-xxs;
+				min-height: $admin-space-xxl;
 			}
 
 			&.icon-create {

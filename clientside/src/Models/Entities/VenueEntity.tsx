@@ -26,19 +26,16 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsVenueEntity } from 'Models/Security/Acl/VisitorsVenueEntity';
+import { SystemuserVenueEntity } from 'Models/Security/Acl/SystemuserVenueEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface IVenueEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface IVenueEntityAttributes extends IModelAttributes {
 	fullname: string;
 	shortname: string;
 	address: string;
@@ -46,7 +43,6 @@ export interface IVenueEntityAttributes extends IModelAttributes, FormEntityData
 	lon: number;
 
 	gamess: Array<Models.GameEntity | Models.IGameEntityAttributes>;
-	formPages: Array<Models.VenueEntityFormTileEntity | Models.IVenueEntityFormTileEntityAttributes>;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -54,10 +50,11 @@ export interface IVenueEntityAttributes extends IModelAttributes, FormEntityData
 // % protected region % [Customise your entity metadata here] off begin
 @entity('VenueEntity', 'Venue')
 // % protected region % [Customise your entity metadata here] end
-export default class VenueEntity extends Model implements IVenueEntityAttributes, FormEntityData  {
+export default class VenueEntity extends Model implements IVenueEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsVenueEntity(),
+		new SystemuserVenueEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -78,22 +75,6 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'FullName'] off begin
 	@Validators.Required()
 	@observable
@@ -101,7 +82,7 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	@CRUD({
 		name: 'FullName',
 		displayType: 'textfield',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -117,7 +98,7 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	@CRUD({
 		name: 'ShortName',
 		displayType: 'textfield',
-		order: 30,
+		order: 20,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -132,7 +113,7 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	@CRUD({
 		name: 'Address',
 		displayType: 'textfield',
-		order: 40,
+		order: 30,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -148,7 +129,7 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	@CRUD({
 		name: 'Lat',
 		displayType: 'textfield',
-		order: 50,
+		order: 40,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -164,7 +145,7 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	@CRUD({
 		name: 'Lon',
 		displayType: 'textfield',
-		order: 60,
+		order: 50,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'equal',
@@ -175,23 +156,11 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 
 	@observable
 	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
-
-	@observable
-	@attribute()
-	public publishedVersionId?: string;
-
-	@observable
-	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
-
-	@observable
-	@attribute({isReference: true})
 	@CRUD({
 		// % protected region % [Modify props to the crud options here for reference 'Games'] off begin
 		name: "Gamess",
 		displayType: 'reference-multicombobox',
-		order: 70,
+		order: 60,
 		referenceTypeFunc: () => Models.GameEntity,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'gamess',
@@ -200,23 +169,6 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 		// % protected region % [Modify props to the crud options here for reference 'Games'] end
 	})
 	public gamess: Models.GameEntity[] = [];
-
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 80,
-		referenceTypeFunc: () => Models.VenueEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.VenueEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
-	})
-	public formPages: Models.VenueEntityFormTileEntity[] = [];
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -257,36 +209,12 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 			if (attributes.lon) {
 				this.lon = attributes.lon;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
-				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
-			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
-			}
 			if (attributes.gamess) {
 				for (const model of attributes.gamess) {
 					if (model instanceof Models.GameEntity) {
 						this.gamess.push(model);
 					} else {
 						this.gamess.push(new Models.GameEntity(model));
-					}
-				}
-			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.VenueEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.VenueEntityFormTileEntity(model));
 					}
 				}
 			}
@@ -303,17 +231,8 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
-		}
 		gamess {
 			${Models.GameEntity.getAttributes().join('\n')}
-		}
-		formPages {
-			${Models.VenueEntityFormTileEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -325,7 +244,6 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
 			gamess: {},
-			formPages: {},
 		};
 		return this.save(
 			relationPath,
@@ -349,43 +267,8 @@ export default class VenueEntity extends Model implements IVenueEntityAttributes
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.VenueSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 

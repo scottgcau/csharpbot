@@ -24,4 +24,3 @@ Then I verify the Required Validator for the StartDate attribute for on-submit v
 Then I verify the Required Validator for the EndDate attribute for on-submit validation
 Then I verify the Required Validator for the FullName attribute for on-submit validation
 Then I verify the Required Validator for the ShortName attribute for on-submit validation
-Then I verify the Required Validator for the LeagueId attribute for on-submit validation

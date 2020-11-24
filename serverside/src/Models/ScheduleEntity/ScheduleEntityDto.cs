@@ -30,7 +30,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class ScheduleEntityDto : ModelDto<ScheduleEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Fullname here] off begin
 		/// <summary>
 		/// Schedule name
@@ -46,8 +45,12 @@ namespace Sportstats.Models
 
 
 		// % protected region % [Customise SeasonId here] off begin
-		public Guid SeasonId { get; set; }
+		public Guid? SeasonId { get; set; }
 		// % protected region % [Customise SeasonId here] end
+
+		// % protected region % [Customise LadderId here] off begin
+		public Guid? LadderId { get; set; }
+		// % protected region % [Customise LadderId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
 		// % protected region % [Add any extra attributes here] end
@@ -75,10 +78,10 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Scheduletype = Scheduletype,
 				SeasonId  = SeasonId,
+				LadderId  = LadderId,
 				// % protected region % [Add any extra model properties here] off begin
 				// % protected region % [Add any extra model properties here] end
 			};
@@ -89,10 +92,10 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Scheduletype = model.Scheduletype;
 			SeasonId  = model.SeasonId;
+			LadderId  = model.LadderId;
 
 			// % protected region % [Add any extra loading data logic here] off begin
 			// % protected region % [Add any extra loading data logic here] end

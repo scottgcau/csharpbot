@@ -20,5 +20,5 @@ Feature: Reference from RosterassignmentEntity using RosterAssignments to Roster
 	Given I login to the site as a user
 	And I navigate to the RosterassignmentEntity backend page
 	And I create 3 RosterassignmentEntity's each associated with 1 Roster using Roster
-	Then I validate each RosterEntity has 4 RosterassignmentEntity associations using RosterAssignments
+	Then I validate each RosterEntity has 3 RosterassignmentEntity associations using RosterAssignments
 	Then I validate each RosterassignmentEntity has 1 RosterEntity associations using Roster

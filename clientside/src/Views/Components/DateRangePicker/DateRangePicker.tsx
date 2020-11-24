@@ -17,6 +17,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DateTimePicker, IDateTimePickerProps } from '../DateTimePicker/DateTimePicker';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 /** DateRangePicker-specific properties. Extend as necessary. */
 export interface IDateRangePickerProps<T> extends IDateTimePickerProps<T> {}
@@ -29,11 +31,12 @@ export interface IDateRangePickerProps<T> extends IDateTimePickerProps<T> {}
 @observer
 export class DateRangePicker<T> extends React.Component<IDateRangePickerProps<T>> {
 
+	// % protected region % [Override render here] off begin
 	public render() {
-		
+
 		return (
 			<DateTimePicker
-				/* The two options below are only applied if the humanReadable 
+				/* The two options below are only applied if the humanReadable
 				 * property is set to true on Component instantiation. */
 				altFormat="j F, Y"
 				dateFormat="Y-m-d"
@@ -44,4 +47,5 @@ export class DateRangePicker<T> extends React.Component<IDateRangePickerProps<T>
 			/>
 		);
 	}
+	// % protected region % [Override render here] end
 }

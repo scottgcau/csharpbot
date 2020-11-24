@@ -27,7 +27,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class VenueEntityDto : ModelDto<VenueEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Fullname here] off begin
 		public String Fullname { get; set; }
 		// % protected region % [Customise Fullname here] end
@@ -75,7 +74,6 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Shortname = Shortname,
 				Address = Address,
@@ -91,7 +89,6 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
 			Address = model.Address;

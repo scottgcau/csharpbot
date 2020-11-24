@@ -21,6 +21,9 @@ import { observer } from 'mobx-react';
 import classNames from 'classnames';
 import { action } from 'mobx';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 export interface ISearchProps {
 	/** A json object that contains the search string */
 	model: {
@@ -45,6 +48,8 @@ export interface ISearchProps {
 	 * Any extra react nodes to be rendered in the form 
 	 */
 	extraNodes?: React.ReactNode;
+	// % protected region % [Add any extra ISearchProps fields here] off begin
+	// % protected region % [Add any extra ISearchProps fields here] end
 }
 
 /**
@@ -57,6 +62,7 @@ export default class SearchForm extends React.Component<ISearchProps> {
 		clickToClear: true,
 	};
 
+	// % protected region % [Override render method of SearchForm here] off begin
 	public render() {
 		const className = classNames(
 			this.props.className,
@@ -83,6 +89,7 @@ export default class SearchForm extends React.Component<ISearchProps> {
 			</form>
 		);
 	}
+	// % protected region % [Override render method of SearchForm here] end
 	
 	/**
 	 * Handler for the text box changing

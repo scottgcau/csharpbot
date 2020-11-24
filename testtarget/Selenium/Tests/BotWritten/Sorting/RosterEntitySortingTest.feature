@@ -23,4 +23,8 @@ Feature: Sort RosterEntity
 	Scenario: Sort RosterEntity
 	Given I login to the site as a user
 	And I navigate to the RosterEntity backend page
+	When I sort RosterEntity by FullName
+	Then I assert that FullName in RosterEntity of type String is properly sorted in descending
+	When I sort RosterEntity by FullName
+	Then I assert that FullName in RosterEntity of type String is properly sorted in ascending
 

@@ -29,8 +29,6 @@ import AttributeReferenceMultiCombobox from './AttributeReferenceMultiCombobox';
 import AttributeDateTimePicker from './AttributeDateTimePicker';
 import AttributeEnumCombobox from './AttributeEnumCombobox';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import AttributeFormData from "./AttributeFormData";
-import AttributeFormTile from 'Views/Components/CRUD/Attributes/AttributeFormTile';
 import AttributeFile from 'Views/Components/CRUD/Attributes/AttributeFile';
 // % protected region % [Add extra imports here] off begin
 // % protected region % [Add extra imports here] end
@@ -338,56 +336,6 @@ export function getAttributeComponent (
 				}}
 				{...attributeOptions.inputProps} />;
 			// % protected region % [Override file input here] end
-		case 'form-data':
-			// % protected region % [Override form-data here] off begin
-			return <AttributeFormData
-				key={attributeOptions.attributeName}
-				model={model}
-				options={attributeOptions}
-				errors={errors}
-				className={className}
-				isReadonly={isReadonly}
-				isRequired={isRequired}
-				formMode={formMode}
-				onAfterChange={() => {
-					if (!!onAfterChange) {
-						onAfterChange(attributeOptions.attributeName);
-					}
-					if (attributeOptions.onAfterChange) {
-						attributeOptions.onAfterChange(model);
-					}
-				}}
-				onChangeAndBlur={() => {
-					if (!!onChangeAndBlur) {
-						onChangeAndBlur(attributeOptions.attributeName);
-					}
-				}}
-				{...attributeOptions.inputProps}
-				/>;
-			// % protected region % [Override form-data here] end
-		case 'form-tile':
-			// % protected region % [Override form-tile here] off begin
-			if (attributeOptions.formTileFilterFn === undefined) {
-				throw new Error('Must have a defined formTileFilterFn for display type' + attributeOptions.displayType);
-			}
-			return <AttributeFormTile
-				model={model}
-				options={attributeOptions}
-				errors={errors}
-				className={className}
-				isReadonly={isReadonly}
-				isRequired={isRequired}
-				key={attributeOptions.attributeName}
-				formMode={formMode}
-				onAfterChange={() => {
-					if (!!onChangeAndBlur) {
-						onChangeAndBlur(attributeOptions.attributeName);
-					}
-					if (attributeOptions.onAfterChange) {
-						attributeOptions.onAfterChange(model);
-					}
-				}}/>;
-			// % protected region % [Override form-tile here] end
 		case 'hidden':
 			// % protected region % [Override hidden here] off begin
 			return null;

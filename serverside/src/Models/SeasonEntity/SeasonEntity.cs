@@ -46,10 +46,6 @@ namespace Sportstats.Models {
 		public DateTime Modified { get; set; }
 
 		[Required]
-		[EntityAttribute]
-		public string Name { get; set; }
-
-		[Required]
 		// % protected region % [Customise Startdate here] off begin
 		[EntityAttribute]
 		public DateTime? Startdate { get; set; }
@@ -97,25 +93,30 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsSeasonEntity(),
+			new SystemuserSeasonEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
 
+		// % protected region % [Customise Divisionss here] off begin
 		/// <summary>
-		/// Reference to the versions for this form
+		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.SeasonEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(SeasonEntityFormVersion))]
-		public ICollection<SeasonEntityFormVersion> FormVersions { get; set; }
+		/// <see cref="Sportstats.Models.DivisionEntity"/>
+		[EntityForeignKey("Divisionss", "Season", false, typeof(DivisionEntity))]
+		public ICollection<DivisionEntity> Divisionss { get; set; }
+		// % protected region % [Customise Divisionss here] end
 
+		// % protected region % [Customise League here] off begin
 		/// <summary>
-		/// The current published version for the form
+		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.SeasonEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(SeasonEntityFormVersion))]
-		public SeasonEntityFormVersion PublishedVersion { get; set; }
+		/// <see cref="Sportstats.Models.LeagueEntity"/>
+		public Guid? LeagueId { get; set; }
+		[EntityForeignKey("League", "Seasonss", false, typeof(LeagueEntity))]
+		public LeagueEntity League { get; set; }
+		// % protected region % [Customise League here] end
 
 		// % protected region % [Customise Rosterss here] off begin
 		/// <summary>
@@ -135,31 +136,15 @@ namespace Sportstats.Models {
 		public ICollection<ScheduleEntity> Scheduless { get; set; }
 		// % protected region % [Customise Scheduless here] end
 
-		// % protected region % [Customise League here] off begin
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.LeagueEntity"/>
-		public Guid LeagueId { get; set; }
-		[EntityForeignKey("League", "Seasonss", true, typeof(LeagueEntity))]
-		public LeagueEntity League { get; set; }
-		// % protected region % [Customise League here] end
-
-		// % protected region % [Customise FormPages here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.SeasonEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(SeasonEntityFormTileEntity))]
-		public ICollection<SeasonEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
-
 		public async Task BeforeSave(
 			EntityState operation,
 			SportstatsDBContext dbContext,
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -171,6 +156,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}
@@ -187,6 +175,48 @@ namespace Sportstats.Models {
 
 			switch (reference)
 			{
+				case "Divisionss":
+					var divisionsIds = modelList.SelectMany(x => x.Divisionss.Select(m => m.Id)).ToList();
+					var olddivisions = await dbContext.DivisionEntity
+						.Where(m => m.SeasonId.HasValue && ids.Contains(m.SeasonId.Value))
+						.Where(m => !divisionsIds.Contains(m.Id))
+						.ToListAsync(cancellation);
+
+					foreach (var divisions in olddivisions)
+					{
+						divisions.SeasonId = null;
+					}
+
+					dbContext.DivisionEntity.UpdateRange(olddivisions);
+					return olddivisions.Count;
+				case "Rosterss":
+					var rostersIds = modelList.SelectMany(x => x.Rosterss.Select(m => m.Id)).ToList();
+					var oldrosters = await dbContext.RosterEntity
+						.Where(m => m.SeasonId.HasValue && ids.Contains(m.SeasonId.Value))
+						.Where(m => !rostersIds.Contains(m.Id))
+						.ToListAsync(cancellation);
+
+					foreach (var rosters in oldrosters)
+					{
+						rosters.SeasonId = null;
+					}
+
+					dbContext.RosterEntity.UpdateRange(oldrosters);
+					return oldrosters.Count;
+				case "Scheduless":
+					var schedulesIds = modelList.SelectMany(x => x.Scheduless.Select(m => m.Id)).ToList();
+					var oldschedules = await dbContext.ScheduleEntity
+						.Where(m => m.SeasonId.HasValue && ids.Contains(m.SeasonId.Value))
+						.Where(m => !schedulesIds.Contains(m.Id))
+						.ToListAsync(cancellation);
+
+					foreach (var schedules in oldschedules)
+					{
+						schedules.SeasonId = null;
+					}
+
+					dbContext.ScheduleEntity.UpdateRange(oldschedules);
+					return oldschedules.Count;
 				// % protected region % [Add any extra clean reference logic here] off begin
 				// % protected region % [Add any extra clean reference logic here] end
 				default:

@@ -47,9 +47,10 @@ namespace Sportstats.Models {
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
 
-		[Required]
+		// % protected region % [Customise Fullname here] off begin
 		[EntityAttribute]
-		public string Name { get; set; }
+		public String Fullname { get; set; }
+		// % protected region % [Customise Fullname here] end
 
 		// % protected region % [Add any further attributes here] off begin
 		// % protected region % [Add any further attributes here] end
@@ -69,44 +70,20 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsRosterEntity(),
+			new SystemuserRosterEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
-
-		/// <summary>
-		/// Reference to the versions for this form
-		/// </summary>
-		/// <see cref="Sportstats.Models.RosterEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(RosterEntityFormVersion))]
-		public ICollection<RosterEntityFormVersion> FormVersions { get; set; }
-
-		/// <summary>
-		/// The current published version for the form
-		/// </summary>
-		/// <see cref="Sportstats.Models.RosterEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(RosterEntityFormVersion))]
-		public RosterEntityFormVersion PublishedVersion { get; set; }
 
 		// % protected region % [Customise Rosterassignmentss here] off begin
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
 		/// <see cref="Sportstats.Models.RosterassignmentEntity"/>
-		[EntityForeignKey("Rosterassignmentss", "Roster", true, typeof(RosterassignmentEntity))]
+		[EntityForeignKey("Rosterassignmentss", "Roster", false, typeof(RosterassignmentEntity))]
 		public ICollection<RosterassignmentEntity> Rosterassignmentss { get; set; }
 		// % protected region % [Customise Rosterassignmentss here] end
-
-		// % protected region % [Customise Season here] off begin
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.SeasonEntity"/>
-		public Guid SeasonId { get; set; }
-		[EntityForeignKey("Season", "Rosterss", true, typeof(SeasonEntity))]
-		public SeasonEntity Season { get; set; }
-		// % protected region % [Customise Season here] end
 
 		// % protected region % [Customise Team here] off begin
 		/// <summary>
@@ -118,14 +95,15 @@ namespace Sportstats.Models {
 		public TeamEntity Team { get; set; }
 		// % protected region % [Customise Team here] end
 
-		// % protected region % [Customise FormPages here] off begin
+		// % protected region % [Customise Season here] off begin
 		/// <summary>
-		/// Incoming one to many reference
+		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.RosterEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(RosterEntityFormTileEntity))]
-		public ICollection<RosterEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
+		/// <see cref="Sportstats.Models.SeasonEntity"/>
+		public Guid? SeasonId { get; set; }
+		[EntityForeignKey("Season", "Rosterss", false, typeof(SeasonEntity))]
+		public SeasonEntity Season { get; set; }
+		// % protected region % [Customise Season here] end
 
 		// % protected region % [Customise LoggedEvents here] off begin
 		/// <summary>
@@ -142,6 +120,9 @@ namespace Sportstats.Models {
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// Create timeline event when an entity is added
 			if (operation == EntityState.Added)
 			{
@@ -174,6 +155,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}
@@ -246,14 +230,14 @@ namespace Sportstats.Models {
 
 			var timelineEvents = new List<ITimelineEventEntity>();
 
-			// % protected region % [Override CreateTimelineEventsAsync 'Season' case here] off begin
+			// % protected region % [Override CreateTimelineEventsAsync 'Fullname' case here] off begin
 			timelineEvents.ConditionalAddUpdateEvent<RosterTimelineEventsEntity>(
 				"RosterEntity",
-				"SeasonId",
-				originalEntity.SeasonId,
-				SeasonId,
-				Id);
-			// % protected region % [Override CreateTimelineEventsAsync 'Season' case here] end
+				"Fullname",
+				 originalEntity.Fullname,
+				 Fullname,
+				 Id);
+			// % protected region % [Override CreateTimelineEventsAsync 'Fullname' case here] end
 			// % protected region % [Override CreateTimelineEventsAsync 'Team' case here] off begin
 			timelineEvents.ConditionalAddUpdateEvent<RosterTimelineEventsEntity>(
 				"RosterEntity",
@@ -262,6 +246,14 @@ namespace Sportstats.Models {
 				TeamId,
 				Id);
 			// % protected region % [Override CreateTimelineEventsAsync 'Team' case here] end
+			// % protected region % [Override CreateTimelineEventsAsync 'Season' case here] off begin
+			timelineEvents.ConditionalAddUpdateEvent<RosterTimelineEventsEntity>(
+				"RosterEntity",
+				"SeasonId",
+				originalEntity.SeasonId,
+				SeasonId,
+				Id);
+			// % protected region % [Override CreateTimelineEventsAsync 'Season' case here] end
 
 			// % protected region % [Add any further timeline update events here] off begin
 			// % protected region % [Add any further timeline update events here] end

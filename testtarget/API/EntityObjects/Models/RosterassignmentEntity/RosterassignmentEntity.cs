@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class RosterassignmentEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// Date assigned to the roster
 		public DateTime? Datefrom { get; set; }
 		// Date left the roster
@@ -40,21 +38,14 @@ namespace APITests.EntityObjects.Models
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.Roster"/>
-		public Guid? RosterId { get; set; }
+		/// <see cref="Sportstats.Models.Person"/>
+		public Guid? PersonId { get; set; }
 
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.Person"/>
-		public Guid PersonId { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<RosterassignmentEntityFormTileEntity> FormPages { get; set; }
+		/// <see cref="Sportstats.Models.Roster"/>
+		public Guid? RosterId { get; set; }
 
 
 		public RosterassignmentEntity()
@@ -100,11 +91,6 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Datefrom",
 				IsRequired = true
 			});
@@ -124,8 +110,8 @@ namespace APITests.EntityObjects.Models
 		{
 			References.Add(new Reference
 			{
-				EntityName = "RosterEntity",
-				OppositeName = "Roster",
+				EntityName = "PersonEntity",
+				OppositeName = "Person",
 				Name = "Rosterassignments",
 				Optional = true,
 				Type = ReferenceType.ONE,
@@ -133,10 +119,10 @@ namespace APITests.EntityObjects.Models
 			});
 			References.Add(new Reference
 			{
-				EntityName = "PersonEntity",
-				OppositeName = "Person",
+				EntityName = "RosterEntity",
+				OppositeName = "Roster",
 				Name = "Rosterassignments",
-				Optional = false,
+				Optional = true,
 				Type = ReferenceType.ONE,
 				OppositeType = ReferenceType.MANY
 			});
@@ -159,8 +145,6 @@ namespace APITests.EntityObjects.Models
 					return GetInvalidDatefrom(validator);
 				case "RoleType":
 					return GetInvalidRoletype(validator);
-				case "PersonId":
-					return GetInvalidPersonId(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -187,7 +171,7 @@ namespace APITests.EntityObjects.Models
 			}
 		}
 
-		private static string GetInvalidRosterId(string validator)
+		private static string GetInvalidPersonId(string validator)
 		{
 			switch (validator)
 			{
@@ -197,7 +181,7 @@ namespace APITests.EntityObjects.Models
 					throw new Exception($"Cannot find validator {validator} for attribute RosterAssignments");
 			}
 		}
-		private static string GetInvalidPersonId(string validator)
+		private static string GetInvalidRosterId(string validator)
 		{
 			switch (validator)
 			{
@@ -227,28 +211,10 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining datefrom,
 						["dateto"] = Dateto?.ToString("s"),
 						["roletype"] = RoletypeEnum.GetRandomRoletype().ToString(),
-						["rosterId"] = RosterId,
 						["personId"] = PersonId,
-				}
-			),
-			(
-				new List<string>
-				{
-					"violates foreign key constraint",
-				},
-
-				new RestSharp.JsonObject
-				{
-						["id"] = Id,
-						["name"] = Name,
-						// not defining PersonId,
-						["datefrom"] = Datefrom?.ToString("s"),
-						["dateto"] = Dateto?.ToString("s"),
-						["roletype"] = RoletypeEnum.GetRandomRoletype().ToString(),
 						["rosterId"] = RosterId,
 				}
 			),
@@ -261,19 +227,18 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"datefrom" ,((DateTime)Datefrom).ToIsoString()},
 				{"dateto" ,((DateTime)Dateto).ToIsoString()},
 				{"roletype" , Roletype.ToString()},
 			};
 
-			if (RosterId != default)
-			{
-				entityVar["rosterId"] = RosterId.ToString();
-			}
 			if (PersonId != default)
 			{
 				entityVar["personId"] = PersonId.ToString();
+			}
+			if (RosterId != default)
+			{
+				entityVar["rosterId"] = RosterId.ToString();
 			}
 
 			return entityVar;
@@ -284,16 +249,11 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["datefrom"] = Datefrom?.ToString("s"),
 				["dateto"] = Dateto?.ToString("s"),
 				["roletype"] = Roletype.ToString(),
 			};
 
-			if (PersonId != default)
-			{
-				entityVar["personId"] = PersonId.ToString();
-			}
 
 			return entityVar;
 		}
@@ -305,12 +265,12 @@ namespace APITests.EntityObjects.Models
 			{
 				switch (key)
 				{
-					case "RosterId":
-						ReferenceIdDictionary.Add("RosterId", guidCollection.FirstOrDefault());
-						SetOneReference(key, guidCollection.FirstOrDefault());
-						break;
 					case "PersonId":
 						ReferenceIdDictionary.Add("PersonId", guidCollection.FirstOrDefault());
+						SetOneReference(key, guidCollection.FirstOrDefault());
+						break;
+					case "RosterId":
+						ReferenceIdDictionary.Add("RosterId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
 					default:
@@ -323,11 +283,11 @@ namespace APITests.EntityObjects.Models
 		{
 			switch (key)
 			{
-				case "RosterId":
-					RosterId = guid;
-					break;
 				case "PersonId":
 					PersonId = guid;
+					break;
+				case "RosterId":
+					RosterId = guid;
 					break;
 				default:
 					throw new Exception($"{key} not valid reference key");
@@ -363,7 +323,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Datefrom
 			// not defining Roletype
 			Roletype = RoletypeEnum.GetRandomRoletype();
@@ -401,9 +360,6 @@ namespace APITests.EntityObjects.Models
 		/// </summary>
 		private void SetValidEntityAssociations()
 		{
-
-			PersonId = new PersonEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES).Save();
-
 		}
 
 		/// <summary>
@@ -412,7 +368,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Datefrom = DataUtils.RandDatetime();
 			Dateto = DataUtils.RandDatetime();
 			Roletype = RoletypeEnum.GetRandomRoletype();
@@ -426,7 +381,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var rosterassignmentEntity = new RosterassignmentEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Datefrom = DataUtils.RandDatetime(),
 

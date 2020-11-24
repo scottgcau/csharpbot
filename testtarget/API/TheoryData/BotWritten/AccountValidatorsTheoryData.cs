@@ -34,6 +34,10 @@ namespace APITests.TheoryData.BotWritten
 			// % protected region % [Add any further password error here] end
 
 			// % protected region % [Modify PasswordInvalidTheoryData entities here] off begin
+			Add(
+				new UserEntityFactory("SystemuserEntity"),
+				"pass",
+				passwordLengthError);
 			// % protected region % [Modify PasswordInvalidTheoryData entities here] end
 
 			// % protected region % [Add any further test cases here] off begin
@@ -48,6 +52,21 @@ namespace APITests.TheoryData.BotWritten
 			// % protected region % [Modify UsernameInvalidTheoryData entities here] off begin
 			var InvalidEmailError = "Email is not a valid email";
 
+			Add(
+				new UserEntityFactory("SystemuserEntity"),
+				"super@example.com",
+				"User name 'super@example.com' is already taken."
+			);
+			Add(
+				new UserEntityFactory("SystemuserEntity"),
+				"super",
+				InvalidEmailError
+			);
+			Add(
+				new UserEntityFactory("SystemuserEntity"),
+				"@e.c*@example.com",
+				InvalidEmailError
+			);
 			// % protected region % [Modify UsernameInvalidTheoryData entities here] end
 		}
 	}

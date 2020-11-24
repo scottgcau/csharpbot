@@ -39,12 +39,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private readonly ContextConfiguration _contextConfiguration;
 
 		// reference elements
-		private static By SeasonssElementBy => By.XPath("//*[contains(@class, 'seasons')]//div[contains(@class, 'dropdown__container')]/a");
-		private static By SeasonssInputElementBy => By.XPath("//*[contains(@class, 'seasons')]/div/input");
-		private static By TeamssElementBy => By.XPath("//*[contains(@class, 'teams')]//div[contains(@class, 'dropdown__container')]/a");
-		private static By TeamssInputElementBy => By.XPath("//*[contains(@class, 'teams')]/div/input");
 		private static By SportIdElementBy => By.XPath("//*[contains(@class, 'sport')]//div[contains(@class, 'dropdown__container')]");
 		private static By SportIdInputElementBy => By.XPath("//*[contains(@class, 'sport')]/div/input");
+		private static By SeasonssElementBy => By.XPath("//*[contains(@class, 'seasons')]//div[contains(@class, 'dropdown__container')]/a");
+		private static By SeasonssInputElementBy => By.XPath("//*[contains(@class, 'seasons')]/div/input");
 
 		//FlatPickr Elements
 
@@ -54,7 +52,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		//Attribute Header Titles
 		private IWebElement FullnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='FullName']"));
 		private IWebElement ShortnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='ShortName']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -81,12 +78,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			selectorDict.Add("ShortnameElement", (selector: "//div[contains(@class, 'shortname')]//input", type: SelectorType.XPath));
 
 			// Reference web elements
-			selectorDict.Add("SeasonsElement", (selector: ".input-group__dropdown.seasonss > .dropdown.dropdown__container", type: SelectorType.CSS));
-			selectorDict.Add("TeamsElement", (selector: ".input-group__dropdown.teamss > .dropdown.dropdown__container", type: SelectorType.CSS));
 			selectorDict.Add("SportElement", (selector: ".input-group__dropdown.sportId > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
+			selectorDict.Add("SeasonsElement", (selector: ".input-group__dropdown.seasonss > .dropdown.dropdown__container", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -100,7 +93,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		//Attribute web Elements
 		private IWebElement FullnameElement => FindElementExt("FullnameElement");
 		private IWebElement ShortnameElement => FindElementExt("ShortnameElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -109,7 +101,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			{
 				"FullName" => FullnameHeaderTitle,
 				"ShortName" => ShortnameHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -119,14 +110,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "FullName":
 					return FullnameElement;
 				case "ShortName":
 					return ShortnameElement;
-				case "SportId":
-					return SportElement;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -136,17 +123,11 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "FullName":
 					SetFullname(value);
 					break;
 				case "ShortName":
 					SetShortname(value);
-					break;
-				case "SportId":
-					SetSportId(value);
 					break;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
@@ -157,10 +138,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"FullName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.fullname > div > p"),
 				"ShortName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.shortname > div > p"),
-				"SportId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.sportId > div > p"),
 				_ => throw new Exception($"No such attribute {attribute}"),
 			};
 		}
@@ -179,19 +158,14 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_leagueEntity.Name);
 			SetFullname(_leagueEntity.Fullname);
 			SetShortname(_leagueEntity.Shortname);
 
+			SetSportId(_leagueEntity.SportId?.ToString());
 			if (_leagueEntity.SeasonsIds != null)
 			{
 				SetSeasonss(_leagueEntity.SeasonsIds.Select(x => x.ToString()));
 			}
-			if (_leagueEntity.TeamsIds != null)
-			{
-				SetTeamss(_leagueEntity.TeamsIds.Select(x => x.ToString()));
-			}
-			SetSportId(_leagueEntity.SportId.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -199,18 +173,30 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (referenceName)
 			{
-				case "seasons":
-					return GetSeasonss();
-				case "teams":
-					return GetTeamss();
 				case "sport":
 					return new List<Guid>() {GetSportId()};
+				case "seasons":
+					return GetSeasonss();
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
 		}
 
 		// set associations
+		private void SetSportId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, SportIdInputElementBy, ElementState.VISIBLE);
+			var sportIdInputElement = _driver.FindElementExt(SportIdInputElementBy);
+
+			if (id != null)
+			{
+				sportIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				sportIdInputElement.SendKeys(Keys.Return);
+			}
+		}
 		private void SetSeasonss(IEnumerable<string> ids)
 		{
 			WaitUtils.elementState(_driverWait, SeasonssInputElementBy, ElementState.VISIBLE);
@@ -224,32 +210,14 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			}
 		}
 
-		private void SetTeamss(IEnumerable<string> ids)
-		{
-			WaitUtils.elementState(_driverWait, TeamssInputElementBy, ElementState.VISIBLE);
-			var teamssInputElement = _driver.FindElementExt(TeamssInputElementBy);
-
-			foreach(var id in ids)
-			{
-				teamssInputElement.SendKeys(id);
-				WaitForDropdownOptions();
-				teamssInputElement.SendKeys(Keys.Return);
-			}
-		}
-
-		private void SetSportId(string id)
-		{
-			if (id == "") { return; }
-			WaitUtils.elementState(_driverWait, SportIdInputElementBy, ElementState.VISIBLE);
-			var sportIdInputElement = _driver.FindElementExt(SportIdInputElementBy);
-
-			sportIdInputElement.SendKeys(id);
-			WaitForDropdownOptions();
-			WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option'][@data-id='{id}']"), ElementState.EXISTS);
-			sportIdInputElement.SendKeys(Keys.Return);
-		}
 
 		// get associations
+		private Guid GetSportId()
+		{
+			WaitUtils.elementState(_driverWait, SportIdElementBy, ElementState.VISIBLE);
+			var sportIdElement = _driver.FindElementExt(SportIdElementBy);
+			return new Guid(sportIdElement.GetAttribute("data-id"));
+		}
 		private List<Guid> GetSeasonss()
 		{
 			var guids = new List<Guid>();
@@ -261,24 +229,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				guids.Add(new Guid (element.GetAttribute("data-id")));
 			}
 			return guids;
-		}
-		private List<Guid> GetTeamss()
-		{
-			var guids = new List<Guid>();
-			WaitUtils.elementState(_driverWait, TeamssElementBy, ElementState.VISIBLE);
-			var teamssElement = _driver.FindElements(TeamssElementBy);
-
-			foreach(var element in teamssElement)
-			{
-				guids.Add(new Guid (element.GetAttribute("data-id")));
-			}
-			return guids;
-		}
-		private Guid GetSportId()
-		{
-			WaitUtils.elementState(_driverWait, SportIdElementBy, ElementState.VISIBLE);
-			var sportIdElement = _driver.FindElementExt(SportIdElementBy);
-			return new Guid(sportIdElement.GetAttribute("data-id"));
 		}
 
 		// wait for dropdown to be displaying options
@@ -310,14 +260,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			ShortnameElement.Text;
 
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

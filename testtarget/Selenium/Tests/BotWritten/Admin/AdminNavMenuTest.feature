@@ -39,9 +39,9 @@ Scenario: Verify the number of Admin Submenus
 	When I click on the Topbar Link
 	Then I assert that the admin bar is on the Frontend
 	When I click on Users Nav link on the Admin Nav section
-	Then I assert that 1 Nav links are displayed
+	Then I assert that 2 Nav links are displayed
 	When I click on Entities Nav link on the Admin Nav section
-	Then I assert that 22 Nav links are displayed
+	Then I assert that 17 Nav links are displayed
 
 Scenario: Verify the admin submenus
 	Given I login to the site as a user
@@ -52,28 +52,24 @@ Scenario: Verify the admin submenus
 	Then I see the Admin Submenus like
 	| Users |
 	| All Users |
+	| SystemUser |
 	When I click on Entities Nav link on the Admin Nav section
 	Then I see the Admin Submenus like
 	| Entities |
+	| Ladder |
 	| Schedule |
-	| Season |
-	| Venue |
+	| LadderElimination |
+	| LadderWinLoss |
+	| Round |
 	| Game |
+	| Division |
+	| Venue |
+	| Team |
+	| GameReferee |
+	| Season |
+	| Person |
 	| Sport |
 	| League |
-	| Team |
-	| Person |
 	| Roster |
 	| RosterAssignment |
-	| Schedule Submission |
-	| Season Submission |
-	| Venue Submission |
-	| Game Submission |
-	| Sport Submission |
-	| League Submission |
-	| Team Submission |
-	| Person Submission |
-	| Roster Submission |
-	| RosterAssignment Submission |
 	| Roster Timeline Events |
-	| Sport Entity Form Tile |

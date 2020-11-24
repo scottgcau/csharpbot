@@ -19,6 +19,9 @@ import { CaseComparison } from '../Views/Components/ModelCollection/ModelQuery';
 import _ from 'lodash';
 import * as Enums from '../Models/Enums';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 export type transformFunction = (attr: any) => IStandardisedOption | null;
 export interface IStandardisedOption {
 	query: string;
@@ -147,3 +150,6 @@ export function standardiseEnum(attr: string, enumOptions: {} ): IStandardisedOp
 		}
 	}
 }
+
+// % protected region % [Add extra AttributeUtils methods here] off begin
+// % protected region % [Add extra AttributeUtils methods here] end

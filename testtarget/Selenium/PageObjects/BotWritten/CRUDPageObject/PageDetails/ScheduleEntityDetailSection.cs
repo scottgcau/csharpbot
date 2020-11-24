@@ -40,10 +40,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private readonly ContextConfiguration _contextConfiguration;
 
 		// reference elements
-		private static By GamessElementBy => By.XPath("//*[contains(@class, 'games')]//div[contains(@class, 'dropdown__container')]/a");
-		private static By GamessInputElementBy => By.XPath("//*[contains(@class, 'games')]/div/input");
+		private static By RoundssElementBy => By.XPath("//*[contains(@class, 'rounds')]//div[contains(@class, 'dropdown__container')]/a");
+		private static By RoundssInputElementBy => By.XPath("//*[contains(@class, 'rounds')]/div/input");
 		private static By SeasonIdElementBy => By.XPath("//*[contains(@class, 'season')]//div[contains(@class, 'dropdown__container')]");
 		private static By SeasonIdInputElementBy => By.XPath("//*[contains(@class, 'season')]/div/input");
+		private static By LadderIdElementBy => By.XPath("//*[contains(@class, 'ladder')]//div[contains(@class, 'dropdown__container')]");
+		private static By LadderIdInputElementBy => By.XPath("//*[contains(@class, 'ladder')]/div/input");
 
 		//FlatPickr Elements
 
@@ -53,7 +55,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		//Attribute Header Titles
 		private IWebElement FullnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='FullName']"));
 		private IWebElement ScheduletypeHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='ScheduleType']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -80,11 +81,9 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			selectorDict.Add("ScheduletypeElement", (selector: "//div[contains(@class, 'scheduletype')]//input", type: SelectorType.XPath));
 
 			// Reference web elements
-			selectorDict.Add("GamesElement", (selector: ".input-group__dropdown.gamess > .dropdown.dropdown__container", type: SelectorType.CSS));
+			selectorDict.Add("RoundsElement", (selector: ".input-group__dropdown.roundss > .dropdown.dropdown__container", type: SelectorType.CSS));
 			selectorDict.Add("SeasonElement", (selector: ".input-group__dropdown.seasonId > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
+			selectorDict.Add("LadderElement", (selector: ".input-group__dropdown.ladderId > .dropdown.dropdown__container", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -98,7 +97,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		//Attribute web Elements
 		private IWebElement FullnameElement => FindElementExt("FullnameElement");
 		private IWebElement ScheduletypeElement => FindElementExt("ScheduletypeElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -107,7 +105,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			{
 				"FullName" => FullnameHeaderTitle,
 				"ScheduleType" => ScheduletypeHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -117,14 +114,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "FullName":
 					return FullnameElement;
 				case "ScheduleType":
 					return ScheduletypeElement;
-				case "SeasonId":
-					return SeasonElement;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -134,17 +127,11 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "FullName":
 					SetFullname(value);
 					break;
 				case "ScheduleType":
 					SetScheduletype((Scheduletype)Enum.Parse(typeof(Scheduletype), value));
-					break;
-				case "SeasonId":
-					SetSeasonId(value);
 					break;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
@@ -155,10 +142,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"FullName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.fullname > div > p"),
 				"ScheduleType" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.scheduletype > div > p"),
-				"SeasonId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.seasonId > div > p"),
 				_ => throw new Exception($"No such attribute {attribute}"),
 			};
 		}
@@ -177,15 +162,15 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_scheduleEntity.Name);
 			SetFullname(_scheduleEntity.Fullname);
 			SetScheduletype(_scheduleEntity.Scheduletype);
 
-			if (_scheduleEntity.GamesIds != null)
+			if (_scheduleEntity.RoundsIds != null)
 			{
-				SetGamess(_scheduleEntity.GamesIds.Select(x => x.ToString()));
+				SetRoundss(_scheduleEntity.RoundsIds.Select(x => x.ToString()));
 			}
-			SetSeasonId(_scheduleEntity.SeasonId.ToString());
+			SetSeasonId(_scheduleEntity.SeasonId?.ToString());
+			SetLadderId(_scheduleEntity.LadderId?.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -193,26 +178,28 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (referenceName)
 			{
-				case "games":
-					return GetGamess();
+				case "rounds":
+					return GetRoundss();
 				case "season":
 					return new List<Guid>() {GetSeasonId()};
+				case "ladder":
+					return new List<Guid>() {GetLadderId()};
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
 		}
 
 		// set associations
-		private void SetGamess(IEnumerable<string> ids)
+		private void SetRoundss(IEnumerable<string> ids)
 		{
-			WaitUtils.elementState(_driverWait, GamessInputElementBy, ElementState.VISIBLE);
-			var gamessInputElement = _driver.FindElementExt(GamessInputElementBy);
+			WaitUtils.elementState(_driverWait, RoundssInputElementBy, ElementState.VISIBLE);
+			var roundssInputElement = _driver.FindElementExt(RoundssInputElementBy);
 
 			foreach(var id in ids)
 			{
-				gamessInputElement.SendKeys(id);
+				roundssInputElement.SendKeys(id);
 				WaitForDropdownOptions();
-				gamessInputElement.SendKeys(Keys.Return);
+				roundssInputElement.SendKeys(Keys.Return);
 			}
 		}
 
@@ -222,20 +209,37 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			WaitUtils.elementState(_driverWait, SeasonIdInputElementBy, ElementState.VISIBLE);
 			var seasonIdInputElement = _driver.FindElementExt(SeasonIdInputElementBy);
 
-			seasonIdInputElement.SendKeys(id);
-			WaitForDropdownOptions();
-			WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option'][@data-id='{id}']"), ElementState.EXISTS);
-			seasonIdInputElement.SendKeys(Keys.Return);
+			if (id != null)
+			{
+				seasonIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				seasonIdInputElement.SendKeys(Keys.Return);
+			}
+		}
+		private void SetLadderId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, LadderIdInputElementBy, ElementState.VISIBLE);
+			var ladderIdInputElement = _driver.FindElementExt(LadderIdInputElementBy);
+
+			if (id != null)
+			{
+				ladderIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				ladderIdInputElement.SendKeys(Keys.Return);
+			}
 		}
 
 		// get associations
-		private List<Guid> GetGamess()
+		private List<Guid> GetRoundss()
 		{
 			var guids = new List<Guid>();
-			WaitUtils.elementState(_driverWait, GamessElementBy, ElementState.VISIBLE);
-			var gamessElement = _driver.FindElements(GamessElementBy);
+			WaitUtils.elementState(_driverWait, RoundssElementBy, ElementState.VISIBLE);
+			var roundssElement = _driver.FindElements(RoundssElementBy);
 
-			foreach(var element in gamessElement)
+			foreach(var element in roundssElement)
 			{
 				guids.Add(new Guid (element.GetAttribute("data-id")));
 			}
@@ -246,6 +250,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			WaitUtils.elementState(_driverWait, SeasonIdElementBy, ElementState.VISIBLE);
 			var seasonIdElement = _driver.FindElementExt(SeasonIdElementBy);
 			return new Guid(seasonIdElement.GetAttribute("data-id"));
+		}
+		private Guid GetLadderId()
+		{
+			WaitUtils.elementState(_driverWait, LadderIdElementBy, ElementState.VISIBLE);
+			var ladderIdElement = _driver.FindElementExt(LadderIdElementBy);
+			return new Guid(ladderIdElement.GetAttribute("data-id"));
 		}
 
 		// wait for dropdown to be displaying options
@@ -275,14 +285,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			(Scheduletype)Enum.Parse(typeof(Scheduletype), ScheduletypeElement.Text);
 			
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

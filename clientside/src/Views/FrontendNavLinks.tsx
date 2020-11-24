@@ -32,6 +32,8 @@ export function getFrontendNavLinks(pageProps: RouteComponentProps): ILink[][] {
 		[
 			// % protected region % [Customise middle nav section here] off begin
 			{label: "Home", path: '/home', icon: "files", iconPos: 'icon-left'},
+			{label: "Sports", path: '/sports', icon: "files", iconPos: 'icon-left'},
+			{label: "Leagues", path: '/leagues', icon: "files", iconPos: 'icon-left'},
 			// % protected region % [Customise middle nav section here] end
 		],
 		[

@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class ScheduleEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// Schedule name
 		public String Fullname { get; set; }
 		// 
@@ -38,22 +36,21 @@ namespace APITests.EntityObjects.Models
 		/// <summary>
 		/// Outgoing one to many reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.Games"/>
-		public List<Guid> GamesIds { get; set; }
-		public ICollection<GameEntity> Gamess { get; set; }
+		/// <see cref="Sportstats.Models.Rounds"/>
+		public List<Guid> RoundsIds { get; set; }
+		public ICollection<RoundEntity> Roundss { get; set; }
 
 		/// <summary>
 		/// Incoming one to many reference
 		/// </summary>
 		/// <see cref="Sportstats.Models.Season"/>
-		public Guid SeasonId { get; set; }
+		public Guid? SeasonId { get; set; }
 
 		/// <summary>
-		/// Outgoing one to many reference
+		/// Incoming one to one reference
 		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<ScheduleEntityFormTileEntity> FormPages { get; set; }
+		/// <see cref="Sportstats.Models.Ladder"/>
+		public Guid? LadderId { get; set; }
 
 
 		public ScheduleEntity()
@@ -99,11 +96,6 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Fullname",
 				IsRequired = true
 			});
@@ -121,9 +113,18 @@ namespace APITests.EntityObjects.Models
 				EntityName = "SeasonEntity",
 				OppositeName = "Season",
 				Name = "Schedules",
-				Optional = false,
+				Optional = true,
 				Type = ReferenceType.ONE,
 				OppositeType = ReferenceType.MANY
+			});
+			References.Add(new Reference
+			{
+				EntityName = "LadderEntity",
+				OppositeName = "Ladder",
+				Name = "Schedule",
+				Optional = true,
+				Type = ReferenceType.ONE,
+				OppositeType = ReferenceType.ONE
 			});
 		}
 
@@ -142,8 +143,6 @@ namespace APITests.EntityObjects.Models
 			{
 				case "FullName":
 					return GetInvalidFullname(validator);
-				case "SeasonId":
-					return GetInvalidSeasonId(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -170,6 +169,16 @@ namespace APITests.EntityObjects.Models
 					throw new Exception($"Cannot find validator {validator} for attribute Schedules");
 			}
 		}
+		private static string GetInvalidLadderId(string validator)
+		{
+			switch (validator)
+			{
+				case "Required":
+					return "";
+				default:
+					throw new Exception($"Cannot find validator {validator} for attribute Schedule");
+			}
+		}
 
 		/// <summary>
 		/// Returns a list of invalid/mutated jsons and expected errors. The expected errors are the errors that
@@ -190,25 +199,10 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining fullname,
 						["scheduletype"] = ScheduletypeEnum.GetRandomScheduletype().ToString(),
 						["seasonId"] = SeasonId,
-				}
-			),
-			(
-				new List<string>
-				{
-					"violates foreign key constraint",
-				},
-
-				new RestSharp.JsonObject
-				{
-						["id"] = Id,
-						["name"] = Name,
-						// not defining SeasonId,
-						["fullname"] = Fullname,
-						["scheduletype"] = ScheduletypeEnum.GetRandomScheduletype().ToString(),
+						["ladderId"] = LadderId,
 				}
 			),
 
@@ -220,7 +214,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"fullname" , Fullname},
 				{"scheduletype" , Scheduletype.ToString()},
 			};
@@ -228,6 +221,10 @@ namespace APITests.EntityObjects.Models
 			if (SeasonId != default)
 			{
 				entityVar["seasonId"] = SeasonId.ToString();
+			}
+			if (LadderId != default)
+			{
+				entityVar["ladderId"] = LadderId.ToString();
 			}
 
 			return entityVar;
@@ -238,15 +235,10 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["fullname"] = Fullname.ToString(),
 				["scheduletype"] = Scheduletype.ToString(),
 			};
 
-			if (SeasonId != default)
-			{
-				entityVar["seasonId"] = SeasonId.ToString();
-			}
 
 			return entityVar;
 		}
@@ -262,6 +254,10 @@ namespace APITests.EntityObjects.Models
 						ReferenceIdDictionary.Add("SeasonId", guidCollection.FirstOrDefault());
 						SetOneReference(key, guidCollection.FirstOrDefault());
 						break;
+					case "LadderId":
+						ReferenceIdDictionary.Add("LadderId", guidCollection.FirstOrDefault());
+						SetOneReference(key, guidCollection.FirstOrDefault());
+						break;
 					default:
 						throw new Exception($"{key} not valid reference key");
 				}
@@ -274,6 +270,9 @@ namespace APITests.EntityObjects.Models
 			{
 				case "SeasonId":
 					SeasonId = guid;
+					break;
+				case "LadderId":
+					LadderId = guid;
 					break;
 				default:
 					throw new Exception($"{key} not valid reference key");
@@ -309,7 +308,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Fullname
 			Scheduletype = ScheduletypeEnum.GetRandomScheduletype();
 		}
@@ -345,9 +343,6 @@ namespace APITests.EntityObjects.Models
 		/// </summary>
 		private void SetValidEntityAssociations()
 		{
-
-			SeasonId = new SeasonEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES).Save();
-
 		}
 
 		/// <summary>
@@ -356,7 +351,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Fullname = DataUtils.RandString();
 			Scheduletype = ScheduletypeEnum.GetRandomScheduletype();
 			// % protected region % [Override generated entity attributes here] end
@@ -369,7 +363,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var scheduleEntity = new ScheduleEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Fullname = (!string.IsNullOrWhiteSpace(fixedStrValue) && fixedStrValue.Length > 0 && fixedStrValue.Length <= 255) ? fixedStrValue : DataUtils.RandString(),
 

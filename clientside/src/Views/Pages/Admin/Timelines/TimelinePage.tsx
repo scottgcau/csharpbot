@@ -70,7 +70,6 @@ export default class TimelinePage extends React.Component<RouteComponentProps> {
 					onClickViewItem={onClickViewItem}
 					onRouteToListView={routeToListView}
 					onRouteToGraphView={() => routeToComponent('graph')}
-					canChangeTimelineEntity={true}
 					timelineEntity={getTimelineEntityFromName(entityName)} />
 			);
 		};

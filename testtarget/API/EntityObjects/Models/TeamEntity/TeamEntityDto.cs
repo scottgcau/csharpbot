@@ -29,25 +29,27 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public String Represents { get; set; }
 		public String Fullname { get; set; }
 		public String Shortname { get; set; }
 
+		public ICollection<LadderwinlossEntity> Ladderwinlossess { get; set; }
+		public Guid? DivisionId { get; set; }
+		public ICollection<LaddereliminationEntity> Laddereliminationss { get; set; }
 		public ICollection<RosterEntity> Rosterss { get; set; }
-		public Guid? LeagueId { get; set; }
 
 		public TeamEntityDto(TeamEntity model)
 		{
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Represents = model.Represents;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
+			Ladderwinlossess = model.Ladderwinlossess;
+			DivisionId = model.DivisionId;
+			Laddereliminationss = model.Laddereliminationss;
 			Rosterss = model.Rosterss;
-			LeagueId = model.LeagueId;
 		}
 
 		public TeamEntityDto(ServersideTeamEntity model)
@@ -55,12 +57,13 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Represents = model.Represents;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
+			Ladderwinlossess = model.Ladderwinlossess.Select(LadderwinlossEntityDto.Convert).ToList();
+			DivisionId = model.DivisionId;
+			Laddereliminationss = model.Laddereliminationss.Select(LaddereliminationEntityDto.Convert).ToList();
 			Rosterss = model.Rosterss.Select(RosterEntityDto.Convert).ToList();
-			LeagueId = model.LeagueId;
 		}
 
 		public TeamEntity GetTesttargetTeamEntity()
@@ -70,12 +73,13 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Represents = Represents,
 				Fullname = Fullname,
 				Shortname = Shortname,
+				Ladderwinlossess = Ladderwinlossess,
+				DivisionId = DivisionId,
+				Laddereliminationss = Laddereliminationss,
 				Rosterss = Rosterss,
-				LeagueId = LeagueId,
 			};
 		}
 
@@ -86,12 +90,13 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Represents = Represents,
 				Fullname = Fullname,
 				Shortname = Shortname,
+				Ladderwinlossess = Ladderwinlossess?.Select(LadderwinlossEntityDto.Convert).ToList(),
+				DivisionId = DivisionId,
+				Laddereliminationss = Laddereliminationss?.Select(LaddereliminationEntityDto.Convert).ToList(),
 				Rosterss = Rosterss?.Select(RosterEntityDto.Convert).ToList(),
-				LeagueId = LeagueId,
 			};
 		}
 

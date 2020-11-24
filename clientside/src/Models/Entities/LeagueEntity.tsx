@@ -26,27 +26,22 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsLeagueEntity } from 'Models/Security/Acl/VisitorsLeagueEntity';
+import { SystemuserLeagueEntity } from 'Models/Security/Acl/SystemuserLeagueEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface ILeagueEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface ILeagueEntityAttributes extends IModelAttributes {
 	fullname: string;
 	shortname: string;
 
+	sportId?: string;
+	sport?: Models.SportEntity | Models.ISportEntityAttributes;
 	seasonss: Array<Models.SeasonEntity | Models.ISeasonEntityAttributes>;
-	teamss: Array<Models.TeamEntity | Models.ITeamEntityAttributes>;
-	sportId: string;
-	sport: Models.SportEntity | Models.ISportEntityAttributes;
-	formPages: Array<Models.LeagueEntityFormTileEntity | Models.ILeagueEntityFormTileEntityAttributes>;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -54,10 +49,11 @@ export interface ILeagueEntityAttributes extends IModelAttributes, FormEntityDat
 // % protected region % [Customise your entity metadata here] off begin
 @entity('LeagueEntity', 'League')
 // % protected region % [Customise your entity metadata here] end
-export default class LeagueEntity extends Model implements ILeagueEntityAttributes, FormEntityData  {
+export default class LeagueEntity extends Model implements ILeagueEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsLeagueEntity(),
+		new SystemuserLeagueEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -78,22 +74,6 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'FullName'] off begin
 	/**
 	 * League name
@@ -104,7 +84,7 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 	@CRUD({
 		name: 'FullName',
 		displayType: 'textfield',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -123,7 +103,7 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 	@CRUD({
 		name: 'ShortName',
 		displayType: 'textfield',
-		order: 30,
+		order: 20,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -132,17 +112,23 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 	public shortname: string;
 	// % protected region % [Modify props to the crud options here for attribute 'ShortName'] end
 
-	@observable
-	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
-
+	/**
+	 * Related leagues
+	 */
 	@observable
 	@attribute()
-	public publishedVersionId?: string;
-
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'Sport'] off begin
+		name: 'Sport',
+		displayType: 'reference-combobox',
+		order: 30,
+		referenceTypeFunc: () => Models.SportEntity,
+		// % protected region % [Modify props to the crud options here for reference 'Sport'] end
+	})
+	public sportId?: string;
 	@observable
 	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
+	public sport: Models.SportEntity;
 
 	/**
 	 * Collection of seasons for a league
@@ -155,7 +141,6 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 		displayType: 'reference-multicombobox',
 		order: 40,
 		referenceTypeFunc: () => Models.SeasonEntity,
-		disableDefaultOptionRemoval: true,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'seasonss',
 			oppositeEntity: () => Models.SeasonEntity,
@@ -163,61 +148,6 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 		// % protected region % [Modify props to the crud options here for reference 'Seasons'] end
 	})
 	public seasonss: Models.SeasonEntity[] = [];
-
-	/**
-	 * Collection of teams for a league
-	 */
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Teams'] off begin
-		name: "Teamss",
-		displayType: 'reference-multicombobox',
-		order: 50,
-		referenceTypeFunc: () => Models.TeamEntity,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'teamss',
-			oppositeEntity: () => Models.TeamEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Teams'] end
-	})
-	public teamss: Models.TeamEntity[] = [];
-
-	/**
-	 * Related leagues
-	 */
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Sport'] off begin
-		name: 'Sport',
-		displayType: 'reference-combobox',
-		order: 60,
-		referenceTypeFunc: () => Models.SportEntity,
-		// % protected region % [Modify props to the crud options here for reference 'Sport'] end
-	})
-	public sportId: string;
-	@observable
-	@attribute({isReference: true})
-	public sport: Models.SportEntity;
-
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 70,
-		referenceTypeFunc: () => Models.LeagueEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.LeagueEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
-	})
-	public formPages: Models.LeagueEntityFormTileEntity[] = [];
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -249,39 +179,6 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 			if (attributes.shortname) {
 				this.shortname = attributes.shortname;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
-				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
-			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
-			}
-			if (attributes.name) {
-				this.name = attributes.name;
-			}
-			if (attributes.seasonss) {
-				for (const model of attributes.seasonss) {
-					if (model instanceof Models.SeasonEntity) {
-						this.seasonss.push(model);
-					} else {
-						this.seasonss.push(new Models.SeasonEntity(model));
-					}
-				}
-			}
-			if (attributes.teamss) {
-				for (const model of attributes.teamss) {
-					if (model instanceof Models.TeamEntity) {
-						this.teamss.push(model);
-					} else {
-						this.teamss.push(new Models.TeamEntity(model));
-					}
-				}
-			}
 			if (attributes.sport) {
 				if (attributes.sport instanceof Models.SportEntity) {
 					this.sport = attributes.sport;
@@ -293,12 +190,12 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 			} else if (attributes.sportId !== undefined) {
 				this.sportId = attributes.sportId;
 			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.LeagueEntityFormTileEntity) {
-						this.formPages.push(model);
+			if (attributes.seasonss) {
+				for (const model of attributes.seasonss) {
+					if (model instanceof Models.SeasonEntity) {
+						this.seasonss.push(model);
 					} else {
-						this.formPages.push(new Models.LeagueEntityFormTileEntity(model));
+						this.seasonss.push(new Models.SeasonEntity(model));
 					}
 				}
 			}
@@ -315,23 +212,11 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
-		}
-		seasonss {
-			${Models.SeasonEntity.getAttributes().join('\n')}
-		}
-		teamss {
-			${Models.TeamEntity.getAttributes().join('\n')}
-		}
 		sport {
 			${Models.SportEntity.getAttributes().join('\n')}
 		}
-		formPages {
-			${Models.LeagueEntityFormTileEntity.getAttributes().join('\n')}
+		seasonss {
+			${Models.SeasonEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -343,8 +228,6 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
 			seasonss: {},
-			teamss: {},
-			formPages: {},
 		};
 		return this.save(
 			relationPath,
@@ -354,7 +237,7 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 						key: 'mergeReferences',
 						graphQlType: '[String]',
 						value: [
-							'teamss',
+							'seasonss',
 						]
 					},
 				],
@@ -368,43 +251,8 @@ export default class LeagueEntity extends Model implements ILeagueEntityAttribut
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.LeagueSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 

@@ -26,16 +26,26 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
+			// % protected region % [Override Ladderwinlossess Team configuration here] off begin
 			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
+				.HasMany(e => e.Ladderwinlossess)
+				.WithOne(e => e.Team)
 				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
+			// % protected region % [Override Ladderwinlossess Team configuration here] end
+
+			// % protected region % [Override Division Teamss configuration here] off begin
+			builder
+				.HasOne(e => e.Division)
+				.WithMany(e => e.Teamss)
+				.OnDelete(DeleteBehavior.Restrict);
+			// % protected region % [Override Division Teamss configuration here] end
+
+			// % protected region % [Override Laddereliminationss Team configuration here] off begin
+			builder
+				.HasMany(e => e.Laddereliminationss)
+				.WithOne(e => e.Team)
+				.OnDelete(DeleteBehavior.Restrict);
+			// % protected region % [Override Laddereliminationss Team configuration here] end
 
 			// % protected region % [Override Rosterss Team configuration here] off begin
 			builder
@@ -43,27 +53,19 @@ namespace Sportstats.Models {
 				.WithOne(e => e.Team)
 				.OnDelete(DeleteBehavior.Restrict);
 			// % protected region % [Override Rosterss Team configuration here] end
-			// % protected region % [Override League Teamss configuration here] off begin
-			builder
-				.HasOne(e => e.League)
-				.WithMany(e => e.Teamss)
-				.OnDelete(DeleteBehavior.Cascade);
-			// % protected region % [Override League Teamss configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
-			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+
 			// % protected region % [Override Represents index configuration here] off begin
 			builder.HasIndex(e => e.Represents);
 			// % protected region % [Override Represents index configuration here] end
+
 			// % protected region % [Override Fullname index configuration here] off begin
 			builder.HasIndex(e => e.Fullname);
 			// % protected region % [Override Fullname index configuration here] end
+
 			// % protected region % [Override Shortname index configuration here] off begin
 			builder.HasIndex(e => e.Shortname);
 			// % protected region % [Override Shortname index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

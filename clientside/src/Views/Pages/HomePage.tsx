@@ -18,6 +18,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 import SecuredPage from 'Views/Components/Security/SecuredPage';
+import BodyContent from 'Views/Components/PageWrapper/BodyContent';
 
 import HomeWrappingTileTile from 'Views/Tiles/HomeWrappingTileTile';
 import Navigation, { Orientation } from 'Views/Components/Navigation/Navigation';
@@ -52,14 +53,14 @@ export default class HomePage extends React.Component<RouteComponentProps> {
 					staticContext={staticContext}
 				/>
 
-				<div className="body-content">
+				<BodyContent>
 					<HomeWrappingTileTile
 						history={history}
 						location={location}
 						match={match}
 						staticContext={staticContext}
 					/>
-				</div>
+				</BodyContent>
 			</SecuredPage>
 		);
 		// % protected region % [Customise the page here] end

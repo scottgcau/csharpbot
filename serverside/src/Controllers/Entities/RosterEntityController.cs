@@ -120,7 +120,7 @@ namespace Sportstats.Controllers.Entities
 		[HttpPost]
 		[Route("")]
 		[Consumes("application/json")]
-		[AllowAnonymous]
+		[Authorize]
 		// % protected region % [Override post attributes here] end
 		public async Task<RosterEntityDto> Post(
 			[BindRequired, FromBody] RosterEntityDto model,
@@ -146,7 +146,7 @@ namespace Sportstats.Controllers.Entities
 		[HttpPost]
 		[Route("")]
 		[Consumes("multipart/form-data")]
-		[AllowAnonymous]
+		[Authorize]
 		// % protected region % [Override post form attributes here] end
 		public async Task<RosterEntityDto> PostForm(CancellationToken cancellation)
 		{
@@ -179,7 +179,7 @@ namespace Sportstats.Controllers.Entities
 		// % protected region % [Override put attributes here] off begin
 		[HttpPut]
 		[Consumes("application/json")]
-		[AllowAnonymous]
+		[Authorize]
 		// % protected region % [Override put attributes here] end
 		public async Task<RosterEntityDto> Put(
 			[BindRequired, FromBody] RosterEntityDto model,
@@ -204,7 +204,7 @@ namespace Sportstats.Controllers.Entities
 		// % protected region % [Override put form attributes here] off begin
 		[HttpPut]
 		[Consumes("multipart/form-data")]
-		[AllowAnonymous]
+		[Authorize]
 		// % protected region % [Override put form attributes here] end
 		public async Task<RosterEntityDto> PutForm(CancellationToken cancellation)
 		{
@@ -235,7 +235,7 @@ namespace Sportstats.Controllers.Entities
 		// % protected region % [Override delete attributes here] off begin
 		[HttpDelete]
 		[Route("{id}")]
-		[AllowAnonymous]
+		[Authorize]
 		// % protected region % [Override delete attributes here] end
 		public async Task<Guid> Delete(Guid id, CancellationToken cancellation)
 		{

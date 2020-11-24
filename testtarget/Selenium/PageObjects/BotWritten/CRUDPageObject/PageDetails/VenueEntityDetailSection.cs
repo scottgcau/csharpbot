@@ -53,7 +53,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private IWebElement AddressHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Address']"));
 		private IWebElement LatHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Lat']"));
 		private IWebElement LonHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Lon']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -85,9 +84,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			// Reference web elements
 			selectorDict.Add("GamesElement", (selector: ".input-group__dropdown.gamess > .dropdown.dropdown__container", type: SelectorType.CSS));
 
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
-
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
 			selectorDict.Add("ModifiedAtDatepickerField", (selector: "//div[contains(@class, 'modified')]/input", type: SelectorType.XPath));
@@ -101,7 +97,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private IWebElement AddressElement => FindElementExt("AddressElement");
 		private IWebElement LatElement => FindElementExt("LatElement");
 		private IWebElement LonElement => FindElementExt("LonElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -113,7 +108,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				"Address" => AddressHeaderTitle,
 				"Lat" => LatHeaderTitle,
 				"Lon" => LonHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -123,8 +117,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "FullName":
 					return FullnameElement;
 				case "ShortName":
@@ -144,9 +136,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "FullName":
 					SetFullname(value);
 					break;
@@ -171,7 +160,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"FullName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.fullname > div > p"),
 				"ShortName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.shortname > div > p"),
 				"Address" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.address > div > p"),
@@ -195,7 +183,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_venueEntity.Name);
 			SetFullname(_venueEntity.Fullname);
 			SetShortname(_venueEntity.Shortname);
 			SetAddress(_venueEntity.Address);
@@ -308,14 +295,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private Double? GetLon =>
 			Convert.ToDouble(LonElement.Text);
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

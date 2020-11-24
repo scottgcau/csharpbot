@@ -15,8 +15,9 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 import * as React from 'react';
-import ReactModal, { Props as ModalProps } from 'react-modal';
 import * as classNames from 'classnames';
+import ReactModal, { Props as ModalProps } from 'react-modal';
+import { observer } from 'mobx-react';
 import { store } from "Models/Store";
 
 export interface IModalProps {
@@ -50,6 +51,7 @@ const modalElement = document.getElementById(rootId);
 /**
  * A modal dialog that can display any content inside of it
  */
+@observer
 export default class Modal extends React.Component<IModalProps> {
 	public render() {
 		if (!modalElement) {

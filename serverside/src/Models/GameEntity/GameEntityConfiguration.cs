@@ -26,16 +26,19 @@ namespace Sportstats.Models {
 		{
 			AbstractModelConfiguration.Configure(builder);
 
-			// % protected region % [Override form data configuration here] off begin
+			// % protected region % [Override Round Gamess configuration here] off begin
 			builder
-				.HasMany(e => e.FormVersions)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Cascade);
-			builder
-				.HasOne(e => e.PublishedVersion)
-				.WithOne(e => e.PublishedForm)
+				.HasOne(e => e.Round)
+				.WithMany(e => e.Gamess)
 				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override form data configuration here] end
+			// % protected region % [Override Round Gamess configuration here] end
+
+			// % protected region % [Override Gamerefereess Game configuration here] off begin
+			builder
+				.HasMany(e => e.Gamerefereess)
+				.WithOne(e => e.Game)
+				.OnDelete(DeleteBehavior.Restrict);
+			// % protected region % [Override Gamerefereess Game configuration here] end
 
 			// % protected region % [Override Venue Gamess configuration here] off begin
 			builder
@@ -43,30 +46,11 @@ namespace Sportstats.Models {
 				.WithMany(e => e.Gamess)
 				.OnDelete(DeleteBehavior.Restrict);
 			// % protected region % [Override Venue Gamess configuration here] end
-			// % protected region % [Override Schedule Gamess configuration here] off begin
-			builder
-				.HasOne(e => e.Schedule)
-				.WithMany(e => e.Gamess)
-				.OnDelete(DeleteBehavior.Cascade);
-			// % protected region % [Override Schedule Gamess configuration here] end
-			// % protected region % [Override Refereess Game configuration here] off begin
-			builder
-				.HasMany(e => e.Refereess)
-				.WithOne(e => e.Game)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override Refereess Game configuration here] end
-			// % protected region % [Override FormPages Form configuration here] off begin
-			builder
-				.HasMany(e => e.FormPages)
-				.WithOne(e => e.Form)
-				.OnDelete(DeleteBehavior.Restrict);
-			// % protected region % [Override FormPages Form configuration here] end
+
 			// % protected region % [Override Hometeamid index configuration here] off begin
 			builder.HasIndex(e => e.Hometeamid);
 			// % protected region % [Override Hometeamid index configuration here] end
-			// % protected region % [Override Awayteamid index configuration here] off begin
-			builder.HasIndex(e => e.Awayteamid);
-			// % protected region % [Override Awayteamid index configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

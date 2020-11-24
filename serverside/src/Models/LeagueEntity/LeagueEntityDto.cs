@@ -27,7 +27,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class LeagueEntityDto : ModelDto<LeagueEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Fullname here] off begin
 		/// <summary>
 		/// League name
@@ -44,7 +43,7 @@ namespace Sportstats.Models
 
 
 		// % protected region % [Customise SportId here] off begin
-		public Guid SportId { get; set; }
+		public Guid? SportId { get; set; }
 		// % protected region % [Customise SportId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
@@ -73,7 +72,6 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Shortname = Shortname,
 				SportId  = SportId,
@@ -87,7 +85,6 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
 			SportId  = model.SportId;

@@ -110,11 +110,10 @@ export default class CollectionHeaders<T> extends React.Component<ICollectionHea
 		// % protected region % [Customise render here] end
 	}
 
+	// % protected region % [Customize renderSelectAllCheckbox here] off begin
 	public renderSelectAllCheckbox() {
-		// % protected region % [Customize initial renderSelectAllCheckbox here] off begin
 		const { allChecked, onCheckedAll } = this.props;
 		const checkboxDisplayType = DisplayType.INLINE;
-		// % protected region % [Customize initial renderSelectAllCheckbox here] end
 
 		return (
 			<Checkbox
@@ -136,6 +135,8 @@ export default class CollectionHeaders<T> extends React.Component<ICollectionHea
 			/>
 		);
 	}
+	// % protected region % [Customize renderSelectAllCheckbox here] end
+
 }
 
 // % protected region % [Add methods here] off begin

@@ -15,6 +15,8 @@
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
 export { default as HomePage } from './HomePage';
+export { default as SportsPage } from './SportsPage';
+export { default as LeaguesPage } from './LeaguesPage';
 export { default as LoginPage } from './LoginPage';
 export { default as RegistrationPage } from './RegistrationPage';
 export { default as RegistrationConfirmPage } from './RegistrationConfirmPage';

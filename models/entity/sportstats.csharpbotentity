@@ -1,11 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <csharpbotEntity:EntityModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:csharpbotEntity="http://codebots.com/emf/csharpbot/entity" Uuid="40cada9e-3be5-11ea-bb2c-6d6f75736579" TargetProject="sportstats">
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="02b991fe-da33-4108-86a5-bb5d345ce264" Name="Ladder" DocoDescription="Ladder entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeEnum" Uuid="e327b1e8-bf66-42ba-b136-10428ef75066" Name="LadderType" DocoDescription="Type of ladder"/>
+  </Entities>
   <Entities xsi:type="csharpbotEntity:Entity" Uuid="6dd55c79-3564-48ee-a4a7-6a2991c52dbc" Name="Schedule" DocoDescription="Schedule entity">
     <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="b94eba59-fb3d-4183-bc94-f859192eb888" Name="FullName" DocoDescription="Schedule name" Searchable="true">
       <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="ed37de1b-7690-43ad-a468-acb0d97e06dd"/>
     </Attributes>
     <Attributes xsi:type="csharpbotEntity:AttributeEnum" Uuid="787d37a8-4411-406e-aafd-398a626c1a05" Name="ScheduleType"/>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="05d46d1b-bda1-4ccb-b137-b60191511793"/>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="86a52fa7-bd56-426d-b304-81b1d31456fc" Name="LadderElimination" DocoDescription="Elimination ladder entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="d3154619-d9bc-44d9-aa77-f3141ee62eb5" Name="PointsFor">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="9024ace7-db67-47f8-8cbe-558f106a0cca"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="8be10867-8e96-4100-967f-cfb259d84e49" Name="AwatWon"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="ccdee49c-afb0-4453-87e1-a132c21f48c4" Name="AwayLost"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="4a0bb2c3-0144-42c7-8650-4cf132960ebb" Name="AwayFor"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="9b671194-2e3b-4eda-8f2b-39173bc79ed3" Name="AwayAgainst"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="48220803-71ea-4977-902b-dfa774d82330" Name="HomeAgainst">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="9a6392f8-2aa6-4e81-9a7b-d256b12133ac"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="40068433-d36c-4274-8185-890e8117b4bf" Name="HomeFor">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="44a7fcee-16ef-45d0-aed0-76e736cfa942"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="a2c852a7-1f8c-4ae9-9f12-e2a9c0cf9ac2" Name="HomeLost">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="c7fb2a4d-35d9-44d4-b1d8-30341cc1223f"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="6cea576b-3f98-4be7-820f-096bcb04805a" Name="HomeWon">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="8ec6cbbb-8795-48f9-a37c-76314eca07e5"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="db511816-301f-4df8-a0eb-1a68c5a8b12d" Name="PointsAgainst">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="cb3f5634-ec44-49d2-acdc-b631c5b34b11"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="0e99b958-7f0f-41b2-b12c-1d7edeb487a9" Name="Played">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="89539c86-ae20-4ad6-b93c-ba56cfd464c4"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="ab9642df-ff53-4982-9253-eae7ab7a8f4c" Name="Won">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="93ffb249-e28a-4969-98f4-b90ae226bd9b"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="c745ed86-3476-4a31-a8b5-5e8ea47d12a9" Name="Lost">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="93608b50-839d-4c29-9b9f-e9dc67e762ca"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="4895fbed-96ab-4359-b739-a186ab696909" Name="LadderWinLoss" DocoDescription="Win loss ladder entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="44cecdf6-5744-4938-83ec-91f50258947a" Name="Played">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="bf4a8b5f-fa55-4024-a234-46a09beaf000"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="6582e233-505b-4eb0-a923-0b0a29f473e7" Name="Won">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="a2f7388f-476e-417b-9de9-efa75a1f7957"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="c898c3d0-5199-4e8b-b38e-e3d1ba1eca38" Name="Lost">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="688bd903-8988-42f8-bb96-165759ebdde2"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="61978f90-44bb-47de-8648-af4370caba37" Name="PointsFor">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="75739e67-88f0-4d04-b6b8-38f74dbb548f"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="3e6c7ec1-bc42-4344-85a9-041fa398d9dc" Name="PointsAgainst">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="f00a77e4-add5-4248-b174-8123c3dfd19c"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="2f9b37b3-e27c-4cce-89b4-d9b5038c7810" Name="HomeWon">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="32452f82-7a68-4c28-8e8d-0370fe5a6715"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="99c663a2-3187-4f0a-b87a-5032a9868a2a" Name="HomeLost">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="c7c5a25a-be35-424f-b2f3-fc24b31eb45d"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="5da0dacc-63ed-45e1-9007-805c78f5efc5" Name="HomeFor">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="13731dbd-f932-4181-a6cb-e5661b1219d3"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="94a64bda-8405-44c0-8f98-91601947c215" Name="HomeAgainst">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="b00df4a6-1829-426c-bf0a-ae0ed26ccfb7"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="a2fe15a8-50db-4e6f-8662-2b1a34a552c8" Name="AwayWon">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="77ad1075-b3d4-41a0-b90b-c78717761df3"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="7706d783-6592-459c-8ca6-b048645d7d20" Name="AwayLost">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="0b013235-9d94-49aa-9a7a-801383c9697c"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="1ea6e192-11ac-4b81-b39e-f7b61d6035f6" Name="AwayFor">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="0878cce3-3233-485c-9e9a-be66cb4192c5"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="dcaa2157-3f37-4a25-8fa2-2da124638eef" Name="AwayAgainst">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="af05bb26-8013-4f19-8a57-30435faae29b"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="f0365cd5-0d47-49ab-8bf7-4a87ad46834b" Name="Round" DocoDescription="Round entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="0a2dd019-351a-4f7b-a06b-b68e9456b814" Name="Order" DocoDescription="Numeric round order" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="fbb3d51c-26ca-49ef-a063-345302b7ee8d"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="dc40c219-1899-44b5-94d4-1bb2c69508f7" Name="FullName" DocoDescription="Full name" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="ae1dc4fb-2b0d-4cdb-a04d-aea903105193"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="5ab36859-79ab-4d73-ac39-d1bf623e29a7" Name="ShortName" DocoDescription="Short name / abbreviation" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="10f6bbc1-4efb-4150-a578-70fce45cbe2f"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="d284625a-f181-4ec2-a2c9-308bb7459031" Name="Game" DocoDescription="Scheduled game">
+    <Attributes xsi:type="csharpbotEntity:AttributeDateTime" Uuid="e3aca019-08c5-4668-a4de-488226a9be73" Name="DateStart">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="2ef6fa77-2fc7-4df9-bbbb-b9db2896cc41"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="52ff0a15-97aa-4941-9f90-5216795ad221" Name="HomePoints"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="0c7a7f58-7681-4449-83f3-953c4b26daa4" Name="AwayPoints"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="4d8c3dc0-9f70-4dac-92bd-d63c74d05524" Name="HomeTeamId" Searchable="true"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="8d4e73d9-00cb-4514-abc9-f0a5ff8b2f0e" Name="AwayTeamId"/>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="2a767325-bc58-4975-924a-4f0740f84e34" Name="Division" DocoDescription="Division entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="b5448cd0-f377-4af3-8b98-2ef4794cae58" Name="FullName" DocoDescription="Full name" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="c62e6035-2d50-4ea0-a719-ebc6370c1592"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="e1a24549-89d1-4d96-8076-324751983483" Name="ShortName" DocoDescription="Short name / abbreviation">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="cb4c34af-38ad-4f20-b625-697ae49d6956"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="225d1057-1366-497e-9dca-5303ce6276d8" Name="Venue" DocoDescription="Venue entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="fa4852cd-f50a-4667-bff1-8a1f41e2b3a0" Name="FullName" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="c597f3a9-691b-4d4e-997c-935e03704263"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="0d6b257a-78cf-46af-a228-0bacc0e089d5" Name="ShortName" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="493ac1da-bcf4-4967-916f-1882cf9555a7"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="46c99d29-bc39-4dff-9c81-ecdbcaf2ca40" Name="Address" Searchable="true"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeDecimal" Uuid="00c9a43e-793d-4c95-a3c7-3a65f46e5a47" Name="Lat" Searchable="true"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeDecimal" Uuid="a8523e2b-023a-4cae-9814-17c17400cfd3" Name="Lon"/>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="3501bf92-5f73-4015-a23c-02c5d3d5f410" Name="Team" DocoDescription="Team entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="3f19b985-af79-4de3-8ba9-a4fc421ba72e" Name="Represents" DocoDescription="City or area represented" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="7d83a563-9ae5-48e0-bb45-ff521c0ee5c5"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="83828b91-9587-4dbd-ad9a-e513f6afd9d2" Name="FullName" DocoDescription="Name of the team (sans city / area)" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="fcb7e8aa-464a-4ba3-829a-6289abec0dee"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="ee562a31-0c94-4aa7-8f56-c58ff350c84b" Name="ShortName" DocoDescription="Short name / abbreviation for the team" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="9beaa38a-a92f-4fe4-b38e-4b45c05ac23f"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="c12f1251-a2b6-426c-93ab-d47afa266cdb" Name="GameReferee" DocoDescription="Game referee entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeBoolean" Uuid="d95bc4d6-ad22-43a7-84ae-45e6dcf0a582" Name="HeadReferee"/>
   </Entities>
   <Entities xsi:type="csharpbotEntity:Entity" Uuid="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Name="Season" DocoDescription="Season entity">
     <Attributes xsi:type="csharpbotEntity:AttributeDate" Uuid="91de9672-e50c-4f9b-935c-aaecc3022e4f" Name="StartDate" Searchable="true">
@@ -20,53 +149,6 @@
     <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="b5053554-1e40-43cf-b3ec-3a7b6e8af30c" Name="ShortName" DocoDescription="Short name / abbreviation" Searchable="true">
       <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="f9f03457-cc78-482a-927c-6a2148595f33"/>
     </Attributes>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="7672c4b0-254a-427c-a738-9bc6eee2d412"/>
-  </Entities>
-  <Entities xsi:type="csharpbotEntity:Entity" Uuid="225d1057-1366-497e-9dca-5303ce6276d8" Name="Venue" DocoDescription="Venue entity">
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="fa4852cd-f50a-4667-bff1-8a1f41e2b3a0" Name="FullName" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="c597f3a9-691b-4d4e-997c-935e03704263"/>
-    </Attributes>
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="0d6b257a-78cf-46af-a228-0bacc0e089d5" Name="ShortName" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="493ac1da-bcf4-4967-916f-1882cf9555a7"/>
-    </Attributes>
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="46c99d29-bc39-4dff-9c81-ecdbcaf2ca40" Name="Address" Searchable="true"/>
-    <Attributes xsi:type="csharpbotEntity:AttributeDecimal" Uuid="00c9a43e-793d-4c95-a3c7-3a65f46e5a47" Name="Lat" Searchable="true"/>
-    <Attributes xsi:type="csharpbotEntity:AttributeDecimal" Uuid="a8523e2b-023a-4cae-9814-17c17400cfd3" Name="Lon"/>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="28f5650f-b4c0-4050-934b-bbe4965ca48c"/>
-  </Entities>
-  <Entities xsi:type="csharpbotEntity:Entity" Uuid="d284625a-f181-4ec2-a2c9-308bb7459031" Name="Game" DocoDescription="Scheduled game">
-    <Attributes xsi:type="csharpbotEntity:AttributeDateTime" Uuid="e3aca019-08c5-4668-a4de-488226a9be73" Name="DateStart"/>
-    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="98b841af-02b9-4072-9430-d531c9954d9a" Name="HomeTeamId" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="ec54c10d-7750-4e5b-a134-ac03d2362789"/>
-    </Attributes>
-    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="f18543b5-bca8-4551-bc90-55152cec1ddd" Name="AwayTeamId" Searchable="true"/>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="4269edaf-5022-454d-85e7-fc571238f907"/>
-  </Entities>
-  <Entities xsi:type="csharpbotEntity:Entity" Uuid="d469786e-3d85-4cc1-ad6f-36f959703fd7" Name="Sport" DocoDescription="Sport entity" AvailableBy="SERVER" OrderBy="80690ac8-bf2c-417a-a270-200f3993c5db" OrderByDirection="DESCENDING">
-    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="80690ac8-bf2c-417a-a270-200f3993c5db" Name="Order" DocoDescription="Order" Searchable="true" Unique="true"/>
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="1fdf86ce-ca5d-4106-8ff0-0b1f610c5db8" Name="FullName" Searchable="true"/>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="4b90daa9-4049-43f1-8a9a-c073c4d7e457"/>
-  </Entities>
-  <Entities xsi:type="csharpbotEntity:Entity" Uuid="c53f04bd-2a20-487f-883a-4452e35e3bda" Name="League" DocoDescription="League entity">
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="b583f484-af50-4967-9cba-7fd21243152d" Name="FullName" DocoDescription="League name" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="90d130e4-3b32-458b-b42b-dfc53005a1be"/>
-    </Attributes>
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="8e28b61f-ec14-4094-9191-cc213de5d162" Name="ShortName" DocoDescription="Short name / abbreviation for the league" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="b2a37a91-2633-495c-bc90-fe57ce75b916"/>
-    </Attributes>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="56bd16cd-b5ad-46aa-8b3c-f6dd5ebf23ef"/>
-  </Entities>
-  <Entities xsi:type="csharpbotEntity:Entity" Uuid="3501bf92-5f73-4015-a23c-02c5d3d5f410" Name="Team" DocoDescription="Team entity">
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="3f19b985-af79-4de3-8ba9-a4fc421ba72e" Name="Represents" DocoDescription="City or area represented" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="7d83a563-9ae5-48e0-bb45-ff521c0ee5c5"/>
-    </Attributes>
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="83828b91-9587-4dbd-ad9a-e513f6afd9d2" Name="FullName" DocoDescription="Name of the team (sans city / area)" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="fcb7e8aa-464a-4ba3-829a-6289abec0dee"/>
-    </Attributes>
-    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="ee562a31-0c94-4aa7-8f56-c58ff350c84b" Name="ShortName" DocoDescription="Short name / abbreviation for the team" Searchable="true">
-      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="9beaa38a-a92f-4fe4-b38e-4b45c05ac23f"/>
-    </Attributes>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="e548bdeb-e0da-4946-9664-f24a19c7ec6e"/>
   </Entities>
   <Entities xsi:type="csharpbotEntity:Entity" Uuid="727cdb92-d522-4ad3-8b15-962529ab7d4d" Name="Person" DocoDescription="Person entity">
     <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="bfe72c7e-67c9-4d89-9d84-833a9ef1a95a" Name="FirstName" DocoDescription="First name" Searchable="true">
@@ -78,11 +160,27 @@
     <Attributes xsi:type="csharpbotEntity:AttributeDate" Uuid="2c900668-65f4-4ff1-99f8-67f743725e01" Name="DateOfBirth" DocoDescription="Date of birth" Searchable="true"/>
     <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="d52db2b2-636f-439a-83e2-a755abdfa06c" Name="Height" DocoDescription="Height (cm)"/>
     <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="74692066-d0c5-466f-845c-db0245d785cd" Name="Weight" DocoDescription="Weight (kg)"/>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="ebb610fb-ffbf-49f7-b69d-1b2aff09305e"/>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="35611a56-d57f-4362-9b99-37c53a014329" Name="SystemUser" DocoDescription="System users">
+    <Behaviours xsi:type="csharpbotEntity:BehaviourUser" Uuid="0590f9c6-da1a-46b0-939d-d6d2c0d7d1b9"/>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="d469786e-3d85-4cc1-ad6f-36f959703fd7" Name="Sport" DocoDescription="Sport entity" AvailableBy="SERVER" OrderBy="80690ac8-bf2c-417a-a270-200f3993c5db" OrderByDirection="DESCENDING">
+    <Attributes xsi:type="csharpbotEntity:AttributeInteger" Uuid="80690ac8-bf2c-417a-a270-200f3993c5db" Name="Order" DocoDescription="Order" Searchable="true" Unique="true"/>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="1fdf86ce-ca5d-4106-8ff0-0b1f610c5db8" Name="FullName" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="ecb14b39-78f9-43d5-be9c-4e0d76119af7"/>
+    </Attributes>
+  </Entities>
+  <Entities xsi:type="csharpbotEntity:Entity" Uuid="c53f04bd-2a20-487f-883a-4452e35e3bda" Name="League" DocoDescription="League entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="b583f484-af50-4967-9cba-7fd21243152d" Name="FullName" DocoDescription="League name" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="90d130e4-3b32-458b-b42b-dfc53005a1be"/>
+    </Attributes>
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="8e28b61f-ec14-4094-9191-cc213de5d162" Name="ShortName" DocoDescription="Short name / abbreviation for the league" Searchable="true">
+      <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="b2a37a91-2633-495c-bc90-fe57ce75b916"/>
+    </Attributes>
   </Entities>
   <Entities xsi:type="csharpbotEntity:Entity" Uuid="9ea28543-4016-44db-b439-928df130db28" Name="Roster" DocoDescription="Roster entity">
+    <Attributes xsi:type="csharpbotEntity:AttributeString" Uuid="9e6b7fcc-ac32-413d-bad3-03d53463d754" Name="FullName" Searchable="true"/>
     <Behaviours xsi:type="csharpbotEntity:BehaviourTimeline" Uuid="c069b1c9-03a7-4215-8e39-98f0080c1b91"/>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="8a643af9-1fb7-4107-8e86-8298936db04f"/>
   </Entities>
   <Entities xsi:type="csharpbotEntity:Entity" Uuid="51170f53-0047-47aa-b141-8da0cebaf8ab" Name="RosterAssignment" DocoDescription="RosterAssingment entity">
     <Attributes xsi:type="csharpbotEntity:AttributeDate" Uuid="a690873b-8e0d-4b38-975f-2fcad47e9628" Name="DateFrom" DocoDescription="Date assigned to the roster" Searchable="true">
@@ -92,8 +190,11 @@
     <Attributes xsi:type="csharpbotEntity:AttributeEnum" Uuid="e3903153-fbf2-4587-9dd4-bf318fc41ab7" Name="RoleType">
       <Validators xsi:type="csharpbotEntity:ValidatorRequired" Uuid="5e2c5aac-b3c4-492a-885d-1d44afab10c0"/>
     </Attributes>
-    <Behaviours xsi:type="csharpbotEntity:BehaviourForms" Uuid="7d5a44b1-6e53-4bb5-810f-907464804a4e"/>
   </Entities>
+  <Enumerations xsi:type="csharpbotEntity:Enumeration" Uuid="a6801d4a-2a05-4eca-b61d-34259cb0fe25" Name="LadderType">
+    <EnumLiterals xsi:type="csharpbotEntity:EnumLiteral" Uuid="e1f871e1-5636-4bb5-ae52-904e0146b09b" Name="WinLoss"/>
+    <EnumLiterals xsi:type="csharpbotEntity:EnumLiteral" Uuid="07be4447-140d-41c2-b4e1-e7cf182bf6b5" Name="Elimination"/>
+  </Enumerations>
   <Enumerations xsi:type="csharpbotEntity:Enumeration" Uuid="4a57709d-f36f-4db3-8532-5b78b01bba6c" Name="ScheduleType">
     <EnumLiterals xsi:type="csharpbotEntity:EnumLiteral" Uuid="89833642-dce9-4168-938d-4511825d5146" Name="Preseason"/>
     <EnumLiterals xsi:type="csharpbotEntity:EnumLiteral" Uuid="9fd7f77b-e005-46a3-ba96-a15c5feb3f7e" Name="Regular"/>
@@ -106,17 +207,28 @@
     <EnumLiterals xsi:type="csharpbotEntity:EnumLiteral" Uuid="35ba4eea-db68-4142-85de-70d826d9114c" Name="Assistant"/>
     <EnumLiterals xsi:type="csharpbotEntity:EnumLiteral" Uuid="26835193-287a-4688-afdb-b4965bd82eb2" Name="Manager"/>
   </Enumerations>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="1b84c72d-fe2b-4584-b742-800c3a4ae638" Name="RosterAssignments" DocoDescription="Roster assignments" OppositeName="Roster" CascadeDelete="CASCADE" TargetOptional="false" SourceOptional="true" Source="9ea28543-4016-44db-b439-928df130db28" Target="51170f53-0047-47aa-b141-8da0cebaf8ab"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="d3420d50-3c13-4461-8774-9463bcf7d854" Name="LadderWinLosses" OppositeName="Team" CascadeCreateUpdate="false" SourceOptional="true" Source="3501bf92-5f73-4015-a23c-02c5d3d5f410" Target="4895fbed-96ab-4359-b739-a186ab696909"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="4f488c76-69ca-4c93-8ae7-14068f2fa7cc" Name="Teams" OppositeName="Division" SourceOptional="true" Source="2a767325-bc58-4975-924a-4f0740f84e34" Target="3501bf92-5f73-4015-a23c-02c5d3d5f410"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="a2c1a118-4fd4-44f3-9718-9d9b04d75777" Name="Divisions" OppositeName="Season" CascadeDelete="CASCADE" CascadeCreateUpdate="false" SourceOptional="true" Source="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Target="2a767325-bc58-4975-924a-4f0740f84e34"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="86ad99a8-0c9d-4bba-9f0e-d66f337c2e12" Name="LadderWinLosses" OppositeName="Ladder" CascadeCreateUpdate="false" SourceOptional="true" Source="02b991fe-da33-4108-86a5-bb5d345ce264" Target="4895fbed-96ab-4359-b739-a186ab696909"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="a395cd12-21f6-4171-b302-9f9200986e01" Name="Games" OppositeName="Round" CascadeCreateUpdate="false" SourceOptional="true" Source="f0365cd5-0d47-49ab-8bf7-4a87ad46834b" Target="d284625a-f181-4ec2-a2c9-308bb7459031"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="369d1902-b02b-45da-8def-7019c824aa77" Name="Rounds" OppositeName="Schedule" CascadeCreateUpdate="false" SourceOptional="true" Source="6dd55c79-3564-48ee-a4a7-6a2991c52dbc" Target="f0365cd5-0d47-49ab-8bf7-4a87ad46834b"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="7750ef4b-0dad-4f18-b1b3-7a8dd9d37c32" Name="LadderEliminations" OppositeName="Ladder" CascadeCreateUpdate="false" SourceOptional="true" Source="02b991fe-da33-4108-86a5-bb5d345ce264" Target="86a52fa7-bd56-426d-b304-81b1d31456fc"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="defab576-fbb8-4fa0-af34-8ce7f57da79c" Name="LadderEliminations" OppositeName="Round" CascadeCreateUpdate="false" SourceOptional="true" Source="f0365cd5-0d47-49ab-8bf7-4a87ad46834b" Target="86a52fa7-bd56-426d-b304-81b1d31456fc"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToOne" Uuid="e68aa985-f657-4a5e-89ab-7119729893d8" Name="Schedule" OppositeName="Ladder" CascadeCreateUpdate="false" SourceOptional="true" Source="02b991fe-da33-4108-86a5-bb5d345ce264" Target="6dd55c79-3564-48ee-a4a7-6a2991c52dbc"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="9eceff64-9bf5-41a4-83ab-a40a8d902900" Name="LadderEliminations" OppositeName="Team" CascadeCreateUpdate="false" SourceOptional="true" Source="3501bf92-5f73-4015-a23c-02c5d3d5f410" Target="86a52fa7-bd56-426d-b304-81b1d31456fc"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToOne" Uuid="fd9c0ca0-c901-455a-b62c-58be9d7c3458" Name="Person" OppositeName="SystemUser" CascadeCreateUpdate="false" SourceOptional="true" Source="35611a56-d57f-4362-9b99-37c53a014329" Target="727cdb92-d522-4ad3-8b15-962529ab7d4d"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="2c9ea881-307f-4cc2-99ff-c80c49f94a35" Name="GameReferees" OppositeName="Game" CascadeCreateUpdate="false" SourceOptional="true" Source="d284625a-f181-4ec2-a2c9-308bb7459031" Target="c12f1251-a2b6-426c-93ab-d47afa266cdb"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="d6bd6633-b824-4b92-8111-a9236ff8152e" Name="Leagues" DocoDescription="Related leagues" OppositeName="Sport" CascadeDelete="CASCADE" SourceOptional="true" Source="d469786e-3d85-4cc1-ad6f-36f959703fd7" Target="c53f04bd-2a20-487f-883a-4452e35e3bda"/>
   <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="1e3c6efa-e2ea-4342-923d-11bf870b3968" Name="Games" OppositeName="Venue" CascadeCreateUpdate="false" SourceOptional="true" Source="225d1057-1366-497e-9dca-5303ce6276d8" Target="d284625a-f181-4ec2-a2c9-308bb7459031"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="7411874a-9d15-4f28-9ffa-fa579f8d69ab" Name="Games" OppositeName="Schedule" CascadeDelete="CASCADE" Source="6dd55c79-3564-48ee-a4a7-6a2991c52dbc" Target="d284625a-f181-4ec2-a2c9-308bb7459031"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="9f1c796c-c16c-408e-bf33-5d4c65544a4a" Name="RosterAssignments" DocoDescription="Roster assignments" OppositeName="Person" Source="727cdb92-d522-4ad3-8b15-962529ab7d4d" Target="51170f53-0047-47aa-b141-8da0cebaf8ab"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="ffd09d25-602a-43f3-9e26-784f8a82c120" Name="Rosters" DocoDescription="Team rosters for season" OppositeName="Season" Source="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Target="9ea28543-4016-44db-b439-928df130db28"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="707ed261-434f-4351-a38b-662a028fa5cb" Name="Seasons" DocoDescription="Collection of seasons for a league" OppositeName="League" CascadeDelete="CASCADE" SourceOptional="true" Source="c53f04bd-2a20-487f-883a-4452e35e3bda" Target="bc85fac3-207d-4eb1-bc55-a75be87a6c12"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="9f1c796c-c16c-408e-bf33-5d4c65544a4a" Name="RosterAssignments" DocoDescription="Roster assignments" OppositeName="Person" SourceOptional="true" Source="727cdb92-d522-4ad3-8b15-962529ab7d4d" Target="51170f53-0047-47aa-b141-8da0cebaf8ab"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="1b84c72d-fe2b-4584-b742-800c3a4ae638" Name="RosterAssignments" DocoDescription="Roster assignments" OppositeName="Roster" CascadeDelete="CASCADE" SourceOptional="true" Source="9ea28543-4016-44db-b439-928df130db28" Target="51170f53-0047-47aa-b141-8da0cebaf8ab"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToOne" Uuid="1a59f3dd-c8bb-4882-958e-26d687bc7ff3" Name="Person" OppositeName="GameReferee" CascadeCreateUpdate="false" SourceOptional="true" Source="c12f1251-a2b6-426c-93ab-d47afa266cdb" Target="727cdb92-d522-4ad3-8b15-962529ab7d4d"/>
   <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="4942b855-bddb-4bbe-9f39-8366c9ef987b" Name="Rosters" DocoDescription="Team rosters" OppositeName="Team" SourceOptional="true" Source="3501bf92-5f73-4015-a23c-02c5d3d5f410" Target="9ea28543-4016-44db-b439-928df130db28"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="4f1e27d7-1f18-4db4-baa0-bd29f43d2139" Name="Schedules" DocoDescription="Season schedules" OppositeName="Season" CascadeDelete="CASCADE" Source="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Target="6dd55c79-3564-48ee-a4a7-6a2991c52dbc"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="707ed261-434f-4351-a38b-662a028fa5cb" Name="Seasons" DocoDescription="Collection of seasons for a league" OppositeName="League" CascadeDelete="CASCADE" Source="c53f04bd-2a20-487f-883a-4452e35e3bda" Target="bc85fac3-207d-4eb1-bc55-a75be87a6c12"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="230811ff-b3f7-4781-889e-6d0ab5c1a4f8" Name="Teams" DocoDescription="Collection of teams for a league" OppositeName="League" CascadeDelete="CASCADE" SourceOptional="true" Source="c53f04bd-2a20-487f-883a-4452e35e3bda" Target="3501bf92-5f73-4015-a23c-02c5d3d5f410"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="d6bd6633-b824-4b92-8111-a9236ff8152e" Name="Leagues" DocoDescription="Related leagues" OppositeName="Sport" CascadeDelete="CASCADE" Source="d469786e-3d85-4cc1-ad6f-36f959703fd7" Target="c53f04bd-2a20-487f-883a-4452e35e3bda"/>
-  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="19c8891c-08eb-4c3e-b669-3833005a3b14" Name="Referees" OppositeName="Game" CascadeCreateUpdate="false" SourceOptional="true" Source="d284625a-f181-4ec2-a2c9-308bb7459031" Target="727cdb92-d522-4ad3-8b15-962529ab7d4d"/>
-  <ReferenceEnums xsi:type="csharpbotEntity:ReferenceEnum" Source="e3903153-fbf2-4587-9dd4-bf318fc41ab7" Target="04673935-e8fd-4b77-bcea-b5a7eb0e3481"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="ffd09d25-602a-43f3-9e26-784f8a82c120" Name="Rosters" DocoDescription="Team rosters for season" OppositeName="Season" SourceOptional="true" Source="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Target="9ea28543-4016-44db-b439-928df130db28"/>
+  <ReferenceEntityEntities xsi:type="csharpbotEntity:ReferenceOneToMany" Uuid="4f1e27d7-1f18-4db4-baa0-bd29f43d2139" Name="Schedules" DocoDescription="Season schedules" OppositeName="Season" CascadeDelete="CASCADE" SourceOptional="true" Source="bc85fac3-207d-4eb1-bc55-a75be87a6c12" Target="6dd55c79-3564-48ee-a4a7-6a2991c52dbc"/>
+  <ReferenceEnums xsi:type="csharpbotEntity:ReferenceEnum" Source="e327b1e8-bf66-42ba-b136-10428ef75066" Target="a6801d4a-2a05-4eca-b61d-34259cb0fe25"/>
   <ReferenceEnums xsi:type="csharpbotEntity:ReferenceEnum" Source="787d37a8-4411-406e-aafd-398a626c1a05" Target="4a57709d-f36f-4db3-8532-5b78b01bba6c"/>
+  <ReferenceEnums xsi:type="csharpbotEntity:ReferenceEnum" Source="e3903153-fbf2-4587-9dd4-bf318fc41ab7" Target="04673935-e8fd-4b77-bcea-b5a7eb0e3481"/>
 </csharpbotEntity:EntityModel>

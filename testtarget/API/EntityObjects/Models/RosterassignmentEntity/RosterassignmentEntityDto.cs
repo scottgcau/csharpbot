@@ -31,25 +31,23 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public DateTime? Datefrom { get; set; }
 		public DateTime? Dateto { get; set; }
 		public Roletype Roletype { get; set; }
 
+		public Guid? PersonId { get; set; }
 		public Guid? RosterId { get; set; }
-		public Guid PersonId { get; set; }
 
 		public RosterassignmentEntityDto(RosterassignmentEntity model)
 		{
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Datefrom = model.Datefrom;
 			Dateto = model.Dateto;
 			Roletype = (Roletype)model.Roletype;
-			RosterId = model.RosterId;
 			PersonId = model.PersonId;
+			RosterId = model.RosterId;
 		}
 
 		public RosterassignmentEntityDto(ServersideRosterassignmentEntity model)
@@ -57,12 +55,11 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Datefrom = model.Datefrom;
 			Dateto = model.Dateto;
 			Roletype = model.Roletype;
-			RosterId = model.RosterId;
 			PersonId = model.PersonId;
+			RosterId = model.RosterId;
 		}
 
 		public RosterassignmentEntity GetTesttargetRosterassignmentEntity()
@@ -72,12 +69,11 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Datefrom = Datefrom,
 				Dateto = Dateto,
 				Roletype = (TestEnums.Roletype)Roletype,
-				RosterId = RosterId,
 				PersonId = PersonId,
+				RosterId = RosterId,
 			};
 		}
 
@@ -88,12 +84,11 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Datefrom = Datefrom,
 				Dateto = Dateto,
 				Roletype = Roletype,
-				RosterId = RosterId,
 				PersonId = PersonId,
+				RosterId = RosterId,
 			};
 		}
 

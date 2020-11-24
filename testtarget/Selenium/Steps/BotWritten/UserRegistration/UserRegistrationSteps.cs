@@ -83,6 +83,8 @@ namespace SeleniumTests.Steps.BotWritten.UserRegistration
 		{
 			switch (userType)
 			{
+				case "SystemUser":
+					return UserType.SYSTEMUSER_ENTITY;
 				default:
 					throw new Exception($"{userType} enum is not handled");
 			}

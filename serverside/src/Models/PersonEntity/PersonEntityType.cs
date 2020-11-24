@@ -44,17 +44,12 @@ namespace Sportstats.Models
 			Field(o => o.Dateofbirth, type: typeof(DateTimeGraphType)).Description(@"Date of birth");
 			Field(o => o.Height, type: typeof(IntGraphType)).Description(@"Height (cm)");
 			Field(o => o.Weight, type: typeof(IntGraphType)).Description(@"Weight (kg)");
-			Field(o => o.Name, type: typeof(StringGraphType));
-			Field(o => o.PublishedVersionId, type: typeof(IdGraphType));
 			// % protected region % [Add any extra GraphQL fields here] off begin
 			// % protected region % [Add any extra GraphQL fields here] end
 
 			// Add entity references
-			AddNavigationListField("FormVersions", context => context.Source.FormVersions);
-			AddNavigationConnectionField("FormVersionConnection", context => context.Source.FormVersions);
-			AddNavigationField("PublishedVersion", context => context.Source.PublishedVersion);
-
-			Field(o => o.GameId, type: typeof(IdGraphType));
+			Field(o => o.SystemuserId, type: typeof(IdGraphType));
+			Field(o => o.GamerefereeId, type: typeof(IdGraphType));
 
 			// GraphQL reference to entity RosterassignmentEntity via reference Rosterassignments
 			IEnumerable<RosterassignmentEntity> RosterassignmentssResolveFunction(ResolveFieldContext<PersonEntity> context)
@@ -66,32 +61,39 @@ namespace Sportstats.Models
 			AddNavigationListField("Rosterassignmentss", (Func<ResolveFieldContext<PersonEntity>, IEnumerable<RosterassignmentEntity>>) RosterassignmentssResolveFunction);
 			AddNavigationConnectionField("RosterassignmentssConnection", RosterassignmentssResolveFunction);
 
-			// GraphQL reference to entity GameEntity via reference Game
-			AddNavigationField("Game", context => {
+			// GraphQL reference to entity SystemuserEntity via reference Systemuser
+			AddNavigationField("Systemuser", context => {
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<GameEntity>(
+				var filter = SecurityService.CreateReadSecurityFilter<SystemuserEntity>(
 					graphQlContext.IdentityService,
 					graphQlContext.UserManager,
 					graphQlContext.DbContext,
 					graphQlContext.ServiceProvider);
-				var value = context.Source.Game;
+				var value = context.Source.Systemuser;
 
 				if (value != null)
 				{
-					return new List<GameEntity> {value}.All(filter.Compile()) ? value : null;
+					return new List<SystemuserEntity> {value}.All(filter.Compile()) ? value : null;
 				}
 				return null;
 			});
 
-			// GraphQL reference to entity PersonEntityFormTileEntity via reference FormPage
-			IEnumerable<PersonEntityFormTileEntity> FormPagesResolveFunction(ResolveFieldContext<PersonEntity> context)
-			{
+			// GraphQL reference to entity GamerefereeEntity via reference Gamereferee
+			AddNavigationField("Gamereferee", context => {
 				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<PersonEntityFormTileEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
-				return context.Source.FormPages.Where(filter.Compile());
-			}
-			AddNavigationListField("FormPages", (Func<ResolveFieldContext<PersonEntity>, IEnumerable<PersonEntityFormTileEntity>>) FormPagesResolveFunction);
-			AddNavigationConnectionField("FormPagesConnection", FormPagesResolveFunction);
+				var filter = SecurityService.CreateReadSecurityFilter<GamerefereeEntity>(
+					graphQlContext.IdentityService,
+					graphQlContext.UserManager,
+					graphQlContext.DbContext,
+					graphQlContext.ServiceProvider);
+				var value = context.Source.Gamereferee;
+
+				if (value != null)
+				{
+					return new List<GamerefereeEntity> {value}.All(filter.Compile()) ? value : null;
+				}
+				return null;
+			});
 
 			// % protected region % [Add any extra GraphQL references here] off begin
 			// % protected region % [Add any extra GraphQL references here] end
@@ -117,17 +119,15 @@ namespace Sportstats.Models
 			Field<DateTimeGraphType>("Dateofbirth").Description = @"Date of birth";
 			Field<IntGraphType>("Height").Description = @"Height (cm)";
 			Field<IntGraphType>("Weight").Description = @"Weight (kg)";
-			Field<StringGraphType>("Name");
-			Field<IdGraphType>("PublishedVersionId").Description = "The current published version for the form";
-			Field<ListGraphType<PersonEntityFormVersionInputType>>("FormVersions").Description = "The versions for this form";
 
 			// Add entity references
-			Field<IdGraphType>("GameId");
+			Field<IdGraphType>("SystemuserId");
+			Field<IdGraphType>("GamerefereeId");
 
 			// Add references to foreign models to allow nested creation
 			Field<ListGraphType<RosterassignmentEntityInputType>>("Rosterassignmentss");
-			Field<GameEntityInputType>("Game");
-			Field<ListGraphType<PersonEntityFormTileEntityInputType>>("FormPages");
+			Field<SystemuserEntityInputType>("Systemuser");
+			Field<GamerefereeEntityInputType>("Gamereferee");
 
 			// % protected region % [Add any extra GraphQL input fields here] off begin
 			// % protected region % [Add any extra GraphQL input fields here] end

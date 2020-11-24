@@ -29,17 +29,17 @@ export class VisitorsTeamEntity implements IAcl {
 	}
 	public canCreate(): boolean {
 		// % protected region % [Override create rule contents here here] off begin
-		return true;
+		return false;
 		// % protected region % [Override create rule contents here here] end
 	}
 	public canUpdate(): boolean {
 		// % protected region % [Override update rule contents here here] off begin
-		return true;
+		return false;
 		// % protected region % [Override update rule contents here here] end
 	}
 	public canDelete(): boolean {
 		// % protected region % [Override delete rule contents here here] off begin
-		return true;
+		return false;
 		// % protected region % [Override delete rule contents here here] end
 	}
 }

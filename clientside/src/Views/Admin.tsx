@@ -25,7 +25,6 @@ import PageLinks from './Pages/Admin/PageLinks';
 import Spinner from 'Views/Components/Spinner/Spinner';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
 import { store } from "Models/Store";
-import FormsPage from "./Pages/Admin/Forms/FormsPage";
 import TimelinePage from "./Pages/Admin/Timelines/TimelinePage";
 // % protected region % [Add any extra imports here] off begin
 // % protected region % [Add any extra imports here] end
@@ -102,38 +101,24 @@ export default class Admin extends React.Component<RouteComponentProps> {
 						{/* Admin entity pages */}
 						<Route exact={true} path={`${this.path}`} component={AdminPage} />
 						<Route path={`${this.path}/User`} component={AllUsersPage} />
-						<Route path={`${this.path}/forms`} component={FormsPage} />
 						<Route path={`${this.path}/Timelines`} component={TimelinePage} />
+						<Route path={`${this.path}/LadderEntity`} component={AdminPages.LadderEntityPage} />
 						<Route path={`${this.path}/ScheduleEntity`} component={AdminPages.ScheduleEntityPage} />
-						<Route path={`${this.path}/SeasonEntity`} component={AdminPages.SeasonEntityPage} />
-						<Route path={`${this.path}/VenueEntity`} component={AdminPages.VenueEntityPage} />
+						<Route path={`${this.path}/LaddereliminationEntity`} component={AdminPages.LaddereliminationEntityPage} />
+						<Route path={`${this.path}/LadderwinlossEntity`} component={AdminPages.LadderwinlossEntityPage} />
+						<Route path={`${this.path}/RoundEntity`} component={AdminPages.RoundEntityPage} />
 						<Route path={`${this.path}/GameEntity`} component={AdminPages.GameEntityPage} />
+						<Route path={`${this.path}/DivisionEntity`} component={AdminPages.DivisionEntityPage} />
+						<Route path={`${this.path}/VenueEntity`} component={AdminPages.VenueEntityPage} />
+						<Route path={`${this.path}/TeamEntity`} component={AdminPages.TeamEntityPage} />
+						<Route path={`${this.path}/GamerefereeEntity`} component={AdminPages.GamerefereeEntityPage} />
+						<Route path={`${this.path}/SeasonEntity`} component={AdminPages.SeasonEntityPage} />
+						<Route path={`${this.path}/PersonEntity`} component={AdminPages.PersonEntityPage} />
+						<Route path={`${this.path}/SystemuserEntity`} component={AdminPages.SystemuserEntityPage} />
 						<Route path={`${this.path}/SportEntity`} component={AdminPages.SportEntityPage} />
 						<Route path={`${this.path}/LeagueEntity`} component={AdminPages.LeagueEntityPage} />
-						<Route path={`${this.path}/TeamEntity`} component={AdminPages.TeamEntityPage} />
-						<Route path={`${this.path}/PersonEntity`} component={AdminPages.PersonEntityPage} />
 						<Route path={`${this.path}/RosterEntity`} component={AdminPages.RosterEntityPage} />
 						<Route path={`${this.path}/RosterassignmentEntity`} component={AdminPages.RosterassignmentEntityPage} />
-						<Route path={`${this.path}/ScheduleSubmissionEntity`} component={AdminPages.ScheduleSubmissionEntityPage} />
-						<Route path={`${this.path}/SeasonSubmissionEntity`} component={AdminPages.SeasonSubmissionEntityPage} />
-						<Route path={`${this.path}/VenueSubmissionEntity`} component={AdminPages.VenueSubmissionEntityPage} />
-						<Route path={`${this.path}/GameSubmissionEntity`} component={AdminPages.GameSubmissionEntityPage} />
-						<Route path={`${this.path}/SportSubmissionEntity`} component={AdminPages.SportSubmissionEntityPage} />
-						<Route path={`${this.path}/LeagueSubmissionEntity`} component={AdminPages.LeagueSubmissionEntityPage} />
-						<Route path={`${this.path}/TeamSubmissionEntity`} component={AdminPages.TeamSubmissionEntityPage} />
-						<Route path={`${this.path}/PersonSubmissionEntity`} component={AdminPages.PersonSubmissionEntityPage} />
-						<Route path={`${this.path}/RosterSubmissionEntity`} component={AdminPages.RosterSubmissionEntityPage} />
-						<Route path={`${this.path}/RosterassignmentSubmissionEntity`} component={AdminPages.RosterassignmentSubmissionEntityPage} />
-						<Route path={`${this.path}/ScheduleEntityFormTileEntity`} component={AdminPages.ScheduleEntityFormTileEntityPage} />
-						<Route path={`${this.path}/SeasonEntityFormTileEntity`} component={AdminPages.SeasonEntityFormTileEntityPage} />
-						<Route path={`${this.path}/VenueEntityFormTileEntity`} component={AdminPages.VenueEntityFormTileEntityPage} />
-						<Route path={`${this.path}/GameEntityFormTileEntity`} component={AdminPages.GameEntityFormTileEntityPage} />
-						<Route path={`${this.path}/SportEntityFormTileEntity`} component={AdminPages.SportEntityFormTileEntityPage} />
-						<Route path={`${this.path}/LeagueEntityFormTileEntity`} component={AdminPages.LeagueEntityFormTileEntityPage} />
-						<Route path={`${this.path}/TeamEntityFormTileEntity`} component={AdminPages.TeamEntityFormTileEntityPage} />
-						<Route path={`${this.path}/PersonEntityFormTileEntity`} component={AdminPages.PersonEntityFormTileEntityPage} />
-						<Route path={`${this.path}/RosterEntityFormTileEntity`} component={AdminPages.RosterEntityFormTileEntityPage} />
-						<Route path={`${this.path}/RosterassignmentEntityFormTileEntity`} component={AdminPages.RosterassignmentEntityFormTileEntityPage} />
 						<Route path={`${this.path}/RosterTimelineEventsEntity`} component={AdminPages.RosterTimelineEventsEntityPage} />
 
 						{

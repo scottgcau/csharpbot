@@ -41,6 +41,8 @@ namespace APITests.Factories
 		{
 			switch (_type)
 			{
+				case "SystemuserEntity":
+					return SystemuserEntity.GetEntity(isValid, _fixedStrValues);
 				default:
 					throw new Exception($"Cannot find entity type {_type}");
 			}

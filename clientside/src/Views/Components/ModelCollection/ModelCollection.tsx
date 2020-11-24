@@ -31,6 +31,8 @@ import { ApolloError, ApolloQueryResult, OperationVariables } from 'apollo-boost
 import ModelAPIQuery, { ApiQueryParams } from './ModelAPIQuery';
 import { ICollectionFilterPanelProps, IFilter } from '../Collection/CollectionFilterPanel';
 import { isOrCondition } from 'Util/GraphQLUtils';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 type refetchFunc<TData> = (variables?: OperationVariables) => Promise<ApolloQueryResult<TData>>;
 
@@ -54,6 +56,8 @@ export interface IModelCollectionProps<T extends Model> extends ICollectionListP
 	url?: string;
 	searchStr?: string;
 	filters?: Array<IFilter<T>>;
+	// % protected region % [Add any extra ICollectionListProps here] off begin
+	// % protected region % [Add any extra ICollectionListProps here] end
 }
 
 // TODO: Remove this definition of this interface - was causing errors on build time without it
@@ -90,6 +94,7 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 
 	public refetch: refetchFunc<T> | (() => void) = (data) => new Promise(resolve => resolve());
 
+	// % protected region % [Override constructor here] off begin
 	constructor(props: IModelCollectionProps<T>, context: any) {
 		super(props, context);
 		// Order by defaults to the prop
@@ -106,6 +111,7 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 		}
 		this.paginationQueryOptions.perPage = this.props.perPage || 20;
 	}
+	// % protected region % [Override constructor here] end
 
 	componentDidUpdate() {
 		runInAction(() => {
@@ -196,6 +202,7 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 			}
 		}
 
+		// % protected region % [Override render collection here] off begin
 		const renderCollection = (loading: boolean, data?: any, error?: ApolloError | string) => {
 			if (error) {
 				return <h2>An unexpected error occurred:</h2>;
@@ -245,6 +252,7 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 				</>
 			);
 		}
+		// % protected region % [Override render collection here] end
 
 		if (this.props.isApiQuery) {
 			return (
@@ -281,23 +289,31 @@ export class ModelCollection<T extends Model> extends React.Component<IModelColl
 
 	}
 
+	// % protected region % [Override getFilters method here] off begin
 	protected getFilters = (): Array<IFilter<T>> => {
 		return [..._.cloneDeep(this.props.filters) || []];
 	}
+	// % protected region % [Override getFilters method here] end
 
+	// % protected region % [Override onClearFilter method here] off begin
 	@action
 	protected onClearFilter = () => {
 		this.filterConfig.filters = this.getFilters();
 		this.filterApplied = false;
 	};
+	// % protected region % [Override onClearFilter method here] end
 
+	// % protected region % [Override onApplyFilter method here] off begin
 	@action
 	protected onApplyFilter = () => {
 		this.filterApplied = true;
 	};
+	// % protected region % [Override onApplyFilter method here] end
 
+	// % protected region % [Override onFilterChanged method here] off begin
 	@action
 	protected onFilterChanged = () => {
 		this.filterApplied = false;
 	};
+	// % protected region % [Override onFilterChanged method here] end
 }

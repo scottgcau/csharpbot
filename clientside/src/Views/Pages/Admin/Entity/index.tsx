@@ -14,36 +14,23 @@
  * This file is bot-written.
  * Any changes out side of "protected regions" will be lost next time the bot makes any changes.
  */
+export { default as LadderEntityPage } from './LadderEntityPage';
 export { default as ScheduleEntityPage } from './ScheduleEntityPage';
-export { default as SeasonEntityPage } from './SeasonEntityPage';
-export { default as VenueEntityPage } from './VenueEntityPage';
+export { default as LaddereliminationEntityPage } from './LaddereliminationEntityPage';
+export { default as LadderwinlossEntityPage } from './LadderwinlossEntityPage';
+export { default as RoundEntityPage } from './RoundEntityPage';
 export { default as GameEntityPage } from './GameEntityPage';
+export { default as DivisionEntityPage } from './DivisionEntityPage';
+export { default as VenueEntityPage } from './VenueEntityPage';
+export { default as TeamEntityPage } from './TeamEntityPage';
+export { default as GamerefereeEntityPage } from './GamerefereeEntityPage';
+export { default as SeasonEntityPage } from './SeasonEntityPage';
+export { default as PersonEntityPage } from './PersonEntityPage';
+export { default as SystemuserEntityPage } from './SystemuserEntityPage';
 export { default as SportEntityPage } from './SportEntityPage';
 export { default as LeagueEntityPage } from './LeagueEntityPage';
-export { default as TeamEntityPage } from './TeamEntityPage';
-export { default as PersonEntityPage } from './PersonEntityPage';
 export { default as RosterEntityPage } from './RosterEntityPage';
 export { default as RosterassignmentEntityPage } from './RosterassignmentEntityPage';
-export { default as ScheduleSubmissionEntityPage } from './ScheduleSubmissionEntityPage';
-export { default as SeasonSubmissionEntityPage } from './SeasonSubmissionEntityPage';
-export { default as VenueSubmissionEntityPage } from './VenueSubmissionEntityPage';
-export { default as GameSubmissionEntityPage } from './GameSubmissionEntityPage';
-export { default as SportSubmissionEntityPage } from './SportSubmissionEntityPage';
-export { default as LeagueSubmissionEntityPage } from './LeagueSubmissionEntityPage';
-export { default as TeamSubmissionEntityPage } from './TeamSubmissionEntityPage';
-export { default as PersonSubmissionEntityPage } from './PersonSubmissionEntityPage';
-export { default as RosterSubmissionEntityPage } from './RosterSubmissionEntityPage';
-export { default as RosterassignmentSubmissionEntityPage } from './RosterassignmentSubmissionEntityPage';
-export { default as ScheduleEntityFormTileEntityPage } from './ScheduleEntityFormTileEntityPage';
-export { default as SeasonEntityFormTileEntityPage } from './SeasonEntityFormTileEntityPage';
-export { default as VenueEntityFormTileEntityPage } from './VenueEntityFormTileEntityPage';
-export { default as GameEntityFormTileEntityPage } from './GameEntityFormTileEntityPage';
-export { default as SportEntityFormTileEntityPage } from './SportEntityFormTileEntityPage';
-export { default as LeagueEntityFormTileEntityPage } from './LeagueEntityFormTileEntityPage';
-export { default as TeamEntityFormTileEntityPage } from './TeamEntityFormTileEntityPage';
-export { default as PersonEntityFormTileEntityPage } from './PersonEntityFormTileEntityPage';
-export { default as RosterEntityFormTileEntityPage } from './RosterEntityFormTileEntityPage';
-export { default as RosterassignmentEntityFormTileEntityPage } from './RosterassignmentEntityFormTileEntityPage';
 export { default as RosterTimelineEventsEntityPage } from './RosterTimelineEventsEntityPage';
 // % protected region % [Add any further admin page exports here] off begin
 // % protected region % [Add any further admin page exports here] end

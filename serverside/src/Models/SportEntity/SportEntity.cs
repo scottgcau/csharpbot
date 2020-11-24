@@ -45,10 +45,6 @@ namespace Sportstats.Models {
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
 
-		[Required]
-		[EntityAttribute]
-		public string Name { get; set; }
-
 		/// <summary>
 		/// Order
 		/// </summary>
@@ -57,6 +53,7 @@ namespace Sportstats.Models {
 		public int? Order { get; set; }
 		// % protected region % [Customise Order here] end
 
+		[Required]
 		// % protected region % [Customise Fullname here] off begin
 		[EntityAttribute]
 		public String Fullname { get; set; }
@@ -80,25 +77,11 @@ namespace Sportstats.Models {
 			// % protected region % [Override ACLs here] off begin
 			new SuperAdministratorsScheme(),
 			new VisitorsSportEntity(),
+			new SystemuserSportEntity(),
 			// % protected region % [Override ACLs here] end
 			// % protected region % [Add any further ACL entries here] off begin
 			// % protected region % [Add any further ACL entries here] end
 		};
-
-		/// <summary>
-		/// Reference to the versions for this form
-		/// </summary>
-		/// <see cref="Sportstats.Models.SportEntityFormVersion"/>
-		[EntityForeignKey("FormVersions", "Form", false, typeof(SportEntityFormVersion))]
-		public ICollection<SportEntityFormVersion> FormVersions { get; set; }
-
-		/// <summary>
-		/// The current published version for the form
-		/// </summary>
-		/// <see cref="Sportstats.Models.SportEntityFormVersion"/>
-		public Guid? PublishedVersionId { get; set; }
-		[EntityForeignKey("PublishedVersion", "PublishedForm", false, typeof(SportEntityFormVersion))]
-		public SportEntityFormVersion PublishedVersion { get; set; }
 
 		// % protected region % [Customise Leaguess here] off begin
 		/// <summary>
@@ -109,21 +92,15 @@ namespace Sportstats.Models {
 		public ICollection<LeagueEntity> Leaguess { get; set; }
 		// % protected region % [Customise Leaguess here] end
 
-		// % protected region % [Customise FormPages here] off begin
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.SportEntityFormTileEntity"/>
-		[EntityForeignKey("FormPages", "Form", false, typeof(SportEntityFormTileEntity))]
-		public ICollection<SportEntityFormTileEntity> FormPages { get; set; }
-		// % protected region % [Customise FormPages here] end
-
 		public async Task BeforeSave(
 			EntityState operation,
 			SportstatsDBContext dbContext,
 			IServiceProvider serviceProvider,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial before save logic here] off begin
+			// % protected region % [Add any initial before save logic here] end
+
 			// % protected region % [Add any before save logic here] off begin
 			// % protected region % [Add any before save logic here] end
 		}
@@ -135,6 +112,9 @@ namespace Sportstats.Models {
 			ICollection<ChangeState> changes,
 			CancellationToken cancellationToken = default)
 		{
+			// % protected region % [Add any initial after save logic here] off begin
+			// % protected region % [Add any initial after save logic here] end
+
 			// % protected region % [Add any after save logic here] off begin
 			// % protected region % [Add any after save logic here] end
 		}
@@ -151,6 +131,20 @@ namespace Sportstats.Models {
 
 			switch (reference)
 			{
+				case "Leaguess":
+					var leaguesIds = modelList.SelectMany(x => x.Leaguess.Select(m => m.Id)).ToList();
+					var oldleagues = await dbContext.LeagueEntity
+						.Where(m => m.SportId.HasValue && ids.Contains(m.SportId.Value))
+						.Where(m => !leaguesIds.Contains(m.Id))
+						.ToListAsync(cancellation);
+
+					foreach (var leagues in oldleagues)
+					{
+						leagues.SportId = null;
+					}
+
+					dbContext.LeagueEntity.UpdateRange(oldleagues);
+					return oldleagues.Count;
 				// % protected region % [Add any extra clean reference logic here] off begin
 				// % protected region % [Add any extra clean reference logic here] end
 				default:

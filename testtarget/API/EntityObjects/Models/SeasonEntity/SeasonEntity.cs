@@ -28,8 +28,6 @@ namespace APITests.EntityObjects.Models
 {
 	public class SeasonEntity : BaseEntity
 	{
-		// Form Name
-		public string Name { get; set; }
 		// 
 		public DateTime? Startdate { get; set; }
 		// 
@@ -38,6 +36,19 @@ namespace APITests.EntityObjects.Models
 		public String Fullname { get; set; }
 		// Short name / abbreviation
 		public String Shortname { get; set; }
+
+		/// <summary>
+		/// Outgoing one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.Divisions"/>
+		public List<Guid> DivisionsIds { get; set; }
+		public ICollection<DivisionEntity> Divisionss { get; set; }
+
+		/// <summary>
+		/// Incoming one to many reference
+		/// </summary>
+		/// <see cref="Sportstats.Models.League"/>
+		public Guid? LeagueId { get; set; }
 
 		/// <summary>
 		/// Outgoing one to many reference
@@ -52,19 +63,6 @@ namespace APITests.EntityObjects.Models
 		/// <see cref="Sportstats.Models.Schedules"/>
 		public List<Guid> SchedulesIds { get; set; }
 		public ICollection<ScheduleEntity> Scheduless { get; set; }
-
-		/// <summary>
-		/// Incoming one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.League"/>
-		public Guid LeagueId { get; set; }
-
-		/// <summary>
-		/// Outgoing one to many reference
-		/// </summary>
-		/// <see cref="Sportstats.Models.FormPage"/>
-		public List<Guid> FormPageIds { get; set; }
-		public ICollection<SeasonEntityFormTileEntity> FormPages { get; set; }
 
 
 		public SeasonEntity()
@@ -110,11 +108,6 @@ namespace APITests.EntityObjects.Models
 		{
 			Attributes.Add(new Attribute
 			{
-				Name = "Name",
-				IsRequired = true
-			});
-			Attributes.Add(new Attribute
-			{
 				Name = "Startdate",
 				IsRequired = true
 			});
@@ -142,7 +135,7 @@ namespace APITests.EntityObjects.Models
 				EntityName = "LeagueEntity",
 				OppositeName = "League",
 				Name = "Seasons",
-				Optional = false,
+				Optional = true,
 				Type = ReferenceType.ONE,
 				OppositeType = ReferenceType.MANY
 			});
@@ -169,8 +162,6 @@ namespace APITests.EntityObjects.Models
 					return GetInvalidFullname(validator);
 				case "ShortName":
 					return GetInvalidShortname(validator);
-				case "LeagueId":
-					return GetInvalidLeagueId(validator);
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -247,7 +238,6 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining startdate,
 						["enddate"] = Enddate?.ToString("s"),
 						["fullname"] = Fullname,
@@ -264,7 +254,6 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining enddate,
 						["startdate"] = Startdate?.ToString("s"),
 						["fullname"] = Fullname,
@@ -281,7 +270,6 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining fullname,
 						["startdate"] = Startdate?.ToString("s"),
 						["enddate"] = Enddate?.ToString("s"),
@@ -298,29 +286,11 @@ namespace APITests.EntityObjects.Models
 				new RestSharp.JsonObject
 				{
 						["id"] = Id,
-						["name"] = Name,
 						// not defining shortname,
 						["startdate"] = Startdate?.ToString("s"),
 						["enddate"] = Enddate?.ToString("s"),
 						["fullname"] = Fullname,
 						["leagueId"] = LeagueId,
-				}
-			),
-			(
-				new List<string>
-				{
-					"violates foreign key constraint",
-				},
-
-				new RestSharp.JsonObject
-				{
-						["id"] = Id,
-						["name"] = Name,
-						// not defining LeagueId,
-						["startdate"] = Startdate?.ToString("s"),
-						["enddate"] = Enddate?.ToString("s"),
-						["fullname"] = Fullname,
-						["shortname"] = Shortname,
 				}
 			),
 
@@ -332,7 +302,6 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new Dictionary<string, string>()
 			{
 				{"id" , Id.ToString()},
-				{"name" , Name},
 				{"startdate" ,((DateTime)Startdate).ToIsoString()},
 				{"enddate" ,((DateTime)Enddate).ToIsoString()},
 				{"fullname" , Fullname},
@@ -352,17 +321,12 @@ namespace APITests.EntityObjects.Models
 			var entityVar = new RestSharp.JsonObject
 			{
 				["id"] = Id,
-				["name"] = Name,
 				["startdate"] = Startdate?.ToString("s"),
 				["enddate"] = Enddate?.ToString("s"),
 				["fullname"] = Fullname.ToString(),
 				["shortname"] = Shortname.ToString(),
 			};
 
-			if (LeagueId != default)
-			{
-				entityVar["leagueId"] = LeagueId.ToString();
-			}
 
 			return entityVar;
 		}
@@ -425,7 +389,6 @@ namespace APITests.EntityObjects.Models
 		// attributes don't actually have any validators to violate.
 		private void SetInvalidEntityAttributes()
 		{
-			Name = Guid.NewGuid().ToString();
 			// not defining Startdate
 			// not defining Enddate
 			// not defining Fullname
@@ -465,9 +428,6 @@ namespace APITests.EntityObjects.Models
 		/// </summary>
 		private void SetValidEntityAssociations()
 		{
-
-			LeagueId = new LeagueEntity(ConfigureOptions.CREATE_ATTRIBUTES_AND_REFERENCES).Save();
-
 		}
 
 		/// <summary>
@@ -476,7 +436,6 @@ namespace APITests.EntityObjects.Models
 		private void SetValidEntityAttributes()
 		{
 			// % protected region % [Override generated entity attributes here] off begin
-			Name = Guid.NewGuid().ToString();
 			Startdate = DataUtils.RandDatetime();
 			Enddate = DataUtils.RandDatetime();
 			Fullname = DataUtils.RandString();
@@ -491,7 +450,6 @@ namespace APITests.EntityObjects.Models
 		{
 			var seasonEntity = new SeasonEntity
 			{
-				Name = Guid.NewGuid().ToString(),
 
 				Startdate = DataUtils.RandDatetime(),
 

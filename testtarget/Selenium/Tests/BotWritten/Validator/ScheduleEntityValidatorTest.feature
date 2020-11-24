@@ -21,4 +21,3 @@ Scenario: Violate ScheduleEntity validators
 Given I login to the site as a user
 And I navigate to the ScheduleEntity create page
 Then I verify the Required Validator for the FullName attribute for on-submit validation
-Then I verify the Required Validator for the SeasonId attribute for on-submit validation

@@ -24,19 +24,22 @@ import TimelineGraphView from "./TimelineGraphView/TimelineGraphView";
 import {getTimelineActionOptions, TimelineEntities} from 'Util/TimelineUtils';
 import moment, {Moment} from "moment";
 import Spinner from 'Views/Components/Spinner/Spinner';
+import { IWhereCondition } from 'Views/Components/ModelCollection/ModelQuery';
 // % protected region % [Add extra imports here] off begin
 // % protected region % [Add extra imports here] end
 
+export type TTimelineEntityOption = IModelType<Model & TimelineModel>
+
 export interface ITimelineTileProps {
 	// % protected region % [Override ITimelineTileProps here] off begin
-	timelineEntity?: IModelType<Model & TimelineModel>
+	timelineEntity?: TTimelineEntityOption
 	entityId?: string;
 	component?: 'list' | 'graph'
-	canChangeTimelineEntity?: boolean
 	onClickViewItem?: (entity: string, id: string) => void;
 	onRouteToListView?: (date?: Date) => void;
 	onRouteToGraphView?: () => void;
 	timelineViewDate?: Moment;
+	timelineFilterProps?: Partial<ITimelineFilter>
 	// % protected region % [Override ITimelineTileProps here] end
 }
 
@@ -48,14 +51,16 @@ export interface ITimelineFilter {
 	endDate: Date | undefined,
 	selectedActionTypes: string[],
 	actionTypeOptions: string[],
-	selectedTimelineEntity: IModelType<Model & TimelineModel>,
-	timelineEntityOptions?: IModelType<Model & TimelineModel>[]
+	selectedTimelineEntity: TTimelineEntityOption
+	timelineEntityOptions?: TTimelineEntityOption[]
+	canChangeTimelineEntity?: boolean
+	initialSearchConditions?: Array<IWhereCondition<any>>;
 	// % protected region % [Override ITimelineFilter here] end
 }
 
 @observer
 export default class TimelineTile extends React.Component<ITimelineTileProps> {
-	
+
 	@observable
 	private component = this.props.component ?? 'graph';
 
@@ -67,7 +72,7 @@ export default class TimelineTile extends React.Component<ITimelineTileProps> {
 
 	// % protected region % [Add extra component variables here] off begin
 	// % protected region % [Add extra component variables here] end
-	
+
 	@computed
 	private get timelineViewDate() {
 		// % protected region % [Override timelineViewDate here] off begin
@@ -81,14 +86,16 @@ export default class TimelineTile extends React.Component<ITimelineTileProps> {
 	@observable
 	private timelineFilter: ITimelineFilter = {
 		// % protected region % [Override timelineFilter here] off begin
-		searchTerm: '',
+		searchTerm: this.props.timelineFilterProps?.searchTerm ?? '',
 		instanceIds: this.props.entityId ? [this.props.entityId] : [],
-		startDate: undefined,
-		endDate: undefined,
-		selectedActionTypes: [],
-		actionTypeOptions: [],
+		startDate: this.props.timelineFilterProps?.startDate ?? undefined,
+		endDate: this.props.timelineFilterProps?.endDate ?? undefined,
+		selectedActionTypes: this.props.timelineFilterProps?.selectedActionTypes ?? [],
+		actionTypeOptions: this.props.timelineFilterProps?.actionTypeOptions ?? [],
 		selectedTimelineEntity: this.props.timelineEntity ?? TimelineEntities[0],
-		timelineEntityOptions: TimelineEntities
+		timelineEntityOptions: this.props.timelineFilterProps?.timelineEntityOptions ?? TimelineEntities,
+		canChangeTimelineEntity: this.props.timelineFilterProps?.canChangeTimelineEntity ?? false,
+		initialSearchConditions: this.props.timelineFilterProps?.initialSearchConditions ?? []
 		// % protected region % [Override timelineFilter here] end
 	};
 
@@ -97,7 +104,7 @@ export default class TimelineTile extends React.Component<ITimelineTileProps> {
 		this.getActionOptions();
 		// % protected region % [Override componentDidMount here] end
 	}
-	
+
 	private getActionOptions = () => {
 		// % protected region % [Override getActionOptions here] off begin
 		getTimelineActionOptions(this.timelineFilter.selectedTimelineEntity)
@@ -107,7 +114,7 @@ export default class TimelineTile extends React.Component<ITimelineTileProps> {
 			}))
 		// % protected region % [Override getActionOptions here] end
 	};
-	
+
 	@action
 	private onSwitchToGraphView = () => {
 		// % protected region % [Override onSwitchToGraphView here] off begin
@@ -133,7 +140,7 @@ export default class TimelineTile extends React.Component<ITimelineTileProps> {
 
 	// % protected region % [Add extra component logic here] off begin
 	// % protected region % [Add extra component logic here] end
-	
+
 	public render() {
 		// % protected region % [Override render here] off begin
 		if (this.loadingStatus == 'Loading') {
@@ -145,7 +152,7 @@ export default class TimelineTile extends React.Component<ITimelineTileProps> {
 				return <TimelineListView
 					timelineViewDate={this.timelineViewDate}
 					onClickViewItem={this.props.onClickViewItem}
-					onSwitchToGraphView={this.onSwitchToGraphView} 
+					onSwitchToGraphView={this.onSwitchToGraphView}
 					timelineFilter={this.timelineFilter}/>;
 			case 'graph':
 				return <TimelineGraphView

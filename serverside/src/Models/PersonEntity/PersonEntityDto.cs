@@ -27,7 +27,6 @@ namespace Sportstats.Models
 	/// </summary>
 	public class PersonEntityDto : ModelDto<PersonEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Firstname here] off begin
 		/// <summary>
 		/// First name
@@ -64,9 +63,13 @@ namespace Sportstats.Models
 		// % protected region % [Customise Weight here] end
 
 
-		// % protected region % [Customise GameId here] off begin
-		public Guid? GameId { get; set; }
-		// % protected region % [Customise GameId here] end
+		// % protected region % [Customise SystemuserId here] off begin
+		public Guid? SystemuserId { get; set; }
+		// % protected region % [Customise SystemuserId here] end
+
+		// % protected region % [Customise GamerefereeId here] off begin
+		public Guid? GamerefereeId { get; set; }
+		// % protected region % [Customise GamerefereeId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
 		// % protected region % [Add any extra attributes here] end
@@ -94,13 +97,13 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Firstname = Firstname,
 				Lastname = Lastname,
 				Dateofbirth = Dateofbirth,
 				Height = Height,
 				Weight = Weight,
-				GameId  = GameId,
+				SystemuserId  = SystemuserId,
+				GamerefereeId  = GamerefereeId,
 				// % protected region % [Add any extra model properties here] off begin
 				// % protected region % [Add any extra model properties here] end
 			};
@@ -111,13 +114,13 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Firstname = model.Firstname;
 			Lastname = model.Lastname;
 			Dateofbirth = model.Dateofbirth;
 			Height = model.Height;
 			Weight = model.Weight;
-			GameId  = model.GameId;
+			SystemuserId  = model.SystemuserId;
+			GamerefereeId  = model.GamerefereeId;
 
 			// % protected region % [Add any extra loading data logic here] off begin
 			// % protected region % [Add any extra loading data logic here] end

@@ -45,6 +45,8 @@ interface ICollectionMenuProps<T> {
 	showSelectAll?: boolean;
 	onSelectAll?: () => void;
 	filterOrientationRow?: boolean;
+	// % protected region % [Add any extra ICollectionMenuProps fields here] off begin
+	// % protected region % [Add any extra ICollectionMenuProps fields here] end
 }
 
 interface ISearch {
@@ -65,6 +67,7 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 	// % protected region % [Add extra fields here] off begin
 	// % protected region % [Add extra fields here] end
 
+	// % protected region % [Override render method of CollectionMenu here] off begin
 	public render() {
 		// TODO: handle more buttons and button group rendering properly
 		const { filterConfig, totalSelectedItems, selectedBulkActions, search } = this.props;
@@ -148,7 +151,9 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 			</>
 		);
 	}
+	// % protected region % [Override render method of CollectionMenu here] end
 
+	// % protected region % [Override renderAdditionalActions method here] off begin
 	private renderAdditionalActions(): React.ReactNode {
 		const additionalActions = this.props.additionalActions || [];
 		if (additionalActions.length > 0) {
@@ -161,6 +166,7 @@ class CollectionMenu<T> extends React.Component<ICollectionMenuProps<T>> {
 
 		return null;
 	}
+	// % protected region % [Override renderAdditionalActions method here] end
 
 	private onSearchButtonClick = () => {
 		const { onSearchTriggered } = this.props;

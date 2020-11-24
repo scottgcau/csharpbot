@@ -32,6 +32,7 @@ namespace Sportstats.Models {
 				.WithMany(e => e.LoggedEvents)
 				.OnDelete(DeleteBehavior.SetNull);
 			// % protected region % [Override Entity LoggedEvents configuration here] end
+
 			// % protected region % [Add any extra db model config options here] off begin
 			// % protected region % [Add any extra db model config options here] end
 		}

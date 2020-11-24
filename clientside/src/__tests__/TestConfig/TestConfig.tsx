@@ -20,6 +20,9 @@ import { ApolloQueryResult } from 'apollo-client/core/types';
 import { store } from 'Models/Store';
 import { SERVER_URL } from 'Constants';
 
+// % protected region % [Add extra imports here] off begin
+// % protected region % [Add extra imports here] end
+
 export const pollingInterval = 100;
 export const pollingTimeout = 1000;
 
@@ -51,3 +54,13 @@ export function setupGraphQlMocking(graphqlResponses: {[key: string]: {}}) {
 		})
 	};
 }
+
+// Add placeholder test so yarn test doesn't throw empty test file exception
+describe('Place Holder', function () {
+	it('placeholder', () => {
+		expect(1).toEqual(1);
+	})
+});
+
+// % protected region % [Add extra methods here] off begin
+// % protected region % [Add extra methods here] end

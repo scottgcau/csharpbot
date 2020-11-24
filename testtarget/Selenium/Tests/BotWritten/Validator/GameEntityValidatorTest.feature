@@ -20,5 +20,4 @@ Feature: GameEntity Validator
 Scenario: Violate GameEntity validators
 Given I login to the site as a user
 And I navigate to the GameEntity create page
-Then I verify the Required Validator for the HomeTeamId attribute for on-submit validation
-Then I verify the Required Validator for the ScheduleId attribute for on-submit validation
+Then I verify the Required Validator for the DateStart attribute for on-submit validation

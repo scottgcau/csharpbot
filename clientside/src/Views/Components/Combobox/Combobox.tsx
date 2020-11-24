@@ -40,6 +40,9 @@ export interface ComboboxOption<I> {
 	value: I | undefined;
 	/** In a multi combobox can the value be removed */
 	isFixed?: boolean;
+
+	// % protected region % [Add extra ComboboxOption fields here] off begin
+	// % protected region % [Add extra ComboboxOption fields here] end
 }
 
 interface InternalComboboxProps<T, I> {
@@ -86,6 +89,9 @@ interface InternalComboboxProps<T, I> {
 	onAfterChange?: (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => void;
 	/** Is the select value clearable **/
 	isClearable?: boolean;
+
+	// % protected region % [Add extra InternalComboboxProps fields here] off begin
+	// % protected region % [Add extra InternalComboboxProps fields here] end
 }
 
 export interface SyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
@@ -100,6 +106,9 @@ export interface SyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
 	searchable?: boolean | ((options: DropdownItemProps[], value: string) => DropdownItemProps[]);
 	/** If the combobox is in a loading state */
 	loading?: boolean;
+
+	// % protected region % [Add extra SyncComboboxProps fields here] off begin
+	// % protected region % [Add extra SyncComboboxProps fields here] end
 }
 
 export interface AsyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
@@ -115,6 +124,9 @@ export interface AsyncComboboxProps<T, I> extends InternalComboboxProps<T, I> {
 	 * The initial options that are displayed in the combobox before any search occurs
 	 */
 	initialOptions?: () => Promise<ComboboxOption<I | undefined>[]>;
+
+	// % protected region % [Add extra AsyncComboboxProps fields here] off begin
+	// % protected region % [Add extra AsyncComboboxProps fields here] end
 }
 
 interface InternalSyncComboboxProps<T, I> extends SyncComboboxProps<T, I> {
@@ -150,6 +162,9 @@ export class Combobox<T, I> extends React.Component<IComboboxProps<T, I>> {
 		? this.props.getOptionValue(option)
 		: option as string | number | boolean | undefined;
 
+	// % protected region % [Add extra Combobox fields here] off begin
+	// % protected region % [Add extra Combobox fields here] end
+
 	public render() {
 		return (
 			<InputWrapper
@@ -178,6 +193,9 @@ export class Combobox<T, I> extends React.Component<IComboboxProps<T, I>> {
 			</InputWrapper>
 		);
 	}
+
+	// % protected region % [Add extra Combobox methods here] off begin
+	// % protected region % [Add extra Combobox methods here] end
 }
 
 @observer
@@ -297,6 +315,9 @@ interface InnerComboboxProps<T, I> extends StrictDropdownProps {
 	getOptionValue: (option: I | undefined) => undefined | boolean | number | string;
 	onAfterChange?: (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => void;
 	optionEqualFunc?: (modelProperty: string | number | boolean | undefined, option: I | undefined) => boolean;
+
+	// % protected region % [Add extra InnerComboboxProps fields here] off begin
+	// % protected region % [Add extra InnerComboboxProps fields here] end
 }
 
 @observer

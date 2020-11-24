@@ -50,7 +50,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		//Attribute Header Titles
 		private IWebElement OrderHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Order']"));
 		private IWebElement FullnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='FullName']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -79,9 +78,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			// Reference web elements
 			selectorDict.Add("LeaguesElement", (selector: ".input-group__dropdown.leaguess > .dropdown.dropdown__container", type: SelectorType.CSS));
 
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
-
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
 			selectorDict.Add("ModifiedAtDatepickerField", (selector: "//div[contains(@class, 'modified')]/input", type: SelectorType.XPath));
@@ -92,7 +88,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		//Attribute web Elements
 		private IWebElement OrderElement => FindElementExt("OrderElement");
 		private IWebElement FullnameElement => FindElementExt("FullnameElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -101,7 +96,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			{
 				"Order" => OrderHeaderTitle,
 				"FullName" => FullnameHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -111,8 +105,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "Order":
 					return OrderElement;
 				case "FullName":
@@ -126,9 +118,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "Order":
 					int? order = null;
 					if (int.TryParse(value, out var intOrder))
@@ -149,7 +138,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"Order" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.order > div > p"),
 				"FullName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.fullname > div > p"),
 				_ => throw new Exception($"No such attribute {attribute}"),
@@ -170,7 +158,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_sportEntity.Name);
 			SetOrder(_sportEntity.Order);
 			SetFullname(_sportEntity.Fullname);
 
@@ -251,14 +238,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			FullnameElement.Text;
 
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

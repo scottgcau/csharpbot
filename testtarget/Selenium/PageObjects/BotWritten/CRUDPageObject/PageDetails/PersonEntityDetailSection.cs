@@ -41,8 +41,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		// reference elements
 		private static By RosterassignmentssElementBy => By.XPath("//*[contains(@class, 'rosterassignments')]//div[contains(@class, 'dropdown__container')]/a");
 		private static By RosterassignmentssInputElementBy => By.XPath("//*[contains(@class, 'rosterassignments')]/div/input");
-		private static By GameIdElementBy => By.XPath("//*[contains(@class, 'game')]//div[contains(@class, 'dropdown__container')]");
-		private static By GameIdInputElementBy => By.XPath("//*[contains(@class, 'game')]/div/input");
+		private static By SystemuserIdElementBy => By.XPath("//*[contains(@class, 'systemuser')]//div[contains(@class, 'dropdown__container')]");
+		private static By SystemuserIdInputElementBy => By.XPath("//*[contains(@class, 'systemuser')]/div/input");
+		private static By GamerefereeIdElementBy => By.XPath("//*[contains(@class, 'gamereferee')]//div[contains(@class, 'dropdown__container')]");
+		private static By GamerefereeIdInputElementBy => By.XPath("//*[contains(@class, 'gamereferee')]/div/input");
 
 		//FlatPickr Elements
 		private DateTimePickerComponent DateofbirthElement => new DateTimePickerComponent(_contextConfiguration, "dateofbirth");
@@ -56,7 +58,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private IWebElement DateofbirthHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='DateOfBirth']"));
 		private IWebElement HeightHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Height']"));
 		private IWebElement WeightHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Weight']"));
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -86,10 +87,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 			// Reference web elements
 			selectorDict.Add("RosterassignmentsElement", (selector: ".input-group__dropdown.rosterassignmentss > .dropdown.dropdown__container", type: SelectorType.CSS));
-			selectorDict.Add("GameElement", (selector: ".input-group__dropdown.gameId > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
+			selectorDict.Add("SystemuserElement", (selector: ".input-group__dropdown.systemuserId > .dropdown.dropdown__container", type: SelectorType.CSS));
+			selectorDict.Add("GamerefereeElement", (selector: ".input-group__dropdown.gamerefereeId > .dropdown.dropdown__container", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -97,15 +96,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		}
 
 		//outgoing Reference web elements
-		//get the input path as set by the selector library
-		private IWebElement GameElement => FindElementExt("GameElement");
 
 		//Attribute web Elements
 		private IWebElement FirstnameElement => FindElementExt("FirstnameElement");
 		private IWebElement LastnameElement => FindElementExt("LastnameElement");
 		private IWebElement HeightElement => FindElementExt("HeightElement");
 		private IWebElement WeightElement => FindElementExt("WeightElement");
-		private IWebElement NameElement => FindElementExt("NameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
@@ -117,7 +113,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				"DateOfBirth" => DateofbirthHeaderTitle,
 				"Height" => HeightHeaderTitle,
 				"Weight" => WeightHeaderTitle,
-				"Name" => NameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -127,8 +122,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
 				case "FirstName":
 					return FirstnameElement;
 				case "LastName":
@@ -148,9 +141,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
 				case "FirstName":
 					SetFirstname(value);
 					break;
@@ -185,7 +175,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
 				"FirstName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.firstname > div > p"),
 				"LastName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.lastname > div > p"),
 				"DateOfBirth" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.dateofbirth > div > p"),
@@ -209,7 +198,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_personEntity.Name);
 			SetFirstname(_personEntity.Firstname);
 			SetLastname(_personEntity.Lastname);
 			SetDateofbirth(_personEntity.Dateofbirth);
@@ -220,7 +208,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			{
 				SetRosterassignmentss(_personEntity.RosterassignmentsIds.Select(x => x.ToString()));
 			}
-			SetGameId(_personEntity.GameId?.ToString());
+			SetSystemuserId(_personEntity.SystemuserId?.ToString());
+			SetGamerefereeId(_personEntity.GamerefereeId?.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -230,8 +219,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			{
 				case "rosterassignments":
 					return GetRosterassignmentss();
-				case "game":
-					return new List<Guid>() {GetGameId()};
+				case "systemuser":
+					return new List<Guid>() {GetSystemuserId()};
+				case "gamereferee":
+					return new List<Guid>() {GetGamerefereeId()};
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
@@ -251,18 +242,32 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			}
 		}
 
-		private void SetGameId(string id)
+		private void SetSystemuserId(string id)
 		{
 			if (id == "") { return; }
-			WaitUtils.elementState(_driverWait, GameIdInputElementBy, ElementState.VISIBLE);
-			var gameIdInputElement = _driver.FindElementExt(GameIdInputElementBy);
+			WaitUtils.elementState(_driverWait, SystemuserIdInputElementBy, ElementState.VISIBLE);
+			var systemuserIdInputElement = _driver.FindElementExt(SystemuserIdInputElementBy);
 
 			if (id != null)
 			{
-				gameIdInputElement.SendKeys(id);
+				systemuserIdInputElement.SendKeys(id);
 				WaitForDropdownOptions();
 				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
-				gameIdInputElement.SendKeys(Keys.Return);
+				systemuserIdInputElement.SendKeys(Keys.Return);
+			}
+		}
+		private void SetGamerefereeId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, GamerefereeIdInputElementBy, ElementState.VISIBLE);
+			var gamerefereeIdInputElement = _driver.FindElementExt(GamerefereeIdInputElementBy);
+
+			if (id != null)
+			{
+				gamerefereeIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				gamerefereeIdInputElement.SendKeys(Keys.Return);
 			}
 		}
 
@@ -279,11 +284,17 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			}
 			return guids;
 		}
-		private Guid GetGameId()
+		private Guid GetSystemuserId()
 		{
-			WaitUtils.elementState(_driverWait, GameIdElementBy, ElementState.VISIBLE);
-			var gameIdElement = _driver.FindElementExt(GameIdElementBy);
-			return new Guid(gameIdElement.GetAttribute("data-id"));
+			WaitUtils.elementState(_driverWait, SystemuserIdElementBy, ElementState.VISIBLE);
+			var systemuserIdElement = _driver.FindElementExt(SystemuserIdElementBy);
+			return new Guid(systemuserIdElement.GetAttribute("data-id"));
+		}
+		private Guid GetGamerefereeId()
+		{
+			WaitUtils.elementState(_driverWait, GamerefereeIdElementBy, ElementState.VISIBLE);
+			var gamerefereeIdElement = _driver.FindElementExt(GamerefereeIdElementBy);
+			return new Guid(gamerefereeIdElement.GetAttribute("data-id"));
 		}
 
 		// wait for dropdown to be displaying options
@@ -347,14 +358,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			int.Parse(WeightElement.Text);
 
 
-		// Set Name for form entity
-		private void SetName (String value)
-		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
-		}
-
-		private String GetName => NameElement.Text;
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

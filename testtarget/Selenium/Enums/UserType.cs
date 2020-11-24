@@ -19,5 +19,6 @@ namespace SeleniumTests.Enums
 {
 	public enum UserType
 	{
+		SYSTEMUSER_ENTITY,
 	}
 }

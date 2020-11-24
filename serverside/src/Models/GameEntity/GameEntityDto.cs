@@ -27,27 +27,34 @@ namespace Sportstats.Models
 	/// </summary>
 	public class GameEntityDto : ModelDto<GameEntity>
 	{
-		public String Name { get; set; }
 		// % protected region % [Customise Datestart here] off begin
 		public DateTime? Datestart { get; set; }
 		// % protected region % [Customise Datestart here] end
 
+		// % protected region % [Customise Homepoints here] off begin
+		public int? Homepoints { get; set; }
+		// % protected region % [Customise Homepoints here] end
+
+		// % protected region % [Customise Awaypoints here] off begin
+		public int? Awaypoints { get; set; }
+		// % protected region % [Customise Awaypoints here] end
+
 		// % protected region % [Customise Hometeamid here] off begin
-		public int? Hometeamid { get; set; }
+		public String Hometeamid { get; set; }
 		// % protected region % [Customise Hometeamid here] end
 
 		// % protected region % [Customise Awayteamid here] off begin
-		public int? Awayteamid { get; set; }
+		public String Awayteamid { get; set; }
 		// % protected region % [Customise Awayteamid here] end
 
+
+		// % protected region % [Customise RoundId here] off begin
+		public Guid? RoundId { get; set; }
+		// % protected region % [Customise RoundId here] end
 
 		// % protected region % [Customise VenueId here] off begin
 		public Guid? VenueId { get; set; }
 		// % protected region % [Customise VenueId here] end
-
-		// % protected region % [Customise ScheduleId here] off begin
-		public Guid ScheduleId { get; set; }
-		// % protected region % [Customise ScheduleId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
 		// % protected region % [Add any extra attributes here] end
@@ -75,12 +82,13 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Datestart = Datestart,
+				Homepoints = Homepoints,
+				Awaypoints = Awaypoints,
 				Hometeamid = Hometeamid,
 				Awayteamid = Awayteamid,
+				RoundId  = RoundId,
 				VenueId  = VenueId,
-				ScheduleId  = ScheduleId,
 				// % protected region % [Add any extra model properties here] off begin
 				// % protected region % [Add any extra model properties here] end
 			};
@@ -91,12 +99,13 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Datestart = model.Datestart;
+			Homepoints = model.Homepoints;
+			Awaypoints = model.Awaypoints;
 			Hometeamid = model.Hometeamid;
 			Awayteamid = model.Awayteamid;
+			RoundId  = model.RoundId;
 			VenueId  = model.VenueId;
-			ScheduleId  = model.ScheduleId;
 
 			// % protected region % [Add any extra loading data logic here] off begin
 			// % protected region % [Add any extra loading data logic here] end

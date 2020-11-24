@@ -29,11 +29,11 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
+		public String Fullname { get; set; }
 
 		public ICollection<RosterassignmentEntity> Rosterassignmentss { get; set; }
-		public Guid SeasonId { get; set; }
 		public Guid? TeamId { get; set; }
+		public Guid? SeasonId { get; set; }
 		public ICollection<RosterTimelineEventsEntity> LoggedEvents { get; set; }
 
 		public RosterEntityDto(RosterEntity model)
@@ -41,10 +41,10 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
+			Fullname = model.Fullname;
 			Rosterassignmentss = model.Rosterassignmentss;
-			SeasonId = model.SeasonId;
 			TeamId = model.TeamId;
+			SeasonId = model.SeasonId;
 			LoggedEvents = model.LoggedEvents;
 		}
 
@@ -53,10 +53,10 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
+			Fullname = model.Fullname;
 			Rosterassignmentss = model.Rosterassignmentss.Select(RosterassignmentEntityDto.Convert).ToList();
-			SeasonId = model.SeasonId;
 			TeamId = model.TeamId;
+			SeasonId = model.SeasonId;
 			LoggedEvents = model.LoggedEvents.Select(RosterTimelineEventsEntityDto.Convert).ToList();
 		}
 
@@ -67,10 +67,10 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
+				Fullname = Fullname,
 				Rosterassignmentss = Rosterassignmentss,
-				SeasonId = SeasonId,
 				TeamId = TeamId,
+				SeasonId = SeasonId,
 				LoggedEvents = LoggedEvents,
 			};
 		}
@@ -82,10 +82,10 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
+				Fullname = Fullname,
 				Rosterassignmentss = Rosterassignmentss?.Select(RosterassignmentEntityDto.Convert).ToList(),
-				SeasonId = SeasonId,
 				TeamId = TeamId,
+				SeasonId = SeasonId,
 				LoggedEvents = LoggedEvents?.Select(RosterTimelineEventsEntityDto.Convert).ToList(),
 			};
 		}

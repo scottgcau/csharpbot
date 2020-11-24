@@ -29,6 +29,7 @@ namespace APITests.TheoryData.BotWritten
 		public UserEntityFactorySingleTheoryData()
 		{
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new UserEntityFactory("SystemuserEntity"));
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end
 		}
 	}
@@ -38,14 +39,21 @@ namespace APITests.TheoryData.BotWritten
 		public EntityFactorySingleTheoryData()
 		{
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new EntityFactory("LadderEntity"), 1);
 			Add(new EntityFactory("ScheduleEntity"), 1);
-			Add(new EntityFactory("SeasonEntity"), 1);
-			Add(new EntityFactory("VenueEntity"), 1);
+			Add(new EntityFactory("LaddereliminationEntity"), 1);
+			Add(new EntityFactory("LadderwinlossEntity"), 1);
+			Add(new EntityFactory("RoundEntity"), 1);
 			Add(new EntityFactory("GameEntity"), 1);
+			Add(new EntityFactory("DivisionEntity"), 1);
+			Add(new EntityFactory("VenueEntity"), 1);
+			Add(new EntityFactory("TeamEntity"), 1);
+			Add(new EntityFactory("GamerefereeEntity"), 1);
+			Add(new EntityFactory("SeasonEntity"), 1);
+			Add(new EntityFactory("PersonEntity"), 1);
+			Add(new EntityFactory("SystemuserEntity"), 1);
 			Add(new EntityFactory("SportEntity"), 1);
 			Add(new EntityFactory("LeagueEntity"), 1);
-			Add(new EntityFactory("TeamEntity"), 1);
-			Add(new EntityFactory("PersonEntity"), 1);
 			Add(new EntityFactory("RosterEntity"), 1);
 			Add(new EntityFactory("RosterassignmentEntity"), 1);
 			Add(new EntityFactory("RosterTimelineEventsEntity"), 1);
@@ -58,14 +66,21 @@ namespace APITests.TheoryData.BotWritten
 		public NonUserEntityFactorySingleTheoryData()
 		{
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new EntityFactory("LadderEntity"), 1);
 			Add(new EntityFactory("ScheduleEntity"), 1);
-			Add(new EntityFactory("SeasonEntity"), 1);
-			Add(new EntityFactory("VenueEntity"), 1);
+			Add(new EntityFactory("LaddereliminationEntity"), 1);
+			Add(new EntityFactory("LadderwinlossEntity"), 1);
+			Add(new EntityFactory("RoundEntity"), 1);
 			Add(new EntityFactory("GameEntity"), 1);
+			Add(new EntityFactory("DivisionEntity"), 1);
+			Add(new EntityFactory("VenueEntity"), 1);
+			Add(new EntityFactory("TeamEntity"), 1);
+			Add(new EntityFactory("GamerefereeEntity"), 1);
+			Add(new EntityFactory("SeasonEntity"), 1);
+			Add(new EntityFactory("PersonEntity"), 1);
+			Add(new EntityFactory("SystemuserEntity"), 1);
 			Add(new EntityFactory("SportEntity"), 1);
 			Add(new EntityFactory("LeagueEntity"), 1);
-			Add(new EntityFactory("TeamEntity"), 1);
-			Add(new EntityFactory("PersonEntity"), 1);
 			Add(new EntityFactory("RosterEntity"), 1);
 			Add(new EntityFactory("RosterassignmentEntity"), 1);
 			Add(new EntityFactory("RosterTimelineEventsEntity"), 1);
@@ -78,14 +93,21 @@ namespace APITests.TheoryData.BotWritten
 		public EntityFactoryTheoryData()
 		{
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
+			Add(new EntityFactory("LadderEntity"));
 			Add(new EntityFactory("ScheduleEntity"));
-			Add(new EntityFactory("SeasonEntity"));
-			Add(new EntityFactory("VenueEntity"));
+			Add(new EntityFactory("LaddereliminationEntity"));
+			Add(new EntityFactory("LadderwinlossEntity"));
+			Add(new EntityFactory("RoundEntity"));
 			Add(new EntityFactory("GameEntity"));
+			Add(new EntityFactory("DivisionEntity"));
+			Add(new EntityFactory("VenueEntity"));
+			Add(new EntityFactory("TeamEntity"));
+			Add(new EntityFactory("GamerefereeEntity"));
+			Add(new EntityFactory("SeasonEntity"));
+			Add(new EntityFactory("PersonEntity"));
+			Add(new EntityFactory("SystemuserEntity"));
 			Add(new EntityFactory("SportEntity"));
 			Add(new EntityFactory("LeagueEntity"));
-			Add(new EntityFactory("TeamEntity"));
-			Add(new EntityFactory("PersonEntity"));
 			Add(new EntityFactory("RosterEntity"));
 			Add(new EntityFactory("RosterassignmentEntity"));
 			Add(new EntityFactory("RosterTimelineEventsEntity"));
@@ -99,14 +121,21 @@ namespace APITests.TheoryData.BotWritten
 		{
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] off begin
 			var numEntities = 3;
+			Add(new EntityFactory("LadderEntity"), numEntities);
 			Add(new EntityFactory("ScheduleEntity"), numEntities);
-			Add(new EntityFactory("SeasonEntity"), numEntities);
-			Add(new EntityFactory("VenueEntity"), numEntities);
+			Add(new EntityFactory("LaddereliminationEntity"), numEntities);
+			Add(new EntityFactory("LadderwinlossEntity"), numEntities);
+			Add(new EntityFactory("RoundEntity"), numEntities);
 			Add(new EntityFactory("GameEntity"), numEntities);
+			Add(new EntityFactory("DivisionEntity"), numEntities);
+			Add(new EntityFactory("VenueEntity"), numEntities);
+			Add(new EntityFactory("TeamEntity"), numEntities);
+			Add(new EntityFactory("GamerefereeEntity"), numEntities);
+			Add(new EntityFactory("SeasonEntity"), numEntities);
+			Add(new EntityFactory("PersonEntity"), numEntities);
 			Add(new EntityFactory("SportEntity"), numEntities);
 			Add(new EntityFactory("LeagueEntity"), numEntities);
-			Add(new EntityFactory("TeamEntity"), numEntities);
-			Add(new EntityFactory("PersonEntity"), numEntities);
+			Add(new EntityFactory("RosterEntity"), numEntities);
 			Add(new EntityFactory("RosterassignmentEntity"), numEntities);
 			Add(new EntityFactory("RosterTimelineEventsEntity"), numEntities);
 			// % protected region % [Modify UserEntityFactorySingleTheoryData entities here] end

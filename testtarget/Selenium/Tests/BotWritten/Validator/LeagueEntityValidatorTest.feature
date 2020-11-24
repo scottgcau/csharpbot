@@ -22,4 +22,3 @@ Given I login to the site as a user
 And I navigate to the LeagueEntity create page
 Then I verify the Required Validator for the FullName attribute for on-submit validation
 Then I verify the Required Validator for the ShortName attribute for on-submit validation
-Then I verify the Required Validator for the SportId attribute for on-submit validation

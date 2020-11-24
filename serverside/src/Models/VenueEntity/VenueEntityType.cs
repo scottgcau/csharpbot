@@ -44,16 +44,10 @@ namespace Sportstats.Models
 			Field(o => o.Address, type: typeof(StringGraphType));
 			Field(o => o.Lat, type: typeof(FloatGraphType));
 			Field(o => o.Lon, type: typeof(FloatGraphType));
-			Field(o => o.Name, type: typeof(StringGraphType));
-			Field(o => o.PublishedVersionId, type: typeof(IdGraphType));
 			// % protected region % [Add any extra GraphQL fields here] off begin
 			// % protected region % [Add any extra GraphQL fields here] end
 
 			// Add entity references
-			AddNavigationListField("FormVersions", context => context.Source.FormVersions);
-			AddNavigationConnectionField("FormVersionConnection", context => context.Source.FormVersions);
-			AddNavigationField("PublishedVersion", context => context.Source.PublishedVersion);
-
 
 			// GraphQL reference to entity GameEntity via reference Games
 			IEnumerable<GameEntity> GamessResolveFunction(ResolveFieldContext<VenueEntity> context)
@@ -64,16 +58,6 @@ namespace Sportstats.Models
 			}
 			AddNavigationListField("Gamess", (Func<ResolveFieldContext<VenueEntity>, IEnumerable<GameEntity>>) GamessResolveFunction);
 			AddNavigationConnectionField("GamessConnection", GamessResolveFunction);
-
-			// GraphQL reference to entity VenueEntityFormTileEntity via reference FormPage
-			IEnumerable<VenueEntityFormTileEntity> FormPagesResolveFunction(ResolveFieldContext<VenueEntity> context)
-			{
-				var graphQlContext = (SportstatsGraphQlContext) context.UserContext;
-				var filter = SecurityService.CreateReadSecurityFilter<VenueEntityFormTileEntity>(graphQlContext.IdentityService, graphQlContext.UserManager, graphQlContext.DbContext, graphQlContext.ServiceProvider);
-				return context.Source.FormPages.Where(filter.Compile());
-			}
-			AddNavigationListField("FormPages", (Func<ResolveFieldContext<VenueEntity>, IEnumerable<VenueEntityFormTileEntity>>) FormPagesResolveFunction);
-			AddNavigationConnectionField("FormPagesConnection", FormPagesResolveFunction);
 
 			// % protected region % [Add any extra GraphQL references here] off begin
 			// % protected region % [Add any extra GraphQL references here] end
@@ -99,15 +83,11 @@ namespace Sportstats.Models
 			Field<StringGraphType>("Address");
 			Field<FloatGraphType>("Lat");
 			Field<FloatGraphType>("Lon");
-			Field<StringGraphType>("Name");
-			Field<IdGraphType>("PublishedVersionId").Description = "The current published version for the form";
-			Field<ListGraphType<VenueEntityFormVersionInputType>>("FormVersions").Description = "The versions for this form";
 
 			// Add entity references
 
 			// Add references to foreign models to allow nested creation
 			Field<ListGraphType<GameEntityInputType>>("Gamess");
-			Field<ListGraphType<VenueEntityFormTileEntityInputType>>("FormPages");
 
 			// % protected region % [Add any extra GraphQL input fields here] off begin
 			// % protected region % [Add any extra GraphQL input fields here] end

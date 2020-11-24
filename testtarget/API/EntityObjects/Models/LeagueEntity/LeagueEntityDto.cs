@@ -29,25 +29,21 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public String Fullname { get; set; }
 		public String Shortname { get; set; }
 
+		public Guid? SportId { get; set; }
 		public ICollection<SeasonEntity> Seasonss { get; set; }
-		public ICollection<TeamEntity> Teamss { get; set; }
-		public Guid SportId { get; set; }
 
 		public LeagueEntityDto(LeagueEntity model)
 		{
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
-			Seasonss = model.Seasonss;
-			Teamss = model.Teamss;
 			SportId = model.SportId;
+			Seasonss = model.Seasonss;
 		}
 
 		public LeagueEntityDto(ServersideLeagueEntity model)
@@ -55,12 +51,10 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Shortname = model.Shortname;
-			Seasonss = model.Seasonss.Select(SeasonEntityDto.Convert).ToList();
-			Teamss = model.Teamss.Select(TeamEntityDto.Convert).ToList();
 			SportId = model.SportId;
+			Seasonss = model.Seasonss.Select(SeasonEntityDto.Convert).ToList();
 		}
 
 		public LeagueEntity GetTesttargetLeagueEntity()
@@ -70,12 +64,10 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Shortname = Shortname,
-				Seasonss = Seasonss,
-				Teamss = Teamss,
 				SportId = SportId,
+				Seasonss = Seasonss,
 			};
 		}
 
@@ -86,12 +78,10 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Shortname = Shortname,
-				Seasonss = Seasonss?.Select(SeasonEntityDto.Convert).ToList(),
-				Teamss = Teamss?.Select(TeamEntityDto.Convert).ToList(),
 				SportId = SportId,
+				Seasonss = Seasonss?.Select(SeasonEntityDto.Convert).ToList(),
 			};
 		}
 

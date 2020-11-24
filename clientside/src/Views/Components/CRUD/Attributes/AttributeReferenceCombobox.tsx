@@ -25,6 +25,8 @@ import { lowerCaseFirst } from 'Util/StringUtils';
 import { action, computed, observable } from 'mobx';
 import { IAttributeProps } from './IAttributeProps';
 import { DropdownProps } from 'semantic-ui-react';
+// % protected region % [Add any extra imports here] off begin
+// % protected region % [Add any extra imports here] end
 
 interface IAttributeReferenceComboboxProps<T extends Model> extends IAttributeProps<T> {
 	/** A function that returns an object that can construct a model */
@@ -69,6 +71,7 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 		}
 	}
 
+	// % protected region % [Override fetchOptions here] off begin
 	private fetchOptions = async (query?: string | string[]) => {
 		const { referenceType } = this.props;
 
@@ -114,11 +117,13 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 				return comboOptions;
 			});
 	}
+	// % protected region % [Override fetchOptions here] end
 
 	private getOptions = () => {
 		return AwesomeDebouncePromise(this.fetchOptions, 500);
 	}
 
+	// % protected region % [Override render method here] off begin
 	public render() {
 		return <Combobox
 			model={this.props.model}
@@ -142,6 +147,7 @@ class AttributeReferenceCombobox<T extends Model> extends React.Component<IAttri
 			}}
 		/>;
 	}
+	// % protected region % [Override render method here] end
 }
 
 export default AttributeReferenceCombobox;

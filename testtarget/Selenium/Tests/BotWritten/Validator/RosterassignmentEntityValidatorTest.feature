@@ -21,4 +21,3 @@ Scenario: Violate RosterassignmentEntity validators
 Given I login to the site as a user
 And I navigate to the RosterassignmentEntity create page
 Then I verify the Required Validator for the DateFrom attribute for on-submit validation
-Then I verify the Required Validator for the PersonId attribute for on-submit validation

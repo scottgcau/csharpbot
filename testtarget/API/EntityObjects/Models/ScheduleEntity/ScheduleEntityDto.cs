@@ -31,23 +31,23 @@ namespace APITests.EntityObjects.Models
 		public Guid Id { get; set; }
 		public DateTime Created { get; set; }
 		public DateTime Modified { get; set; }
-		public string Name { get; set; }
 		public String Fullname { get; set; }
 		public Scheduletype Scheduletype { get; set; }
 
-		public ICollection<GameEntity> Gamess { get; set; }
-		public Guid SeasonId { get; set; }
+		public ICollection<RoundEntity> Roundss { get; set; }
+		public Guid? SeasonId { get; set; }
+		public Guid? LadderId { get; set; }
 
 		public ScheduleEntityDto(ScheduleEntity model)
 		{
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Scheduletype = (Scheduletype)model.Scheduletype;
-			Gamess = model.Gamess;
+			Roundss = model.Roundss;
 			SeasonId = model.SeasonId;
+			LadderId = model.LadderId;
 		}
 
 		public ScheduleEntityDto(ServersideScheduleEntity model)
@@ -55,11 +55,11 @@ namespace APITests.EntityObjects.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
 			Fullname = model.Fullname;
 			Scheduletype = model.Scheduletype;
-			Gamess = model.Gamess.Select(GameEntityDto.Convert).ToList();
+			Roundss = model.Roundss.Select(RoundEntityDto.Convert).ToList();
 			SeasonId = model.SeasonId;
+			LadderId = model.LadderId;
 		}
 
 		public ScheduleEntity GetTesttargetScheduleEntity()
@@ -69,11 +69,11 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Scheduletype = (TestEnums.Scheduletype)Scheduletype,
-				Gamess = Gamess,
+				Roundss = Roundss,
 				SeasonId = SeasonId,
+				LadderId = LadderId,
 			};
 		}
 
@@ -84,11 +84,11 @@ namespace APITests.EntityObjects.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
 				Fullname = Fullname,
 				Scheduletype = Scheduletype,
-				Gamess = Gamess?.Select(GameEntityDto.Convert).ToList(),
+				Roundss = Roundss?.Select(RoundEntityDto.Convert).ToList(),
 				SeasonId = SeasonId,
+				LadderId = LadderId,
 			};
 		}
 

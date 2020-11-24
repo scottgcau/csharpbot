@@ -41,10 +41,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		// reference elements
 		private static By RosterassignmentssElementBy => By.XPath("//*[contains(@class, 'rosterassignments')]//div[contains(@class, 'dropdown__container')]/a");
 		private static By RosterassignmentssInputElementBy => By.XPath("//*[contains(@class, 'rosterassignments')]/div/input");
-		private static By SeasonIdElementBy => By.XPath("//*[contains(@class, 'season')]//div[contains(@class, 'dropdown__container')]");
-		private static By SeasonIdInputElementBy => By.XPath("//*[contains(@class, 'season')]/div/input");
 		private static By TeamIdElementBy => By.XPath("//*[contains(@class, 'team')]//div[contains(@class, 'dropdown__container')]");
 		private static By TeamIdInputElementBy => By.XPath("//*[contains(@class, 'team')]/div/input");
+		private static By SeasonIdElementBy => By.XPath("//*[contains(@class, 'season')]//div[contains(@class, 'dropdown__container')]");
+		private static By SeasonIdInputElementBy => By.XPath("//*[contains(@class, 'season')]/div/input");
 
 		//FlatPickr Elements
 
@@ -52,7 +52,7 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private readonly RosterEntity _rosterEntity;
 
 		//Attribute Header Titles
-		private IWebElement NameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='Name']"));
+		private IWebElement FullnameHeaderTitle => _driver.FindElementExt(By.XPath("//th[text()='FullName']"));
 
 		// Datepickers
 		public IWebElement CreateAtDatepickerField => _driver.FindElementExt(By.CssSelector("div.created > input[type='date']"));
@@ -75,14 +75,12 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		private void InitializeSelectors()
 		{
 			// Attribute web elements
+			selectorDict.Add("FullnameElement", (selector: "//div[contains(@class, 'fullname')]//input", type: SelectorType.XPath));
 
 			// Reference web elements
 			selectorDict.Add("RosterassignmentsElement", (selector: ".input-group__dropdown.rosterassignmentss > .dropdown.dropdown__container", type: SelectorType.CSS));
-			selectorDict.Add("SeasonElement", (selector: ".input-group__dropdown.seasonId > .dropdown.dropdown__container", type: SelectorType.CSS));
 			selectorDict.Add("TeamElement", (selector: ".input-group__dropdown.teamId > .dropdown.dropdown__container", type: SelectorType.CSS));
-
-			// Form Entity specific web Element
-			selectorDict.Add("NameElement", (selector: "div.name > input", type: SelectorType.CSS));
+			selectorDict.Add("SeasonElement", (selector: ".input-group__dropdown.seasonId > .dropdown.dropdown__container", type: SelectorType.CSS));
 
 			// Datepicker
 			selectorDict.Add("CreateAtDatepickerField", (selector: "//div[contains(@class, 'created')]/input", type: SelectorType.XPath));
@@ -91,19 +89,19 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 
 		//outgoing Reference web elements
 		//get the input path as set by the selector library
-		private IWebElement SeasonElement => FindElementExt("SeasonElement");
-		//get the input path as set by the selector library
 		private IWebElement TeamElement => FindElementExt("TeamElement");
+		//get the input path as set by the selector library
+		private IWebElement SeasonElement => FindElementExt("SeasonElement");
 
 		//Attribute web Elements
-		private IWebElement NameElement => FindElementExt("NameElement");
+		private IWebElement FullnameElement => FindElementExt("FullnameElement");
 
 		// Return an IWebElement that can be used to sort an attribute.
 		public IWebElement GetHeaderTile(string attribute)
 		{
 			return attribute switch
 			{
-				"Name" => NameHeaderTitle,
+				"FullName" => FullnameHeaderTitle,
 				_ => throw new Exception($"Cannot find header tile {attribute}"),
 			};
 		}
@@ -113,10 +111,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					return NameElement;
-				case "SeasonId":
-					return SeasonElement;
+				case "FullName":
+					return FullnameElement;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
 			}
@@ -126,11 +122,8 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			switch (attribute)
 			{
-				case "Name":
-					SetName(value);
-					break;
-				case "SeasonId":
-					SetSeasonId(value);
+				case "FullName":
+					SetFullname(value);
 					break;
 				default:
 					throw new Exception($"Cannot find input element {attribute}");
@@ -141,8 +134,7 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		{
 			return attribute switch
 			{
-				"Name" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "//div[contains(@class, 'name')]"),
-				"SeasonId" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.seasonId > div > p"),
+				"FullName" => WebElementUtils.GetElementAsBy(SelectorPathType.CSS, "div.fullname > div > p"),
 				_ => throw new Exception($"No such attribute {attribute}"),
 			};
 		}
@@ -161,14 +153,14 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 		public void Apply()
 		{
 			// % protected region % [Configure entity application here] off begin
-			SetName(_rosterEntity.Name);
+			SetFullname(_rosterEntity.Fullname);
 
 			if (_rosterEntity.RosterassignmentsIds != null)
 			{
 				SetRosterassignmentss(_rosterEntity.RosterassignmentsIds.Select(x => x.ToString()));
 			}
-			SetSeasonId(_rosterEntity.SeasonId.ToString());
 			SetTeamId(_rosterEntity.TeamId?.ToString());
+			SetSeasonId(_rosterEntity.SeasonId?.ToString());
 			// % protected region % [Configure entity application here] end
 		}
 
@@ -178,10 +170,10 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			{
 				case "rosterassignments":
 					return GetRosterassignmentss();
-				case "season":
-					return new List<Guid>() {GetSeasonId()};
 				case "team":
 					return new List<Guid>() {GetTeamId()};
+				case "season":
+					return new List<Guid>() {GetSeasonId()};
 				default:
 					throw new Exception($"Cannot find association type {referenceName}");
 			}
@@ -201,17 +193,6 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			}
 		}
 
-		private void SetSeasonId(string id)
-		{
-			if (id == "") { return; }
-			WaitUtils.elementState(_driverWait, SeasonIdInputElementBy, ElementState.VISIBLE);
-			var seasonIdInputElement = _driver.FindElementExt(SeasonIdInputElementBy);
-
-			seasonIdInputElement.SendKeys(id);
-			WaitForDropdownOptions();
-			WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option'][@data-id='{id}']"), ElementState.EXISTS);
-			seasonIdInputElement.SendKeys(Keys.Return);
-		}
 		private void SetTeamId(string id)
 		{
 			if (id == "") { return; }
@@ -224,6 +205,20 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 				WaitForDropdownOptions();
 				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
 				teamIdInputElement.SendKeys(Keys.Return);
+			}
+		}
+		private void SetSeasonId(string id)
+		{
+			if (id == "") { return; }
+			WaitUtils.elementState(_driverWait, SeasonIdInputElementBy, ElementState.VISIBLE);
+			var seasonIdInputElement = _driver.FindElementExt(SeasonIdInputElementBy);
+
+			if (id != null)
+			{
+				seasonIdInputElement.SendKeys(id);
+				WaitForDropdownOptions();
+				WaitUtils.elementState(_driverWait, By.XPath($"//*/div[@role='option']/span[text()='{id}']"), ElementState.EXISTS);
+				seasonIdInputElement.SendKeys(Keys.Return);
 			}
 		}
 
@@ -240,17 +235,17 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			}
 			return guids;
 		}
-		private Guid GetSeasonId()
-		{
-			WaitUtils.elementState(_driverWait, SeasonIdElementBy, ElementState.VISIBLE);
-			var seasonIdElement = _driver.FindElementExt(SeasonIdElementBy);
-			return new Guid(seasonIdElement.GetAttribute("data-id"));
-		}
 		private Guid GetTeamId()
 		{
 			WaitUtils.elementState(_driverWait, TeamIdElementBy, ElementState.VISIBLE);
 			var teamIdElement = _driver.FindElementExt(TeamIdElementBy);
 			return new Guid(teamIdElement.GetAttribute("data-id"));
+		}
+		private Guid GetSeasonId()
+		{
+			WaitUtils.elementState(_driverWait, SeasonIdElementBy, ElementState.VISIBLE);
+			var seasonIdElement = _driver.FindElementExt(SeasonIdElementBy);
+			return new Guid(seasonIdElement.GetAttribute("data-id"));
 		}
 
 		// wait for dropdown to be displaying options
@@ -261,15 +256,17 @@ namespace SeleniumTests.PageObjects.CRUDPageObject.PageDetails
 			WaitUtils.elementState(_driverWait, elementBy,ElementState.EXISTS);
 		}
 
-
-		// Set Name for form entity
-		private void SetName (String value)
+		private void SetFullname (String value)
 		{
-			TypingUtils.InputEntityAttributeByClass(_driver, "name", value, _isFastText);
-			NameElement.SendKeys(Keys.Tab);
+			TypingUtils.InputEntityAttributeByClass(_driver, "fullname", value, _isFastText);
+			FullnameElement.SendKeys(Keys.Tab);
+			FullnameElement.SendKeys(Keys.Escape);
 		}
 
-		private String GetName => NameElement.Text;
+		private String GetFullname =>
+			FullnameElement.Text;
+
+
 		// % protected region % [Add any additional getters and setters of web elements] off begin
 		// % protected region % [Add any additional getters and setters of web elements] end
 	}

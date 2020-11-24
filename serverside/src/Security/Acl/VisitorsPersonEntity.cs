@@ -31,7 +31,7 @@ namespace Sportstats.Security.Acl
 		public bool GetCreate(User user, IEnumerable<IAbstractModel> models, SecurityContext context)
 		{
 			// % protected region % [Override create rule contents here here] off begin
-			return true;
+			return false;
 			// % protected region % [Override create rule contents here here] end
 		}
 
@@ -47,7 +47,7 @@ namespace Sportstats.Security.Acl
 			where TModel : IOwnerAbstractModel, new()
 		{
 			// % protected region % [Override conditional update rule contents here here] off begin
-			return model => true;
+			return model => false;
 			// % protected region % [Override conditional update rule contents here here] end
 		}
 
@@ -55,21 +55,21 @@ namespace Sportstats.Security.Acl
 			where TModel : IOwnerAbstractModel, new()
 		{
 			// % protected region % [Override conditional delete rule contents here here] off begin
-			return model => true;
+			return model => false;
 			// % protected region % [Override conditional delete rule contents here here] end
 		}
 
 		public bool GetUpdate(User user, IEnumerable<IAbstractModel> models, SecurityContext context)
 		{
 			// % protected region % [Override update rule contents here here] off begin
-			return true;
+			return false;
 			// % protected region % [Override update rule contents here here] end
 		}
 
 		public bool GetDelete(User user, IEnumerable<IAbstractModel> models, SecurityContext context)
 		{
 			// % protected region % [Override delete rule contents here here] off begin
-			return true;
+			return false;
 			// % protected region % [Override delete rule contents here here] end
 		}
 

@@ -5,7 +5,7 @@
 You have complete ownership of the source code the bots write, which means it is customisable and ready to use for any commercial or non-commercial purposes. Below is an overview of the code to help you get started.
 This readme is intended to help get you get started, and can be edited to suit your needs at any time.
 
-**Bot version:** 1.4.6.1 ([Release notes are here](https://codebots.app/library-article/codebots/view/581))
+**Bot version:** 1.4.7.0 ([Release notes are here](https://codebots.app/library-article/codebots/view/592))
 
 ## Running your app
 
@@ -38,8 +38,8 @@ Got some code you want to write but no protected region to hold it? You can requ
 
 ### Behaviours
 
-Your app is using: [Developer API](https://codebots.app/library-article/codebots/view/148), [CRUD](https://codebots.app/library-article/codebots/view/7), [Forms](https://codebots.app/library-article/codebots/view/9), [Timeline](https://codebots.app/library-article/codebots/view/147)
-You aren't using: [Workflow](https://codebots.app/library-article/codebots/view/8), [User](https://codebots.app/library-article/codebots/view/71)
+Your app is using: [Developer API](https://codebots.app/library-article/codebots/view/148), [CRUD](https://codebots.app/library-article/codebots/view/7), [Timeline](https://codebots.app/library-article/codebots/view/147), [User](https://codebots.app/library-article/codebots/view/71)
+You aren't using: [Forms](https://codebots.app/library-article/codebots/view/9), [Workflow](https://codebots.app/library-article/codebots/view/8)
 
 Behaviours are how you can add in pre-built functionality into your app. There are a whole range of behaviours you can use. Add them into either the Entity or User Interface diagram and get the bots to build to see how they work.
 

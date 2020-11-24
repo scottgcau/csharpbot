@@ -27,15 +27,18 @@ namespace Sportstats.Models
 	/// </summary>
 	public class RosterEntityDto : ModelDto<RosterEntity>
 	{
-		public String Name { get; set; }
+		// % protected region % [Customise Fullname here] off begin
+		public String Fullname { get; set; }
+		// % protected region % [Customise Fullname here] end
 
-		// % protected region % [Customise SeasonId here] off begin
-		public Guid SeasonId { get; set; }
-		// % protected region % [Customise SeasonId here] end
 
 		// % protected region % [Customise TeamId here] off begin
 		public Guid? TeamId { get; set; }
 		// % protected region % [Customise TeamId here] end
+
+		// % protected region % [Customise SeasonId here] off begin
+		public Guid? SeasonId { get; set; }
+		// % protected region % [Customise SeasonId here] end
 
 		// % protected region % [Add any extra attributes here] off begin
 		// % protected region % [Add any extra attributes here] end
@@ -63,9 +66,9 @@ namespace Sportstats.Models
 				Id = Id,
 				Created = Created,
 				Modified = Modified,
-				Name = Name,
-				SeasonId  = SeasonId,
+				Fullname = Fullname,
 				TeamId  = TeamId,
+				SeasonId  = SeasonId,
 				// % protected region % [Add any extra model properties here] off begin
 				// % protected region % [Add any extra model properties here] end
 			};
@@ -76,9 +79,9 @@ namespace Sportstats.Models
 			Id = model.Id;
 			Created = model.Created;
 			Modified = model.Modified;
-			Name = model.Name;
-			SeasonId  = model.SeasonId;
+			Fullname = model.Fullname;
 			TeamId  = model.TeamId;
+			SeasonId  = model.SeasonId;
 
 			// % protected region % [Add any extra loading data logic here] off begin
 			// % protected region % [Add any extra loading data logic here] end

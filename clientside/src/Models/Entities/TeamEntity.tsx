@@ -26,27 +26,25 @@ import * as AttrUtils from "Util/AttributeUtils";
 import { IAcl } from 'Models/Security/IAcl';
 import { makeFetchManyToManyFunc, makeFetchOneToManyFunc, makeJoinEqualsFunc, makeEnumFetchFunction } from 'Util/EntityUtils';
 import { VisitorsTeamEntity } from 'Models/Security/Acl/VisitorsTeamEntity';
+import { SystemuserTeamEntity } from 'Models/Security/Acl/SystemuserTeamEntity';
 import * as Enums from '../Enums';
 import { IOrderByCondition } from 'Views/Components/ModelCollection/ModelQuery';
 import { EntityFormMode } from 'Views/Components/Helpers/Common';
-import { FormEntityData, FormEntityDataAttributes, getAllVersionsFn, getPublishedVersionFn } from 'Forms/FormEntityData';
-import { FormVersion } from 'Forms/FormVersion';
-import { fetchFormVersions, fetchPublishedVersion } from 'Forms/Forms';
 import { SERVER_URL } from 'Constants';
 import {SuperAdministratorScheme} from '../Security/Acl/SuperAdministratorScheme';
 // % protected region % [Add any further imports here] off begin
 // % protected region % [Add any further imports here] end
 
-export interface ITeamEntityAttributes extends IModelAttributes, FormEntityDataAttributes {
-	name: string;
+export interface ITeamEntityAttributes extends IModelAttributes {
 	represents: string;
 	fullname: string;
 	shortname: string;
 
+	ladderwinlossess: Array<Models.LadderwinlossEntity | Models.ILadderwinlossEntityAttributes>;
+	divisionId?: string;
+	division?: Models.DivisionEntity | Models.IDivisionEntityAttributes;
+	laddereliminationss: Array<Models.LaddereliminationEntity | Models.ILaddereliminationEntityAttributes>;
 	rosterss: Array<Models.RosterEntity | Models.IRosterEntityAttributes>;
-	leagueId?: string;
-	league?: Models.LeagueEntity | Models.ILeagueEntityAttributes;
-	formPages: Array<Models.TeamEntityFormTileEntity | Models.ITeamEntityFormTileEntityAttributes>;
 	// % protected region % [Add any custom attributes to the interface here] off begin
 	// % protected region % [Add any custom attributes to the interface here] end
 }
@@ -54,10 +52,11 @@ export interface ITeamEntityAttributes extends IModelAttributes, FormEntityDataA
 // % protected region % [Customise your entity metadata here] off begin
 @entity('TeamEntity', 'Team')
 // % protected region % [Customise your entity metadata here] end
-export default class TeamEntity extends Model implements ITeamEntityAttributes, FormEntityData  {
+export default class TeamEntity extends Model implements ITeamEntityAttributes {
 	public static acls: IAcl[] = [
 		new SuperAdministratorScheme(),
 		new VisitorsTeamEntity(),
+		new SystemuserTeamEntity(),
 		// % protected region % [Add any further ACL entries here] off begin
 		// % protected region % [Add any further ACL entries here] end
 	];
@@ -78,22 +77,6 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 		// % protected region % [Add any custom update exclusions here] end
 	];
 
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] off begin
-	@Validators.Required()
-	@observable
-	@attribute()
-	@CRUD({
-		name: 'Name',
-		displayType: 'textfield',
-		order: 10,
-		headerColumn: true,
-		searchable: true,
-		searchFunction: 'like',
-		searchTransform: AttrUtils.standardiseString,
-	})
-	public name: string;
-	// % protected region % [Modify props to the crud options here for attribute 'Name'] end
-
 	// % protected region % [Modify props to the crud options here for attribute 'Represents'] off begin
 	/**
 	 * City or area represented
@@ -104,7 +87,7 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 	@CRUD({
 		name: 'Represents',
 		displayType: 'textfield',
-		order: 20,
+		order: 10,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -123,7 +106,7 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 	@CRUD({
 		name: 'FullName',
 		displayType: 'textfield',
-		order: 30,
+		order: 20,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -142,7 +125,7 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 	@CRUD({
 		name: 'ShortName',
 		displayType: 'textfield',
-		order: 40,
+		order: 30,
 		headerColumn: true,
 		searchable: true,
 		searchFunction: 'like',
@@ -153,15 +136,50 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 
 	@observable
 	@attribute({isReference: true})
-	public formVersions: FormVersion[] = [];
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'LadderWinLosses'] off begin
+		name: "LadderWinLossess",
+		displayType: 'reference-multicombobox',
+		order: 40,
+		referenceTypeFunc: () => Models.LadderwinlossEntity,
+		referenceResolveFunction: makeFetchOneToManyFunc({
+			relationName: 'ladderwinlossess',
+			oppositeEntity: () => Models.LadderwinlossEntity,
+		}),
+		// % protected region % [Modify props to the crud options here for reference 'LadderWinLosses'] end
+	})
+	public ladderwinlossess: Models.LadderwinlossEntity[] = [];
 
 	@observable
 	@attribute()
-	public publishedVersionId?: string;
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'Division'] off begin
+		name: 'Division',
+		displayType: 'reference-combobox',
+		order: 50,
+		referenceTypeFunc: () => Models.DivisionEntity,
+		// % protected region % [Modify props to the crud options here for reference 'Division'] end
+	})
+	public divisionId?: string;
+	@observable
+	@attribute({isReference: true})
+	public division: Models.DivisionEntity;
 
 	@observable
 	@attribute({isReference: true})
-	public publishedVersion?: FormVersion;
+	@CRUD({
+		// % protected region % [Modify props to the crud options here for reference 'LadderEliminations'] off begin
+		name: "LadderEliminationss",
+		displayType: 'reference-multicombobox',
+		order: 60,
+		referenceTypeFunc: () => Models.LaddereliminationEntity,
+		referenceResolveFunction: makeFetchOneToManyFunc({
+			relationName: 'laddereliminationss',
+			oppositeEntity: () => Models.LaddereliminationEntity,
+		}),
+		// % protected region % [Modify props to the crud options here for reference 'LadderEliminations'] end
+	})
+	public laddereliminationss: Models.LaddereliminationEntity[] = [];
 
 	/**
 	 * Team rosters
@@ -172,7 +190,7 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 		// % protected region % [Modify props to the crud options here for reference 'Rosters'] off begin
 		name: "Rosterss",
 		displayType: 'reference-multicombobox',
-		order: 50,
+		order: 70,
 		referenceTypeFunc: () => Models.RosterEntity,
 		referenceResolveFunction: makeFetchOneToManyFunc({
 			relationName: 'rosterss',
@@ -181,41 +199,6 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 		// % protected region % [Modify props to the crud options here for reference 'Rosters'] end
 	})
 	public rosterss: Models.RosterEntity[] = [];
-
-	/**
-	 * Collection of teams for a league
-	 */
-	@observable
-	@attribute()
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'League'] off begin
-		name: 'League',
-		displayType: 'reference-combobox',
-		order: 60,
-		referenceTypeFunc: () => Models.LeagueEntity,
-		// % protected region % [Modify props to the crud options here for reference 'League'] end
-	})
-	public leagueId?: string;
-	@observable
-	@attribute({isReference: true})
-	public league: Models.LeagueEntity;
-
-	@observable
-	@attribute({isReference: true})
-	@CRUD({
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] off begin
-		name: "Form Pages",
-		displayType: 'hidden',
-		order: 70,
-		referenceTypeFunc: () => Models.TeamEntityFormTileEntity,
-		disableDefaultOptionRemoval: true,
-		referenceResolveFunction: makeFetchOneToManyFunc({
-			relationName: 'formPages',
-			oppositeEntity: () => Models.TeamEntityFormTileEntity,
-		}),
-		// % protected region % [Modify props to the crud options here for reference 'Form Page'] end
-	})
-	public formPages: Models.TeamEntityFormTileEntity[] = [];
 
 	// % protected region % [Add any custom attributes to the model here] off begin
 	// % protected region % [Add any custom attributes to the model here] end
@@ -250,20 +233,34 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 			if (attributes.shortname) {
 				this.shortname = attributes.shortname;
 			}
-			if (attributes.publishedVersion) {
-				if (typeof attributes.publishedVersion.formData === 'string') {
-					attributes.publishedVersion.formData = JSON.parse(attributes.publishedVersion.formData);
+			if (attributes.ladderwinlossess) {
+				for (const model of attributes.ladderwinlossess) {
+					if (model instanceof Models.LadderwinlossEntity) {
+						this.ladderwinlossess.push(model);
+					} else {
+						this.ladderwinlossess.push(new Models.LadderwinlossEntity(model));
+					}
 				}
-				this.publishedVersion = attributes.publishedVersion;
-				this.publishedVersionId = attributes.publishedVersion.id;
-			} else if (attributes.publishedVersionId !== undefined) {
-				this.publishedVersionId = attributes.publishedVersionId;
 			}
-			if (attributes.formVersions) {
-				this.formVersions.push(...attributes.formVersions);
+			if (attributes.division) {
+				if (attributes.division instanceof Models.DivisionEntity) {
+					this.division = attributes.division;
+					this.divisionId = attributes.division.id;
+				} else {
+					this.division = new Models.DivisionEntity(attributes.division);
+					this.divisionId = this.division.id;
+				}
+			} else if (attributes.divisionId !== undefined) {
+				this.divisionId = attributes.divisionId;
 			}
-			if (attributes.name) {
-				this.name = attributes.name;
+			if (attributes.laddereliminationss) {
+				for (const model of attributes.laddereliminationss) {
+					if (model instanceof Models.LaddereliminationEntity) {
+						this.laddereliminationss.push(model);
+					} else {
+						this.laddereliminationss.push(new Models.LaddereliminationEntity(model));
+					}
+				}
 			}
 			if (attributes.rosterss) {
 				for (const model of attributes.rosterss) {
@@ -271,26 +268,6 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 						this.rosterss.push(model);
 					} else {
 						this.rosterss.push(new Models.RosterEntity(model));
-					}
-				}
-			}
-			if (attributes.league) {
-				if (attributes.league instanceof Models.LeagueEntity) {
-					this.league = attributes.league;
-					this.leagueId = attributes.league.id;
-				} else {
-					this.league = new Models.LeagueEntity(attributes.league);
-					this.leagueId = this.league.id;
-				}
-			} else if (attributes.leagueId !== undefined) {
-				this.leagueId = attributes.leagueId;
-			}
-			if (attributes.formPages) {
-				for (const model of attributes.formPages) {
-					if (model instanceof Models.TeamEntityFormTileEntity) {
-						this.formPages.push(model);
-					} else {
-						this.formPages.push(new Models.TeamEntityFormTileEntity(model));
 					}
 				}
 			}
@@ -307,20 +284,17 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 	 */
 	// % protected region % [Customize Default Expands here] off begin
 	public defaultExpands = `
-		publishedVersion {
-			id
-			created
-			modified
-			formData
+		ladderwinlossess {
+			${Models.LadderwinlossEntity.getAttributes().join('\n')}
+		}
+		division {
+			${Models.DivisionEntity.getAttributes().join('\n')}
+		}
+		laddereliminationss {
+			${Models.LaddereliminationEntity.getAttributes().join('\n')}
 		}
 		rosterss {
 			${Models.RosterEntity.getAttributes().join('\n')}
-		}
-		league {
-			${Models.LeagueEntity.getAttributes().join('\n')}
-		}
-		formPages {
-			${Models.TeamEntityFormTileEntity.getAttributes().join('\n')}
 		}
 	`;
 	// % protected region % [Customize Default Expands here] end
@@ -331,8 +305,9 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 	// % protected region % [Customize Save From Crud here] off begin
 	public async saveFromCrud(formMode: EntityFormMode) {
 		const relationPath = {
+			ladderwinlossess: {},
+			laddereliminationss: {},
 			rosterss: {},
-			formPages: {},
 		};
 		return this.save(
 			relationPath,
@@ -342,6 +317,8 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 						key: 'mergeReferences',
 						graphQlType: '[String]',
 						value: [
+							'ladderwinlossess',
+							'laddereliminationss',
 							'rosterss',
 						]
 					},
@@ -356,43 +333,8 @@ export default class TeamEntity extends Model implements ITeamEntityAttributes, 
 	 */
 	public getDisplayName() {
 		// % protected region % [Customise the display name for this entity] off begin
-		return this.name;
+		return this.id;
 		// % protected region % [Customise the display name for this entity] end
-	}
-
-	/**
-	 * Gets all the versions for this form.
-	 */
-	public getAllVersions: getAllVersionsFn = (includeSubmissions?, conditions?) => {
-		// % protected region % [Modify the getAllVersionsFn here] off begin
-		return fetchFormVersions(this, includeSubmissions, conditions)
-			.then(d => {
-				runInAction(() => this.formVersions = d);
-				return d.map(x => x.formData)
-			});
-		// % protected region % [Modify the getAllVersionsFn here] end
-	};
-
-	/**
-	 * Gets the published version for this form.
-	 */
-	public getPublishedVersion: getPublishedVersionFn = includeSubmissions => {
-		// % protected region % [Modify the getPublishedVersionFn here] off begin
-		return fetchPublishedVersion(this, includeSubmissions)
-			.then(d => {
-				runInAction(() => this.publishedVersion = d);
-				return d ? d.formData : undefined;
-			});
-		// % protected region % [Modify the getPublishedVersionFn here] end
-	};
-
-	/**
-	 * Gets the submission entity type for this form.
-	 */
-	public getSubmissionEntity = () => {
-		// % protected region % [Modify the getSubmissionEntity here] off begin
-		return Models.TeamSubmissionEntity;
-		// % protected region % [Modify the getSubmissionEntity here] end
 	}
 
 
